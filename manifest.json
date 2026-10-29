@@ -1,0 +1,19 @@
+
+{
+  "name": "All-in-One File Converter",
+  "short_name": "File Converter",
+  "description": "Convert HTML, JSON and common image formats.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f6fb",
+  "theme_color": "#172554",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
