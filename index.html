@@ -1,98 +1,406 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>All-in-One File Converter</title>
+<meta name="theme-color" content="#172554">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+
 <style>
-:root{--bg:#f3f6fb;--card:#fff;--ink:#182230;--muted:#65748b;--accent:#3157d5;--line:#dce4f0}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#edf3ff,#f8faff);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
-header{background:#172554;color:#fff;padding:28px 18px;text-align:center}header h1{margin:0 0 8px;font-size:clamp(25px,5vw,38px)}header p{margin:0;color:#dbeafe}
-main{max-width:1000px;margin:24px auto;padding:0 14px 36px}.notice{background:#fff8e6;border:1px solid #f1d48b;padding:12px 14px;border-radius:12px;color:#6b4c00;font-size:14px;line-height:1.5;margin-bottom:18px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 8px 25px #1725540a}.card h2{font-size:18px;margin:0 0 7px}.card p{color:var(--muted);font-size:13px;line-height:1.5;min-height:38px}
-label{font-size:13px;font-weight:700;display:block;margin:12px 0 7px}input[type=file],textarea,select{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff;font:inherit;font-size:14px}textarea{min-height:110px;resize:vertical}
-button{background:var(--accent);color:white;border:0;border-radius:9px;padding:11px 14px;font-weight:700;cursor:pointer;margin-top:10px;width:100%}button:hover{filter:brightness(.94)}button.secondary{background:#e8edff;color:#243f9f}.status{font-size:13px;color:var(--muted);margin-top:10px;overflow-wrap:anywhere}.small{font-size:12px;color:var(--muted);line-height:1.5}.full{grid-column:1/-1}
-footer{text-align:center;color:var(--muted);font-size:12px;padding:0 12px 24px}
+:root {
+  --bg: #f3f6fb;
+  --card: #fff;
+  --ink: #182230;
+  --muted: #65748b;
+  --accent: #3157d5;
+  --line: #dce4f0;
+}
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg,#edf3ff,#f8faff);
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--ink);
+}
+header {
+  background: #172554;
+  color: white;
+  padding: 28px 18px;
+  text-align: center;
+}
+header h1 { margin: 0 0 8px; font-size: clamp(25px,5vw,38px); }
+header p { margin: 0; color: #dbeafe; }
+
+main { max-width: 1000px; margin: 24px auto; padding: 0 14px 36px; }
+.notice {
+  background: #fff8e6;
+  border: 1px solid #f1d48b;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: #6b4c00;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+  gap: 16px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 8px 25px #1725540a;
+}
+.card h2 { font-size: 18px; margin: 0 0 7px; }
+.card p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+label { font-size: 13px; font-weight: bold; display: block; margin: 12px 0 7px; }
+input[type=file], textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 10px;
+  background: white;
+  font: inherit;
+  font-size: 14px;
+}
+textarea { min-height: 110px; resize: vertical; }
+button {
+  background: var(--accent);
+  color: white;
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+button:hover { filter: brightness(.94); }
+button.secondary { background: #e8edff; color: #243f9f; }
+.status { font-size: 13px; color: var(--muted); margin-top: 10px; overflow-wrap: anywhere; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 12px 24px; }
 </style>
 </head>
+
 <body>
-<header><h1>All-in-One File Converter</h1><p>Simple tools for documents, images, HTML and JSON</p></header>
+<header>
+  <h1>All-in-One File Converter</h1>
+  <p>Simple tools for documents, images, HTML and JSON</p>
+</header>
+
 <main>
-<div class="notice"><b>Important:</b> This is a single-file browser tool. HTML ↔ JSON and JPG/PNG conversion work locally. PDF/Word conversions need extra libraries or a server and are not fully supported offline here; use the relevant tools below where available. Your files are processed in your browser for the supported conversions.</div>
+<div class="notice">
+  <b>Important:</b> HTML ↔ JSON and image conversions work in the browser.
+  PDF and Word conversions may need an external application or additional library.
+</div>
+
 <div class="grid">
+
 <section class="card">
-<h2>HTML → JSON</h2><p>Wrap HTML markup as JSON text and download it.</p>
-<label for="htmlInput">Paste HTML</label><textarea id="htmlInput" placeholder="&lt;h1&gt;Hello world&lt;/h1&gt;"></textarea>
-<button onclick="htmlToJson()">Convert & Download JSON</button><div class="status" id="h2jStatus"></div>
+<h2>HTML → JSON</h2>
+<p>Convert HTML markup into JSON.</p>
+<label for="htmlInput">Paste HTML</label>
+<textarea id="htmlInput" placeholder="<h1>Hello world</h1>"></textarea>
+<button onclick="htmlToJson()">Convert & Download JSON</button>
+<div class="status" id="h2jStatus"></div>
 </section>
+
 <section class="card">
-<h2>JSON → HTML</h2><p>Extract HTML stored in a JSON string or an object with an “html” field.</p>
-<label for="jsonInput">Paste JSON</label><textarea id="jsonInput" placeholder='{"html":"&lt;h1&gt;Hello&lt;/h1&gt;"}'></textarea>
-<button onclick="jsonToHtml()">Convert & Download HTML</button><div class="status" id="j2hStatus"></div>
+<h2>JSON → HTML</h2>
+<p>Extract HTML from JSON.</p>
+<label for="jsonInput">Paste JSON</label>
+<textarea id="jsonInput" placeholder='{"html":"<h1>Hello</h1>"}'></textarea>
+<button onclick="jsonToHtml()">Convert & Download HTML</button>
+<div class="status" id="j2hStatus"></div>
 </section>
+
 <section class="card">
-<h2>JPG / JPEG → PNG</h2><p>Convert an image to PNG format in your browser.</p>
-<label for="jpgFile">Choose JPG/JPEG image</label><input id="jpgFile" type="file" accept=".jpg,.jpeg,image/jpeg,image/png">
-<button onclick="imageConvert('jpgFile','png')">Convert & Download PNG</button><div class="status" id="jpgStatus"></div>
+<h2>JPG → PNG</h2>
+<p>Convert JPG/JPEG images to PNG.</p>
+<label for="jpgFile">Choose image</label>
+<input id="jpgFile" type="file" accept=".jpg,.jpeg,image/jpeg,image/png">
+<button onclick="imageConvert('jpgFile','png')">Convert to PNG</button>
+<div class="status" id="jpgStatus"></div>
 </section>
+
 <section class="card">
-<h2>PNG → JPG</h2><p>Convert PNG images to JPG with a white background.</p>
-<label for="pngFile">Choose PNG image</label><input id="pngFile" type="file" accept=".png,image/png">
-<button onclick="imageConvert('pngFile','jpg')">Convert & Download JPG</button><div class="status" id="pngStatus"></div>
+<h2>PNG → JPG</h2>
+<p>Convert PNG images to JPG.</p>
+<label for="pngFile">Choose PNG</label>
+<input id="pngFile" type="file" accept=".png,image/png">
+<button onclick="imageConvert('pngFile','jpg')">Convert to JPG</button>
+<div class="status" id="pngStatus"></div>
 </section>
+
 <section class="card">
-<h2>Image → WebP</h2><p>Convert common image formats to compact WebP.</p>
-<label for="webpFile">Choose image</label><input id="webpFile" type="file" accept="image/*">
-<button onclick="imageConvert('webpFile','webp')">Convert & Download WebP</button><div class="status" id="webpStatus"></div>
+<h2>Image → WebP</h2>
+<p>Convert images to WebP format.</p>
+<label for="webpFile">Choose image</label>
+<input id="webpFile" type="file" accept="image/*">
+<button onclick="imageConvert('webpFile','webp')">Convert to WebP</button>
+<div class="status" id="webpStatus"></div>
 </section>
+
 <section class="card">
-<h2>Image → PDF</h2><p>Place an image on a printable page and save as PDF using your browser’s print dialog.</p>
-<label for="imgPdfFile">Choose image</label><input id="imgPdfFile" type="file" accept="image/*">
-<button onclick="imageToPrint('imgPdfFile')">Open Print / Save as PDF</button><div class="status" id="imgPdfStatus"></div>
+<h2>Image → PDF</h2>
+<p>Use the browser print dialog to save an image as PDF.</p>
+<label for="imgPdfFile">Choose image</label>
+<input id="imgPdfFile" type="file" accept="image/*">
+<button onclick="imageToPrint('imgPdfFile')">Save as PDF</button>
+<div class="status" id="imgPdfStatus"></div>
 </section>
+
 <section class="card">
-<h2>PDF → Images</h2><p>Open a PDF and use your PDF viewer’s export or screenshot options to save pages as images.</p>
-<label for="pdfFile">Choose PDF</label><input id="pdfFile" type="file" accept="application/pdf,.pdf">
-<button class="secondary" onclick="openPdf()">Open PDF</button><div class="status" id="pdfStatus"></div>
+<h2>PDF → Image</h2>
+<p>Open a PDF in your PDF viewer.</p>
+<label for="pdfFile">Choose PDF</label>
+<input id="pdfFile" type="file" accept="application/pdf,.pdf">
+<button class="secondary" onclick="openPdf()">Open PDF</button>
+<div class="status" id="pdfStatus"></div>
 </section>
+
 <section class="card">
-<h2>DOC / DOCX → PDF</h2><p>Open a Word document in Word or Google Docs, then export/download it as PDF.</p>
-<label for="docFile">Choose DOC/DOCX</label><input id="docFile" type="file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-<button class="secondary" onclick="docHelp()">Show conversion steps</button><div class="status" id="docStatus"></div>
+<h2>DOC/DOCX → PDF</h2>
+<p>Get instructions for exporting a Word document to PDF.</p>
+<label for="docFile">Choose document</label>
+<input id="docFile" type="file" accept=".doc,.docx">
+<button class="secondary" onclick="docHelp()">Show instructions</button>
+<div class="status" id="docStatus"></div>
 </section>
+
 <section class="card">
-<h2>DOC / DOCX → Image</h2><p>Convert via PDF first, then export each page as an image using a PDF app.</p>
-<button class="secondary" onclick="document.getElementById('docImgStatus').textContent='Open the DOC/DOCX in Word or Google Docs → export/download as PDF → open the PDF in an app that exports pages to PNG/JPG.'">Show conversion steps</button><div class="status" id="docImgStatus"></div>
+<h2>DOC/DOCX → Image</h2>
+<p>Convert the document to PDF first, then export its pages as images.</p>
+<button class="secondary" onclick="document.getElementById('docImgStatus').textContent='Open in Word or Google Docs → export as PDF → use a PDF application to export pages as PNG/JPG.'">Show instructions</button>
+<div class="status" id="docImgStatus"></div>
 </section>
+
 <section class="card">
-<h2>Text → TXT</h2><p>Save text entered below as a plain text file.</p>
-<label for="textInput">Enter text</label><textarea id="textInput" placeholder="Write or paste text here..."></textarea>
+<h2>Text → TXT</h2>
+<p>Save your text in a TXT file.</p>
+<label for="textInput">Enter text</label>
+<textarea id="textInput" placeholder="Write text here..."></textarea>
 <button onclick="downloadText()">Download TXT</button>
 </section>
+
 <section class="card">
-<h2>JSON Formatter</h2><p>Validate and neatly format JSON text.</p>
-<label for="formatInput">Paste JSON</label><textarea id="formatInput" placeholder='{"name":"Example","active":true}'></textarea>
-<button onclick="formatJson()">Format JSON</button><div class="status" id="formatStatus"></div>
+<h2>JSON Formatter</h2>
+<p>Validate and format JSON.</p>
+<label for="formatInput">Paste JSON</label>
+<textarea id="formatInput" placeholder='{"name":"Example","active":true}'></textarea>
+<button onclick="formatJson()">Format JSON</button>
+<div class="status" id="formatStatus"></div>
 </section>
+
 <section class="card">
-<h2>HTML Preview</h2><p>Preview pasted HTML in a separate tab. Only preview content you trust.</p>
-<label for="previewInput">Paste HTML</label><textarea id="previewInput" placeholder="&lt;p&gt;Your HTML here&lt;/p&gt;"></textarea>
+<h2>HTML Preview</h2>
+<p>Preview your HTML in a new tab. Only preview trusted HTML.</p>
+<label for="previewInput">Paste HTML</label>
+<textarea id="previewInput" placeholder="<p>Your HTML here</p>"></textarea>
 <button onclick="previewHtml()">Preview HTML</button>
 </section>
+
 </div>
 </main>
-<footer>All-in-One Converter · Supported conversions run locally in your browser.</footer>
+
+<footer>All-in-One Converter</footer>
+
 <script>
-function saveBlob(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
-function htmlToJson(){const v=document.getElementById('htmlInput').value;saveBlob(new Blob([JSON.stringify({html:v},null,2)],{type:'application/json'}),'converted.json');document.getElementById('h2jStatus').textContent='JSON file created.'}
-function jsonToHtml(){const s=document.getElementById('jsonInput').value;try{const obj=JSON.parse(s);let html=typeof obj==='string'?obj:(obj&&typeof obj.html==='string'?obj.html:null);if(html===null)throw Error('JSON must be a string or an object with a string “html” property.');saveBlob(new Blob([html],{type:'text/html;charset=utf-8'}),'converted.html');document.getElementById('j2hStatus').textContent='HTML file created.'}catch(e){document.getElementById('j2hStatus').textContent='Error: '+e.message}}
-function imageConvert(inputId,fmt){const input=document.getElementById(inputId),file=input.files&&input.files[0];const statusId={jpgFile:'jpgStatus',pngFile:'pngStatus',webpFile:'webpStatus'}[inputId];const status=document.getElementById(statusId);if(!file){status.textContent='Please choose an image first.';return}const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;const ctx=c.getContext('2d');if(fmt==='jpg'){ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height)}ctx.drawImage(img,0,0);const mime=fmt==='jpg'?'image/jpeg':fmt==='png'?'image/png':'image/webp';c.toBlob(blob=>{URL.revokeObjectURL(url);if(!blob){status.textContent='This format is not supported by this browser.';return}const ext=fmt==='jpg'?'jpg':fmt;saveBlob(blob,(file.name.replace(/\.[^.]+$/,'')||'image')+'.'+ext);status.textContent='Converted successfully.'},mime,.92)};img.onerror=()=>{URL.revokeObjectURL(url);status.textContent='Could not read this image.'};img.src=url}
-function imageToPrint(id){const f=document.getElementById(id).files[0],s=document.getElementById('imgPdfStatus');if(!f){s.textContent='Please choose an image first.';return}const u=URL.createObjectURL(f),w=window.open('','_blank');if(!w){s.textContent='Allow pop-ups, then try again.';URL.revokeObjectURL(u);return}w.document.write('<!doctype html><title>Print image</title><style>body{margin:0;text-align:center}img{max-width:100%;max-height:95vh;object-fit:contain}@media print{img{max-width:100%;max-height:95vh}}</style><img src="'+u+'" onload="setTimeout(()=>window.print(),300)">');w.document.close();s.textContent='In the print dialog, select “Save as PDF”.'}
-function openPdf(){const f=document.getElementById('pdfFile').files[0],s=document.getElementById('pdfStatus');if(!f){s.textContent='Please choose a PDF first.';return}const u=URL.createObjectURL(f);window.open(u,'_blank');s.textContent='Use your PDF viewer’s export-to-image feature if available.'}
-function docHelp(){const f=document.getElementById('docFile').files[0],s=document.getElementById('docStatus');s.textContent=(f?'Selected: '+f.name+'. ':'')+'Open in Microsoft Word → File → Save As/Export → PDF. Or upload to Google Docs → File → Download → PDF Document (.pdf).'}
-function downloadText(){saveBlob(new Blob([document.getElementById('textInput').value],{type:'text/plain;charset=utf-8'}),'converted.txt')}
-function formatJson(){const el=document.getElementById('formatInput'),s=document.getElementById('formatStatus');try{el.value=JSON.stringify(JSON.parse(el.value),null,2);s.textContent='Valid JSON formatted successfully.'}catch(e){s.textContent='Invalid JSON: '+e.message}}
-function previewHtml(){const w=window.open('','_blank');if(!w){alert('Please allow pop-ups to preview HTML.');return}w.document.open();w.document.write(document.getElementById('previewInput').value);w.document.close()}
+function saveBlob(blob, name) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function htmlToJson() {
+  const value = document.getElementById("htmlInput").value;
+  const json = JSON.stringify({html: value}, null, 2);
+  saveBlob(new Blob([json], {type: "application/json"}), "converted.json");
+  document.getElementById("h2jStatus").textContent = "JSON file created.";
+}
+
+function jsonToHtml() {
+  const value = document.getElementById("jsonInput").value;
+  const status = document.getElementById("j2hStatus");
+
+  try {
+    const obj = JSON.parse(value);
+    const html = typeof obj === "string" ? obj :
+      (obj && typeof obj.html === "string" ? obj.html : null);
+
+    if (html === null) {
+      throw new Error('Use a JSON string or an object with an "html" property.');
+    }
+
+    saveBlob(new Blob([html], {type: "text/html;charset=utf-8"}), "converted.html");
+    status.textContent = "HTML file created.";
+  } catch (error) {
+    status.textContent = "Error: " + error.message;
+  }
+}
+
+function imageConvert(inputId, format) {
+  const input = document.getElementById(inputId);
+  const file = input.files[0];
+  const statusMap = {
+    jpgFile: "jpgStatus",
+    pngFile: "pngStatus",
+    webpFile: "webpStatus"
+  };
+  const status = document.getElementById(statusMap[inputId]);
+
+  if (!file) {
+    status.textContent = "Please choose an image first.";
+    return;
+  }
+
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+
+  img.onload = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+
+    const ctx = canvas.getContext("2d");
+
+    if (format === "jpg") {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    ctx.drawImage(img, 0, 0);
+
+    const mime = format === "jpg" ? "image/jpeg" :
+      format === "png" ? "image/png" : "image/webp";
+
+    canvas.toBlob(blob => {
+      URL.revokeObjectURL(url);
+
+      if (!blob) {
+        status.textContent = "This format is not supported.";
+        return;
+      }
+
+      const extension = format === "jpg" ? "jpg" : format;
+      const name = file.name.replace(/\.[^.]+$/, "") || "image";
+
+      saveBlob(blob, name + "." + extension);
+      status.textContent = "Converted successfully.";
+    }, mime, 0.92);
+  };
+
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    status.textContent = "Could not read this image.";
+  };
+
+  img.src = url;
+}
+
+function imageToPrint(inputId) {
+  const file = document.getElementById(inputId).files[0];
+  const status = document.getElementById("imgPdfStatus");
+
+  if (!file) {
+    status.textContent = "Please choose an image first.";
+    return;
+  }
+
+  const url = URL.createObjectURL(file);
+  const win = window.open("", "_blank");
+
+  if (!win) {
+    URL.revokeObjectURL(url);
+    status.textContent = "Allow pop-ups and try again.";
+    return;
+  }
+
+  win.document.write(`
+    <!doctype html>
+    <title>Print Image</title>
+    <style>
+      body { margin: 0; text-align: center; }
+      img { max-width: 100%; max-height: 95vh; object-fit: contain; }
+    </style>
+    <img src="${url}" onload="setTimeout(()=>window.print(),300)">
+  `);
+
+  win.document.close();
+  status.textContent = 'Choose "Save as PDF" in the print dialog.';
+}
+
+function openPdf() {
+  const file = document.getElementById("pdfFile").files[0];
+  const status = document.getElementById("pdfStatus");
+
+  if (!file) {
+    status.textContent = "Please choose a PDF first.";
+    return;
+  }
+
+  window.open(URL.createObjectURL(file), "_blank");
+  status.textContent = "Use your PDF viewer to export pages as images.";
+}
+
+function docHelp() {
+  const file = document.getElementById("docFile").files[0];
+  const status = document.getElementById("docStatus");
+
+  status.textContent =
+    (file ? "Selected: " + file.name + ". " : "") +
+    "Open in Microsoft Word → File → Save As/Export → PDF. " +
+    "Alternatively, open in Google Docs → File → Download → PDF.";
+}
+
+function downloadText() {
+  const text = document.getElementById("textInput").value;
+  saveBlob(new Blob([text], {type: "text/plain;charset=utf-8"}), "converted.txt");
+}
+
+function formatJson() {
+  const input = document.getElementById("formatInput");
+  const status = document.getElementById("formatStatus");
+
+  try {
+    input.value = JSON.stringify(JSON.parse(input.value), null, 2);
+    status.textContent = "Valid JSON formatted successfully.";
+  } catch (error) {
+    status.textContent = "Invalid JSON: " + error.message;
+  }
+}
+
+function previewHtml() {
+  const win = window.open("", "_blank");
+
+  if (!win) {
+    alert("Please allow pop-ups to preview HTML.");
+    return;
+  }
+
+  win.document.open();
+  win.document.write(document.getElementById("previewInput").value);
+  win.document.close();
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .catch(error => console.warn("Service Worker registration failed:", error));
+  });
+}
 </script>
 </body>
 </html>
