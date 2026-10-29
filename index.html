@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>All-in-One Ultimate File Converter</title>
+<title>All-in-One Ultimate File Converter 2027</title>
 <meta name="theme-color" content="#0f172a">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -11,8 +11,8 @@
 <style>
 :root {
   --bg: #0f172a;
-  --card-bg: rgba(30, 41, 59, 0.7);
-  --card-border: rgba(255, 255, 255, 0.1);
+  --card-bg: rgba(30, 41, 59, 0.75);
+  --card-border: rgba(255, 255, 255, 0.12);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --accent-primary: #6366f1;
@@ -37,10 +37,10 @@ body {
   padding-bottom: 40px;
 }
 header {
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--card-border);
-  padding: 40px 20px;
+  padding: 35px 20px;
   text-align: center;
   position: sticky;
   top: 0;
@@ -49,18 +49,18 @@ header {
 header h1 {
   font-size: clamp(26px, 5vw, 42px);
   font-weight: 800;
-  background: linear-gradient(135deg, #a5b4fc, #6366f1);
+  background: linear-gradient(135deg, #a5b4fc, #6366f1, #38bdf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   letter-spacing: -0.5px;
 }
 header p { color: var(--text-muted); font-size: 15px; }
-main { max-width: 1200px; margin: 32px auto 0; padding: 0 20px; }
+main { max-width: 1280px; margin: 28px auto 0; padding: 0 20px; }
 .notice {
   background: var(--warning-bg);
   border: 1px solid var(--warning-border);
-  padding: 16px 20px;
+  padding: 14px 20px;
   border-radius: var(--radius);
   color: var(--warning-text);
   font-size: 14px;
@@ -72,7 +72,7 @@ main { max-width: 1200px; margin: 32px auto 0; padding: 0 20px; }
 }
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
   gap: 20px;
 }
 .card {
@@ -80,7 +80,7 @@ main { max-width: 1200px; margin: 32px auto 0; padding: 0 20px; }
   backdrop-filter: blur(16px);
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   transition: var(--transition);
@@ -89,7 +89,7 @@ main { max-width: 1200px; margin: 32px auto 0; padding: 0 20px; }
 .card:hover {
   transform: translateY(-4px);
   border-color: rgba(99, 102, 241, 0.4);
-  box-shadow: 0 15px 35px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 15px 35px rgba(99, 102, 241, 0.18);
 }
 .card-icon {
   width: 42px;
@@ -101,47 +101,48 @@ main { max-width: 1200px; margin: 32px auto 0; padding: 0 20px; }
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 .card h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
-.card p { color: var(--text-muted); font-size: 13px; margin-bottom: 16px; flex-grow: 1; }
-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; display: block; }
+.card p { color: var(--text-muted); font-size: 13px; margin-bottom: 14px; flex-grow: 1; }
+label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 6px; display: block; }
 .drop-zone {
   border: 2px dashed var(--card-border);
   border-radius: 12px;
-  padding: 16px;
+  padding: 14px;
   text-align: center;
   cursor: pointer;
   background: rgba(15, 23, 42, 0.4);
   transition: var(--transition);
   margin-bottom: 12px;
 }
-.drop-zone:hover { border-color: var(--accent-primary); background: rgba(99, 102, 241, 0.05); }
+.drop-zone:hover { border-color: var(--accent-primary); background: rgba(99, 102, 241, 0.08); }
 .drop-zone input[type=file] { display: none; }
-.drop-zone-text { font-size: 13px; color: var(--text-muted); pointer-events: none; }
-textarea {
+.drop-zone-text { font-size: 13px; color: var(--text-muted); pointer-events: none; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+textarea, input[type=text] {
   width: 100%;
   border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 10px;
+  padding: 10px 12px;
   background: rgba(15, 23, 42, 0.6);
   color: var(--text-main);
-  font-family: 'Fira Code', monospace, monospace;
+  font-family: 'Fira Code', monospace, sans-serif;
   font-size: 13px;
-  min-height: 100px;
-  resize: vertical;
-  margin-bottom: 12px;
   outline: none;
   transition: var(--transition);
+  margin-bottom: 10px;
 }
-textarea:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); }
+textarea { min-height: 85px; resize: vertical; }
+textarea:focus, input[type=text]:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); }
+.btn-group { display: flex; gap: 8px; }
 button {
+  width: 100%;
   background: var(--accent-primary);
   color: white;
   border: 0;
   border-radius: 10px;
-  padding: 12px 16px;
-  font-size: 14px;
+  padding: 10px 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
@@ -154,22 +155,25 @@ button:hover { background: var(--accent-hover); transform: translateY(-1px); }
 button:active { transform: translateY(0); }
 button.secondary { background: var(--accent-secondary); color: var(--accent-secondary-text); }
 button.secondary:hover { background: rgba(99, 102, 241, 0.25); }
-.status { font-size: 12px; margin-top: 10px; overflow-wrap: anywhere; min-height: 18px; }
+.status { font-size: 12px; margin-top: 8px; overflow-wrap: anywhere; min-height: 18px; }
 .status.success { color: var(--success); }
 .status.error { color: var(--danger); }
+.qr-preview { text-align: center; margin-top: 10px; display: none; }
+.qr-preview img { border-radius: 8px; border: 2px solid var(--card-border); }
 footer { text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 40px; }
 </style>
 </head>
 <body>
 <header>
-  <h1><i class="fa-solid fa-wand-magic-sparkles"></i> File Converter Pro</h1>
-  <p>Browser-based secure, instant & privacy-focused converter tools</p>
+  <h1><i class="fa-solid fa-wand-magic-sparkles"></i> File Converter Pro 2027</h1>
+  <p>Browser-based ultra-fast, secure & private client-side converter suite</p>
 </header>
 <main>
 <div class="notice">
-  <i class="fa-solid fa-circle-info"></i>
-  <span><b>Privacy Guarantee:</b> HTML/JSON & Image conversions happen entirely on your device. Your files are never uploaded to any server.</span>
+  <i class="fa-solid fa-shield-halved"></i>
+  <span><b>Privacy Guarantee 2027:</b> All conversions happen 100% locally on your browser. No files or text data are sent to any server.</span>
 </div>
+
 <div class="grid">
   <!-- HTML to JSON -->
   <section class="card">
@@ -193,6 +197,17 @@ footer { text-align: center; color: var(--text-muted); font-size: 13px; margin-t
     <div class="status" id="j2hStatus"></div>
   </section>
 
+  <!-- CSV to JSON -->
+  <section class="card">
+    <div class="card-icon"><i class="fa-file-csv"></i></div>
+    <h2>CSV → JSON</h2>
+    <p>Convert tabular CSV text or files into formatted JSON arrays.</p>
+    <label for="csvInput">CSV Data</label>
+    <textarea id="csvInput" placeholder="name,age&#10;John,30&#10;Jane,25"></textarea>
+    <button onclick="csvToJson()"><i class="fa-solid fa-arrow-right-arrow-left"></i> Convert to JSON</button>
+    <div class="status" id="csvStatus"></div>
+  </section>
+
   <!-- JPG to PNG -->
   <section class="card">
     <div class="card-icon"><i class="fa-image"></i></div>
@@ -210,7 +225,7 @@ footer { text-align: center; color: var(--text-muted); font-size: 13px; margin-t
   <section class="card">
     <div class="card-icon"><i class="fa-file-image"></i></div>
     <h2>PNG → JPG</h2>
-    <p>Convert PNG graphics into compressed JPG images with a white background.</p>
+    <p>Convert PNG graphics into compressed JPG images with white background.</p>
     <div class="drop-zone" onclick="document.getElementById('pngFile').click()">
       <div class="drop-zone-text" id="pngFileText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose PNG image</div>
       <input id="pngFile" type="file" accept=".png,image/png" onchange="updateFileName(this, 'pngFileText')">
@@ -230,6 +245,83 @@ footer { text-align: center; color: var(--text-muted); font-size: 13px; margin-t
     </div>
     <button onclick="imageConvert('webpFile','webp')"><i class="fa-solid fa-bolt"></i> Convert to WebP</button>
     <div class="status" id="webpStatus"></div>
+  </section>
+
+  <!-- SVG to PNG -->
+  <section class="card">
+    <div class="card-icon"><i class="fa-shapes"></i></div>
+    <h2>SVG → PNG</h2>
+    <p>Rasterize vector SVG files into high-resolution PNG graphics.</p>
+    <div class="drop-zone" onclick="document.getElementById('svgFile').click()">
+      <div class="drop-zone-text" id="svgFileText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose SVG image</div>
+      <input id="svgFile" type="file" accept=".svg,image/svg+xml" onchange="updateFileName(this, 'svgFileText')">
+    </div>
+    <button onclick="svgToPng()"><i class="fa-solid fa-file-export"></i> Convert to PNG</button>
+    <div class="status" id="svgStatus"></div>
+  </section>
+
+  <!-- Base64 Encoder / Decoder -->
+  <section class="card">
+    <div class="card-icon"><i class="fa-lock"></i></div>
+    <h2>Base64 Encoder / Decoder</h2>
+    <p>Encode plain text into Base64 format or decode Base64 back to text.</p>
+    <label for="base64Input">Text / Base64</label>
+    <textarea id="base64Input" placeholder="Enter text or Base64 string..."></textarea>
+    <div class="btn-group">
+      <button onclick="processBase64(true)"><i class="fa-solid fa-lock"></i> Encode</button>
+      <button class="secondary" onclick="processBase64(false)"><i class="fa-solid fa-unlock"></i> Decode</button>
+    </div>
+    <div class="status" id="base64Status"></div>
+  </section>
+
+  <!-- Markdown to HTML -->
+  <section class="card">
+    <div class="card-icon"><i class="fa-brands fa-markdown"></i></div>
+    <h2>Markdown → HTML</h2>
+    <p>Convert Markdown formatted text into ready-to-use HTML code.</p>
+    <label for="mdInput">Markdown Text</label>
+    <textarea id="mdInput" placeholder="# Heading&#10;**Bold text** and *Italic*"></textarea>
+    <button onclick="mdToHtml()"><i class="fa-solid fa-code"></i> Convert to HTML</button>
+    <div class="status" id="mdStatus"></div>
+  </section>
+
+  <!-- HEX to RGB Color Converter -->
+  <section class="card">
+    <div class="card-icon"><i class="fa-palette"></i></div>
+    <h2>HEX ↔ RGB Color</h2>
+    <p>Convert hex color codes (#6366f1) to RGB/RGBA values and vice versa.</p>
+    <label for="colorInput">HEX or RGB Color</label>
+    <input type="text" id="colorInput" placeholder="#6366f1 OR rgb(99, 102, 241)">
+    <button onclick="convertColor()"><i class="fa-solid fa-sliders"></i> Convert Color</button>
+    <div class="status" id="colorStatus"></div>
+  </section>
+
+  <!-- URL Encoder / Decoder -->
+  <section class="card">
+    <div class="card-icon"><i class="fa-link"></i></div>
+    <h2>URL Encoder / Decoder</h2>
+    <p>Encode special characters in URLs or decode encoded Web URIs.</p>
+    <label for="urlInput">URL String</label>
+    <textarea id="urlInput" placeholder="https://example.com?query=hello world"></textarea>
+    <div class="btn-group">
+      <button onclick="processUrl(true)"><i class="fa-solid fa-link"></i> Encode</button>
+      <button class="secondary" onclick="processUrl(false)"><i class="fa-solid fa-unlink"></i> Decode</button>
+    </div>
+    <div class="status" id="urlStatus"></div>
+  </section>
+
+  <!-- QR Code Generator -->
+  <section class="card">
+    <div class="card-icon"><i class="fa-qrcode"></i></div>
+    <h2>Text / URL → QR Code</h2>
+    <p>Generate instant downloadable QR codes from any web link or text.</p>
+    <label for="qrInput">Enter Text or URL</label>
+    <input type="text" id="qrInput" placeholder="https://example.com">
+    <button onclick="generateQR()"><i class="fa-solid fa-qrcode"></i> Generate QR Code</button>
+    <div class="qr-preview" id="qrPreview">
+      <img id="qrImg" src="" alt="QR Code">
+    </div>
+    <div class="status" id="qrStatus"></div>
   </section>
 
   <!-- Image to PDF -->
@@ -303,7 +395,8 @@ footer { text-align: center; color: var(--text-muted); font-size: 13px; margin-t
   </section>
 </div>
 </main>
-<footer><p>© File Converter Pro — Fast, Private Browser Utility</p></footer>
+
+<footer><p>© 2027 File Converter Pro — Fast, Private Browser Utility</p></footer>
 
 <script>
 function setStatus(id, text, isSuccess = true) {
@@ -352,6 +445,27 @@ function jsonToHtml() {
   }
 }
 
+function csvToJson() {
+  const csv = document.getElementById("csvInput").value.trim();
+  if (!csv) return setStatus("csvStatus", "Please enter CSV data.", false);
+  try {
+    const lines = csv.split("\n").map(l => l.trim()).filter(l => l);
+    if (lines.length < 2) throw new Error("CSV requires headers and at least 1 data row.");
+    const headers = lines[0].split(",").map(h => h.trim());
+    const result = lines.slice(1).map(line => {
+      const values = line.split(",").map(v => v.trim());
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = values[i] || "");
+      return obj;
+    });
+    const jsonStr = JSON.stringify(result, null, 2);
+    saveBlob(new Blob([jsonStr], { type: "application/json" }), "csv_converted.json");
+    setStatus("csvStatus", "CSV successfully converted to JSON!");
+  } catch (e) {
+    setStatus("csvStatus", "Error: " + e.message, false);
+  }
+}
+
 function imageConvert(inputId, format) {
   const input = document.getElementById(inputId);
   const file = input.files[0];
@@ -391,6 +505,114 @@ function imageConvert(inputId, format) {
     setStatus(statusId, "Failed to load image file.", false);
   };
   img.src = url;
+}
+
+function svgToPng() {
+  const file = document.getElementById("svgFile").files[0];
+  if (!file) return setStatus("svgStatus", "Please select an SVG file.", false);
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const blob = new Blob([e.target.result], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width || 800;
+      canvas.height = img.height || 600;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(pngBlob => {
+        URL.revokeObjectURL(url);
+        saveBlob(pngBlob, file.name.replace(/\.svg$/i, "") + ".png");
+        setStatus("svgStatus", "SVG converted to PNG successfully!");
+      }, "image/png");
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      setStatus("svgStatus", "Failed to parse SVG file.", false);
+    };
+    img.src = url;
+  };
+  reader.readAsText(file);
+}
+
+function processBase64(isEncode) {
+  const val = document.getElementById("base64Input").value;
+  if (!val.trim()) return setStatus("base64Status", "Please enter input text.", false);
+  try {
+    if (isEncode) {
+      document.getElementById("base64Input").value = btoa(unescape(encodeURIComponent(val)));
+      setStatus("base64Status", "Encoded to Base64!");
+    } else {
+      document.getElementById("base64Input").value = decodeURIComponent(escape(atob(val)));
+      setStatus("base64Status", "Decoded from Base64!");
+    }
+  } catch (err) {
+    setStatus("base64Status", "Invalid Base64 format/character.", false);
+  }
+}
+
+function mdToHtml() {
+  const md = document.getElementById("mdInput").value;
+  if (!md.trim()) return setStatus("mdStatus", "Enter markdown text.", false);
+  
+  let html = md
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/\*\*(.*)\*/gim, '<b>$1</b>')
+    .replace(/\*(.*)\*/gim, '<i>$1</i>')
+    .replace(/\n$/gim, '<br />');
+
+  saveBlob(new Blob([html.trim()], { type: "text/html;charset=utf-8" }), "markdown.html");
+  setStatus("mdStatus", "Markdown converted & HTML downloaded!");
+}
+
+function convertColor() {
+  const input = document.getElementById("colorInput").value.trim();
+  if (!input) return setStatus("colorStatus", "Enter color code.", false);
+
+  if (input.startsWith("#")) {
+    let hex = input.replace("#", "");
+    if (hex.length === 3) hex = hex.split("").map(c => c + c).join("");
+    if (hex.length !== 6) return setStatus("colorStatus", "Invalid HEX code.", false);
+    const r = parseInt(hex.substring(0,2), 16);
+    const g = parseInt(hex.substring(2,4), 16);
+    const b = parseInt(hex.substring(4,6), 16);
+    document.getElementById("colorInput").value = `rgb(${r}, ${g}, ${b})`;
+    setStatus("colorStatus", "Converted to RGB!");
+  } else if (input.toLowerCase().startsWith("rgb")) {
+    const match = input.match(/\d+/g);
+    if (!match || match.length < 3) return setStatus("colorStatus", "Invalid RGB string.", false);
+    const hex = "#" + match.slice(0, 3).map(x => parseInt(x).toString(16).padStart(2, "0")).join("");
+    document.getElementById("colorInput").value = hex;
+    setStatus("colorStatus", "Converted to HEX!");
+  } else {
+    setStatus("colorStatus", "Format should be #hex or rgb(r,g,b).", false);
+  }
+}
+
+function processUrl(isEncode) {
+  const val = document.getElementById("urlInput").value;
+  if (!val.trim()) return setStatus("urlStatus", "Enter URL to process.", false);
+  try {
+    document.getElementById("urlInput").value = isEncode ? encodeURIComponent(val) : decodeURIComponent(val);
+    setStatus("urlStatus", isEncode ? "URL Encoded!" : "URL Decoded!");
+  } catch (e) {
+    setStatus("urlStatus", "Error processing URL string.", false);
+  }
+}
+
+function generateQR() {
+  const text = document.getElementById("qrInput").value.trim();
+  if (!text) return setStatus("qrStatus", "Please enter text or URL.", false);
+  
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(text)}`;
+  const img = document.getElementById("qrImg");
+  img.src = qrUrl;
+  document.getElementById("qrPreview").style.display = "block";
+  setStatus("qrStatus", "QR Code generated successfully!");
 }
 
 function imageToPrint(inputId) {
