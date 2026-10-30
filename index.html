@@ -22,7 +22,7 @@
     </div>
   </div>
   <div class="header-actions">
-    <!-- User Profile Badge (Click to Open Registration / Edit Modal) -->
+    <!-- User Profile Badge -->
     <div class="user-profile-badge" id="userProfileBadge" onclick="openProfileModal()" title="Click to register or edit profile">
       <div class="user-avatar" id="navAvatar">HK</div>
       <span id="navUsername">kaushalji</span>
@@ -34,81 +34,106 @@
 </header>
 
 <main>
-  <!-- Home Dashboard View (Box Grid) -->
+  <!-- Home Dashboard View -->
   <div id="homeDashboard">
     <div class="dashboard-hero">
       <h1>Select a Converter Tool</h1>
-      <p>Click on any box below to open the full-screen tool interface instantly. (Click your profile badge on top-right to register/edit profile)</p>
+      <p>Click on any box below to open the full-screen tool interface instantly.</p>
     </div>
 
     <div class="grid">
+      <!-- 1. Ultra HD Converter -->
+      <div class="card-selector" onclick="openTool('hdView')">
+        <div class="card-icon"><i class="fa-solid fa-expand"></i></div>
+        <h3>Ultra HD Enhancer</h3>
+        <p>Upscale image resolution to 4K Ultra HD with AI sharpness filters.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <!-- 2. BG Remover -->
+      <div class="card-selector" onclick="openTool('bgRemView')">
+        <div class="card-icon"><i class="fa-solid fa-scissors"></i></div>
+        <h3>Background Remover</h3>
+        <p>Remove image background instantly and download transparent PNG.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <!-- 3. Mini Photoshop Editor -->
+      <div class="card-selector" onclick="openTool('photoEditorView')">
+        <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
+        <h3>Photoshop Image Editor</h3>
+        <p>Adjust brightness, contrast, blur, grayscale, rotate and flip images.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <!-- Existing Tools Grid -->
       <div class="card-selector" onclick="openTool('h2jView')">
         <div class="card-icon"><i class="fa-code"></i></div>
         <h3>HTML → JSON</h3>
-        <p>Convert raw HTML tags and structures into organized JSON objects.</p>
+        <p>Convert raw HTML tags into JSON objects.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('j2hView')">
         <div class="card-icon"><i class="fa-file-code"></i></div>
         <h3>JSON → HTML</h3>
-        <p>Extract and render HTML markup stored inside JSON string structures.</p>
+        <p>Extract and render HTML markup from JSON.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('csvView')">
         <div class="card-icon"><i class="fa-file-csv"></i></div>
         <h3>CSV → JSON</h3>
-        <p>Transform tabular comma-separated values into robust JSON arrays.</p>
+        <p>Transform tabular CSV values into JSON arrays.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('j2csvView')">
         <div class="card-icon"><i class="fa-solid fa-file-excel"></i></div>
         <h3>JSON → CSV</h3>
-        <p>Convert structured JSON arrays into downloadable CSV spreadsheet files.</p>
+        <p>Convert JSON arrays into CSV spreadsheet files.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('imgConvView')">
         <div class="card-icon"><i class="fa-image"></i></div>
         <h3>JPG / PNG / WebP Converter</h3>
-        <p>Switch between image formats with transparency and background controls.</p>
+        <p>Switch between JPG, PNG, and WebP image formats.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('svgView')">
         <div class="card-icon"><i class="fa-shapes"></i></div>
         <h3>SVG → PNG</h3>
-        <p>Rasterize vector Scalable Vector Graphics or paste raw code into high-res PNG.</p>
+        <p>Rasterize vector SVG files or code into high-res PNG.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('base64View')">
         <div class="card-icon"><i class="fa-lock"></i></div>
         <h3>Base64 Encoder / Decoder</h3>
-        <p>Securely encode strings to Base64 or decode back to readable text.</p>
+        <p>Encode strings to Base64 or decode back to readable text.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('urlView')">
         <div class="card-icon"><i class="fa-solid fa-link"></i></div>
         <h3>URL Encoder / Decoder</h3>
-        <p>Safely encode special URL characters or decode encoded web links.</p>
+        <p>Safely encode special URL characters or decode web links.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('mdView')">
         <div class="card-icon"><i class="fa-brands fa-markdown"></i></div>
         <h3>Markdown → HTML</h3>
-        <p>Convert markdown formatting syntax directly into clean HTML files.</p>
+        <p>Convert markdown formatting into clean HTML files.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('textCaseView')">
         <div class="card-icon"><i class="fa-solid fa-font"></i></div>
         <h3>Text Case Transformer</h3>
-        <p>Instantly convert text to UPPERCASE, lowercase, or Title Case.</p>
+        <p>Convert text to UPPERCASE, lowercase, or Title Case.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
@@ -122,42 +147,111 @@
       <div class="card-selector" onclick="openTool('binaryView')">
         <div class="card-icon"><i class="fa-solid fa-binary"></i></div>
         <h3>Binary ⇄ Text</h3>
-        <p>Convert characters into 8-bit binary code strings instantly.</p>
+        <p>Convert characters into 8-bit binary code strings.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('colorView')">
         <div class="card-icon"><i class="fa-solid fa-palette"></i></div>
         <h3>HEX ⇄ RGB Converter</h3>
-        <p>Switch color codes between HEX format and RGB values seamlessly.</p>
+        <p>Switch color codes between HEX and RGB values.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('passGenView')">
         <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
         <h3>Secure Password Gen</h3>
-        <p>Generate unbreakable cryptographic passwords with custom rules.</p>
+        <p>Generate unbreakable cryptographic passwords.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('wordCountView')">
         <div class="card-icon"><i class="fa-solid fa-calculator"></i></div>
         <h3>Word & Char Counter</h3>
-        <p>Analyze text statistics including words, characters, and reading time.</p>
+        <p>Analyze text statistics including words and characters.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <div class="card-selector" onclick="openTool('qrView')">
         <div class="card-icon"><i class="fa-qrcode"></i></div>
         <h3>QR Code Generator</h3>
-        <p>Generate downloadable high-resolution QR codes from links or text.</p>
+        <p>Generate downloadable high-resolution QR codes.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
     </div>
   </div>
 
-  <!-- ================= FULL SCREEN TOOL VIEWS ================= -->
-  
+  <!-- ================= TOOL VIEWS ================= -->
+
+  <!-- Naya Tool 1: Ultra HD Upscaler -->
+  <div id="hdView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-expand"></i> Ultra HD 4K Image Enhancer</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <div class="drop-zone" onclick="document.getElementById('hdImgFile').click()">
+      <div class="drop-zone-text" id="hdImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Low Res Image</div>
+      <input id="hdImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'hdImgText')">
+    </div>
+    <label>Upscale Scale Level</label>
+    <div class="btn-group">
+      <button class="action-btn" onclick="convertToUltraHD(2)">2X HD</button>
+      <button class="action-btn" onclick="convertToUltraHD(4)">4X Ultra HD</button>
+    </div>
+    <div class="status" id="hdStatus"></div>
+  </div>
+
+  <!-- Naya Tool 2: BG Remover -->
+  <div id="bgRemView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-scissors"></i> Image Background Remover</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <div class="drop-zone" onclick="document.getElementById('bgImgFile').click()">
+      <div class="drop-zone-text" id="bgImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image to Remove BG</div>
+      <input id="bgImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'bgImgText')">
+    </div>
+    <label for="bgTolerance">Background Removal Tolerance Sensitivity (1-100)</label>
+    <input type="number" id="bgTolerance" value="30" min="1" max="100" style="margin-bottom:12px;">
+    <button class="action-btn" onclick="removeBackground()"><i class="fa-solid fa-wand-magic-sparkles"></i> Remove Background & Download PNG</button>
+    <div class="status" id="bgRemStatus"></div>
+  </div>
+
+  <!-- Naya Tool 3: Photoshop Image Editor -->
+  <div id="photoEditorView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-sliders"></i> Photoshop Image Editor</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <div class="drop-zone" onclick="document.getElementById('editorImgFile').click()">
+      <div class="drop-zone-text" id="editorImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image to Edit</div>
+      <input id="editorImgFile" type="file" accept="image/*" onchange="loadEditorImage(this)">
+    </div>
+
+    <div id="editorControls" style="display:none; margin-top:15px;">
+      <div style="text-align:center; margin-bottom:15px; background:var(--bg-main); padding:10px; border-radius:10px; border:1px solid var(--card-border);">
+        <canvas id="editorCanvas" style="max-width:100%; height:auto; border-radius:8px;"></canvas>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:15px;">
+        <div><label>Brightness</label><input type="range" id="eBrightness" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
+        <div><label>Contrast</label><input type="range" id="eContrast" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
+        <div><label>Saturate</label><input type="range" id="eSaturate" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
+        <div><label>Blur (px)</label><input type="range" id="eBlur" min="0" max="20" value="0" oninput="applyEditorFilters()"></div>
+      </div>
+
+      <div class="btn-group">
+        <button class="action-btn secondary" onclick="rotateEditorImage(-90)"><i class="fa-solid fa-rotate-left"></i> Rotate Left</button>
+        <button class="action-btn secondary" onclick="rotateEditorImage(90)"><i class="fa-solid fa-rotate-right"></i> Rotate Right</button>
+        <button class="action-btn secondary" onclick="flipEditorImage()"><i class="fa-solid fa-repeat"></i> Flip</button>
+      </div>
+
+      <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Download Edited Image</button>
+    </div>
+    <div class="status" id="editorStatus"></div>
+  </div>
+
+  <!-- Baaki View Blocks -->
   <div id="h2jView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-code"></i> HTML to JSON Converter</h2>
@@ -374,7 +468,7 @@
   </div>
 </main>
 
-<!-- ================= APP INFO & DEVELOPER MODAL (Day/Night Mode Included) ================= -->
+<!-- APP INFO & DEVELOPER MODAL (Day/Night Mode) -->
 <div class="modal-overlay" id="appInfoModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -390,7 +484,6 @@
         <p><b>Security:</b> 100% Client-Side Processing (Zero Server Uploads)</p>
       </div>
 
-      <!-- Day / Night Mode Toggle inside App Info -->
       <label style="margin-top: 15px;">Appearance Theme</label>
       <button class="action-btn secondary" id="themeToggleBtn" onclick="toggleTheme()" style="margin-bottom: 15px;">
         <i class="fa-solid fa-moon" id="themeIcon"></i> Switch to Light Mode
@@ -405,7 +498,7 @@
   </div>
 </div>
 
-<!-- ================= REGISTRATION / EDIT PROFILE MODAL ================= -->
+<!-- PROFILE REGISTRATION MODAL -->
 <div class="modal-overlay" id="profileModal">
   <div class="modal-card">
     <div class="modal-header">
