@@ -1,7 +1,16 @@
-// Load User Profile on page startup
+// Load User Profile on page startup & Register PWA Service Worker
 document.addEventListener("DOMContentLoaded", () => {
   loadProfileData();
+  registerPWA();
 });
+
+function registerPWA() {
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('PWA Service Worker registered:', reg.scope))
+      .catch(err => console.log('PWA Service Worker failed:', err));
+  }
+}
 
 function loadProfileData() {
   const profile = JSON.parse(localStorage.getItem("userProfile")) || {
@@ -36,7 +45,7 @@ function openProfileModal() {
   document.getElementById("editEmail").value = profile.email || "";
   document.getElementById("editDob").value = profile.dob || "";
   document.getElementById("editAddress").value = profile.address || "";
-  document.getElementById("editAvatarUrl").value = profile.avatar.startsWith("data:") ? "" : profile.avatar;
+  document.getElementById("editAvatarUrl").value = profile.avatar && !profile.avatar.startsWith("data:") ? profile.avatar : "";
 
   document.getElementById("profileModal").classList.add("active");
 }
@@ -67,6 +76,9 @@ function saveProfile(event) {
 
   if (tempAvatarBase64) {
     avatar = tempAvatarBase64;
+  } else if (avatar === "[Image Uploaded]") {
+    const existing = JSON.parse(localStorage.getItem("userProfile"));
+    avatar = existing ? existing.avatar : "";
   }
 
   const profile = { username, email, dob, address, avatar };
@@ -79,15 +91,18 @@ function saveProfile(event) {
 
 // Tab Switching Logic
 function openTool(viewId) {
-  document.getElementById('homeDashboard').style.display = 'none';
+  const home = document.getElementById('homeDashboard');
+  if (home) home.style.display = 'none';
   document.querySelectorAll('.tool-view').forEach(el => el.classList.remove('active'));
-  document.getElementById(viewId).classList.add('active');
+  const target = document.getElementById(viewId);
+  if (target) target.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function goHome() {
   document.querySelectorAll('.tool-view').forEach(el => el.classList.remove('active'));
-  document.getElementById('homeDashboard').style.display = 'block';
+  const home = document.getElementById('homeDashboard');
+  if (home) home.style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
