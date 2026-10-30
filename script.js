@@ -1,3 +1,4 @@
+
 // Load User Profile on page startup & Register PWA Service Worker
 document.addEventListener("DOMContentLoaded", () => {
   loadProfileData();
@@ -31,7 +32,36 @@ function loadProfileData() {
   }
 }
 
-// Profile Modal Actions
+// Single Click View Profile Modal Functions
+function viewProfileModal() {
+  const profile = JSON.parse(localStorage.getItem("userProfile")) || {
+    username: "kaushalji",
+    email: "kaushalji@example.com",
+    dob: "2004-09-13",
+    address: "India",
+    avatar: ""
+  };
+
+  document.getElementById("profileLargeName").textContent = profile.username;
+  document.getElementById("profileLargeEmail").textContent = profile.email || "N/A";
+  document.getElementById("profileLargeDob").textContent = profile.dob || "N/A";
+  document.getElementById("profileLargeAddress").textContent = profile.address || "N/A";
+
+  const largeAvatarEl = document.getElementById("profileLargeAvatar");
+  if (profile.avatar) {
+    largeAvatarEl.innerHTML = `<img src="${profile.avatar}" alt="Avatar" style="width:100%; height:100%; object-fit:cover;">`;
+  } else {
+    largeAvatarEl.textContent = profile.username.substring(0, 2).toUpperCase();
+  }
+
+  document.getElementById("viewProfileModal").classList.add("active");
+}
+
+function closeViewProfileModal() {
+  document.getElementById("viewProfileModal").classList.remove("active");
+}
+
+// Profile Modal Actions (Double Click)
 function openProfileModal() {
   const profile = JSON.parse(localStorage.getItem("userProfile")) || {
     username: "kaushalji",
