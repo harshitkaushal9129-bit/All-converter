@@ -1,7 +1,7 @@
-
-// Load User Profile on page startup & Register PWA Service Worker
+// Load User Profile, Theme & Register PWA Service Worker on Startup
 document.addEventListener("DOMContentLoaded", () => {
   loadProfileData();
+  initThemePreference();
   registerPWA();
 });
 
@@ -13,12 +13,49 @@ function registerPWA() {
   }
 }
 
+// Day / Night Theme Toggle Logic (Managed from App Info Modal)
+function toggleTheme() {
+  const body = document.body;
+  const themeIcon = document.getElementById("themeIcon");
+  const themeBtn = document.getElementById("themeToggleBtn");
+  const currentTheme = body.getAttribute("data-theme");
+  
+  if (currentTheme === "dark") {
+    body.setAttribute("data-theme", "light");
+    if(themeIcon) themeIcon.className = "fa-solid fa-sun";
+    if(themeBtn) themeBtn.innerHTML = `<i class="fa-solid fa-sun" id="themeIcon"></i> Switch to Dark Mode`;
+    localStorage.setItem("appTheme", "light");
+  } else {
+    body.setAttribute("data-theme", "dark");
+    if(themeIcon) themeIcon.className = "fa-solid fa-moon";
+    if(themeBtn) themeBtn.innerHTML = `<i class="fa-solid fa-moon" id="themeIcon"></i> Switch to Light Mode`;
+    localStorage.setItem("appTheme", "dark");
+  }
+}
+
+function initThemePreference() {
+  const savedTheme = localStorage.getItem("appTheme") || "dark";
+  document.body.setAttribute("data-theme", savedTheme);
+  const themeIcon = document.getElementById("themeIcon");
+  const themeBtn = document.getElementById("themeToggleBtn");
+  if (themeIcon && themeBtn) {
+    if (savedTheme === "light") {
+      themeIcon.className = "fa-solid fa-sun";
+      themeBtn.innerHTML = `<i class="fa-solid fa-sun" id="themeIcon"></i> Switch to Dark Mode`;
+    } else {
+      themeIcon.className = "fa-solid fa-moon";
+      themeBtn.innerHTML = `<i class="fa-solid fa-moon" id="themeIcon"></i> Switch to Light Mode`;
+    }
+  }
+}
+
+// Load Profile Data in Header Badge
 function loadProfileData() {
   const profile = JSON.parse(localStorage.getItem("userProfile")) || {
+    userId: "kaushalji9129",
     username: "kaushalji",
-    email: "kaushalji@example.com",
+    mobile: "9876543210",
     dob: "2004-09-13",
-    address: "India",
     avatar: ""
   };
 
@@ -32,49 +69,20 @@ function loadProfileData() {
   }
 }
 
-// Single Click View Profile Modal Functions
-function viewProfileModal() {
-  const profile = JSON.parse(localStorage.getItem("userProfile")) || {
-    username: "kaushalji",
-    email: "kaushalji@example.com",
-    dob: "2004-09-13",
-    address: "India",
-    avatar: ""
-  };
-
-  document.getElementById("profileLargeName").textContent = profile.username;
-  document.getElementById("profileLargeEmail").textContent = profile.email || "N/A";
-  document.getElementById("profileLargeDob").textContent = profile.dob || "N/A";
-  document.getElementById("profileLargeAddress").textContent = profile.address || "N/A";
-
-  const largeAvatarEl = document.getElementById("profileLargeAvatar");
-  if (profile.avatar) {
-    largeAvatarEl.innerHTML = `<img src="${profile.avatar}" alt="Avatar" style="width:100%; height:100%; object-fit:cover;">`;
-  } else {
-    largeAvatarEl.textContent = profile.username.substring(0, 2).toUpperCase();
-  }
-
-  document.getElementById("viewProfileModal").classList.add("active");
-}
-
-function closeViewProfileModal() {
-  document.getElementById("viewProfileModal").classList.remove("active");
-}
-
-// Profile Modal Actions (Double Click)
+// Open Registration / Profile Modal
 function openProfileModal() {
   const profile = JSON.parse(localStorage.getItem("userProfile")) || {
+    userId: "",
     username: "kaushalji",
-    email: "kaushalji@example.com",
+    mobile: "",
     dob: "2004-09-13",
-    address: "India",
     avatar: ""
   };
 
+  document.getElementById("editUserId").value = profile.userId || "";
   document.getElementById("editUsername").value = profile.username || "";
-  document.getElementById("editEmail").value = profile.email || "";
+  document.getElementById("editMobile").value = profile.mobile || "";
   document.getElementById("editDob").value = profile.dob || "";
-  document.getElementById("editAddress").value = profile.address || "";
   document.getElementById("editAvatarUrl").value = profile.avatar && !profile.avatar.startsWith("data:") ? profile.avatar : "";
 
   document.getElementById("profileModal").classList.add("active");
@@ -96,12 +104,13 @@ function previewAvatarFile(input) {
   }
 }
 
+// Save User Registration Data to LocalStorage
 function saveProfile(event) {
   event.preventDefault();
+  const userId = document.getElementById("editUserId").value.trim();
   const username = document.getElementById("editUsername").value.trim();
-  const email = document.getElementById("editEmail").value.trim();
+  const mobile = document.getElementById("editMobile").value.trim();
   const dob = document.getElementById("editDob").value;
-  const address = document.getElementById("editAddress").value.trim();
   let avatar = document.getElementById("editAvatarUrl").value.trim();
 
   if (tempAvatarBase64) {
@@ -111,12 +120,12 @@ function saveProfile(event) {
     avatar = existing ? existing.avatar : "";
   }
 
-  const profile = { username, email, dob, address, avatar };
+  const profile = { userId, username, mobile, dob, avatar };
   localStorage.setItem("userProfile", JSON.stringify(profile));
 
   loadProfileData();
   closeProfileModal();
-  alert("Profile updated successfully!");
+  alert("Registration data saved successfully to Local Storage!");
 }
 
 // Tab Switching Logic
