@@ -61,6 +61,13 @@
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
+      <div class="card-selector" onclick="openTool('j2csvView')">
+        <div class="card-icon"><i class="fa-solid fa-file-excel"></i></div>
+        <h3>JSON → CSV</h3>
+        <p>Convert structured JSON arrays into downloadable CSV spreadsheet files.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
       <div class="card-selector" onclick="openTool('imgConvView')">
         <div class="card-icon"><i class="fa-image"></i></div>
         <h3>JPG / PNG / WebP Converter</h3>
@@ -71,7 +78,7 @@
       <div class="card-selector" onclick="openTool('svgView')">
         <div class="card-icon"><i class="fa-shapes"></i></div>
         <h3>SVG → PNG</h3>
-        <p>Rasterize vector Scalable Vector Graphics into high-res PNG files.</p>
+        <p>Rasterize vector Scalable Vector Graphics or paste raw code into high-res PNG.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
@@ -82,10 +89,59 @@
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
+      <div class="card-selector" onclick="openTool('urlView')">
+        <div class="card-icon"><i class="fa-solid fa-link"></i></div>
+        <h3>URL Encoder / Decoder</h3>
+        <p>Safely encode special URL characters or decode encoded web links.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
       <div class="card-selector" onclick="openTool('mdView')">
         <div class="card-icon"><i class="fa-brands fa-markdown"></i></div>
         <h3>Markdown → HTML</h3>
         <p>Convert markdown formatting syntax directly into clean HTML files.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <div class="card-selector" onclick="openTool('textCaseView')">
+        <div class="card-icon"><i class="fa-solid fa-font"></i></div>
+        <h3>Text Case Transformer</h3>
+        <p>Instantly convert text to UPPERCASE, lowercase, or Title Case.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <div class="card-selector" onclick="openTool('morseView')">
+        <div class="card-icon"><i class="fa-solid fa-signal"></i></div>
+        <h3>Morse Code Converter</h3>
+        <p>Translate plain text into Morse code signals and vice versa.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <div class="card-selector" onclick="openTool('binaryView')">
+        <div class="card-icon"><i class="fa-solid fa-binary"></i></div>
+        <h3>Binary ⇄ Text</h3>
+        <p>Convert characters into 8-bit binary code strings instantly.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <div class="card-selector" onclick="openTool('colorView')">
+        <div class="card-icon"><i class="fa-solid fa-palette"></i></div>
+        <h3>HEX ⇄ RGB Converter</h3>
+        <p>Switch color codes between HEX format and RGB values seamlessly.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <div class="card-selector" onclick="openTool('passGenView')">
+        <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <h3>Secure Password Gen</h3>
+        <p>Generate unbreakable cryptographic passwords with custom rules.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <div class="card-selector" onclick="openTool('wordCountView')">
+        <div class="card-icon"><i class="fa-solid fa-calculator"></i></div>
+        <h3>Word & Char Counter</h3>
+        <p>Analyze text statistics including words, characters, and reading time.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
@@ -133,6 +189,17 @@
     <div class="status" id="csvStatus"></div>
   </div>
 
+  <div id="j2csvView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-file-excel"></i> JSON to CSV Converter</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <label for="j2csvInput">JSON Array Data</label>
+    <textarea id="j2csvInput" placeholder='[{"name":"John","age":30}]'></textarea>
+    <button class="action-btn" onclick="jsonToCsv()"><i class="fa-solid fa-download"></i> Convert & Download CSV</button>
+    <div class="status" id="j2csvStatus"></div>
+  </div>
+
   <div id="imgConvView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-image"></i> Image Converter (JPG / PNG / WebP)</h2>
@@ -155,11 +222,14 @@
       <h2><i class="fa-solid fa-shapes"></i> SVG to PNG Rasterizer</h2>
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
-    <div class="drop-zone" onclick="document.getElementById('svgFile').click()">
+    <div class="drop-zone" onclick="document.getElementById('svgFile').click()" style="margin-bottom: 12px;">
       <div class="drop-zone-text" id="svgFileText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose SVG File</div>
       <input id="svgFile" type="file" accept=".svg,image/svg+xml" onchange="updateFileName(this, 'svgFileText')">
     </div>
-    <button class="action-btn" onclick="svgToPng()"><i class="fa-solid fa-file-export"></i> Convert SVG to PNG</button>
+    <div style="text-align: center; margin: 10px 0; color: var(--text-muted); font-weight: 600;">— OR PASTE SVG CODE —</div>
+    <label for="svgCodeInput">Raw SVG Code</label>
+    <textarea id="svgCodeInput" placeholder='<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">...</svg>' style="min-height: 120px; font-family: monospace;"></textarea>
+    <button class="action-btn" onclick="svgToPng()"><i class="fa-solid fa-file-export"></i> Convert SVG to PNG & Download</button>
     <div class="status" id="svgStatus"></div>
   </div>
 
@@ -177,6 +247,20 @@
     <div class="status" id="base64Status"></div>
   </div>
 
+  <div id="urlView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-link"></i> URL Encoder / Decoder</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <label for="urlInput">URL or Text String</label>
+    <textarea id="urlInput" placeholder="Enter URL or text string..."></textarea>
+    <div class="btn-group">
+      <button class="action-btn" onclick="processUrl(true)">Encode URL</button>
+      <button class="action-btn secondary" onclick="processUrl(false)">Decode URL</button>
+    </div>
+    <div class="status" id="urlStatus"></div>
+  </div>
+
   <div id="mdView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-brands fa-markdown"></i> Markdown to HTML Converter</h2>
@@ -186,6 +270,93 @@
     <textarea id="mdInput" placeholder="# Heading&#10;**Bold text**"></textarea>
     <button class="action-btn" onclick="mdToHtml()"><i class="fa-solid fa-code"></i> Convert & Download HTML</button>
     <div class="status" id="mdStatus"></div>
+  </div>
+
+  <div id="textCaseView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-font"></i> Text Case Transformer</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <label for="caseInput">Enter Text</label>
+    <textarea id="caseInput" placeholder="Type or paste your text here..."></textarea>
+    <div class="btn-group">
+      <button class="action-btn" onclick="convertTextCase('upper')">UPPERCASE</button>
+      <button class="action-btn secondary" onclick="convertTextCase('lower')">lowercase</button>
+      <button class="action-btn secondary" onclick="convertTextCase('title')">Title Case</button>
+    </div>
+    <div class="status" id="textCaseStatus"></div>
+  </div>
+
+  <div id="morseView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-signal"></i> Morse Code Converter</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <label for="morseInput">Text or Morse Code (. and -)</label>
+    <textarea id="morseInput" placeholder="Enter text to convert..."></textarea>
+    <div class="btn-group">
+      <button class="action-btn" onclick="textToMorse()">To Morse Code</button>
+      <button class="action-btn secondary" onclick="morseToText()">To Plain Text</button>
+    </div>
+    <div class="status" id="morseStatus"></div>
+  </div>
+
+  <div id="binaryView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-binary"></i> Binary to Text Converter</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <label for="binaryInput">Enter Text or Binary</label>
+    <textarea id="binaryInput" placeholder="Enter characters or 010101..."></textarea>
+    <div class="btn-group">
+      <button class="action-btn" onclick="textToBinary()">Text to Binary</button>
+      <button class="action-btn secondary" onclick="binaryToText()">Binary to Text</button>
+    </div>
+    <div class="status" id="binaryStatus"></div>
+  </div>
+
+  <div id="colorView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-palette"></i> HEX ⇄ RGB Color Converter</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <label for="colorInput">Enter HEX (#ff5733) or RGB (255, 87, 51)</label>
+    <input type="text" id="colorInput" placeholder="#f97316 or 249, 115, 22" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--card-border); background:rgba(15,23,42,0.6); color:var(--text-main); margin-bottom:12px;">
+    <button class="action-btn" onclick="convertColor()"><i class="fa-solid fa-sync"></i> Convert Color</button>
+    <div id="colorPreviewBox" style="margin-top:15px; height:50px; border-radius:8px; border:1px solid var(--card-border); display:flex; align-items:center; justify-content:center; font-weight:bold;">Preview Box</div>
+    <div class="status" id="colorStatus"></div>
+  </div>
+
+  <div id="passGenView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-shield-halved"></i> Secure Password Generator</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <label>Generated Password Output</label>
+    <input type="text" id="generatedPassword" readonly style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--card-border); background:rgba(15,23,42,0.6); color:var(--text-main); font-family:monospace; font-size:1.1rem; margin-bottom:12px;">
+    <button class="action-btn" onclick="generateSecurePassword()"><i class="fa-solid fa-key"></i> Generate New Password</button>
+    <div class="status" id="passGenStatus"></div>
+  </div>
+
+  <div id="wordCountView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-calculator"></i> Word & Character Counter</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <label for="wordCountInput">Type text here for live analysis</label>
+    <textarea id="wordCountInput" oninput="analyzeText()" placeholder="Start typing or paste text..."></textarea>
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:15px; text-align:center;">
+      <div style="background:rgba(15,23,42,0.5); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+        <b id="wcWords" style="font-size:1.4rem; color:var(--accent-primary);">0</b><br><small>Words</small>
+      </div>
+      <div style="background:rgba(15,23,42,0.5); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+        <b id="wcChars" style="font-size:1.4rem; color:var(--accent-primary);">0</b><br><small>Characters</small>
+      </div>
+      <div style="background:rgba(15,23,42,0.5); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+        <b id="wcTime" style="font-size:1.4rem; color:var(--accent-primary);">0s</b><br><small>Reading Time</small>
+      </div>
+    </div>
+    <div class="status" id="wordCountStatus"></div>
   </div>
 
   <div id="qrView" class="tool-view">
