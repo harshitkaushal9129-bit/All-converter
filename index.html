@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-theme="dark">
 
 <!-- Universal App Header -->
 <header class="app-header">
@@ -22,8 +22,8 @@
     </div>
   </div>
   <div class="header-actions">
-    <!-- User Profile Badge: Single Click to View, Double Click to Edit -->
-    <div class="user-profile-badge" id="userProfileBadge" onclick="viewProfileModal()" ondblclick="openProfileModal()" title="Click to view profile | Double click to edit">
+    <!-- User Profile Badge (Click to Open Registration / Edit Modal) -->
+    <div class="user-profile-badge" id="userProfileBadge" onclick="openProfileModal()" title="Click to register or edit profile">
       <div class="user-avatar" id="navAvatar">HK</div>
       <span id="navUsername">kaushalji</span>
     </div>
@@ -38,7 +38,7 @@
   <div id="homeDashboard">
     <div class="dashboard-hero">
       <h1>Select a Converter Tool</h1>
-      <p>Click on any box below to open the full-screen tool interface instantly. (Click your profile badge to view, double-click to edit)</p>
+      <p>Click on any box below to open the full-screen tool interface instantly. (Click your profile badge on top-right to register/edit profile)</p>
     </div>
 
     <div class="grid">
@@ -323,7 +323,7 @@
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
     <label for="colorInput">Enter HEX (#ff5733) or RGB (255, 87, 51)</label>
-    <input type="text" id="colorInput" placeholder="#f97316 or 249, 115, 22" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--card-border); background:rgba(15,23,42,0.6); color:var(--text-main); margin-bottom:12px;">
+    <input type="text" id="colorInput" placeholder="#f97316 or 249, 115, 22" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--card-border); background:var(--bg-main); color:var(--text-main); margin-bottom:12px;">
     <button class="action-btn" onclick="convertColor()"><i class="fa-solid fa-sync"></i> Convert Color</button>
     <div id="colorPreviewBox" style="margin-top:15px; height:50px; border-radius:8px; border:1px solid var(--card-border); display:flex; align-items:center; justify-content:center; font-weight:bold;">Preview Box</div>
     <div class="status" id="colorStatus"></div>
@@ -335,7 +335,7 @@
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
     <label>Generated Password Output</label>
-    <input type="text" id="generatedPassword" readonly style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--card-border); background:rgba(15,23,42,0.6); color:var(--text-main); font-family:monospace; font-size:1.1rem; margin-bottom:12px;">
+    <input type="text" id="generatedPassword" readonly style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--card-border); background:var(--bg-main); color:var(--text-main); font-family:monospace; font-size:1.1rem; margin-bottom:12px;">
     <button class="action-btn" onclick="generateSecurePassword()"><i class="fa-solid fa-key"></i> Generate New Password</button>
     <div class="status" id="passGenStatus"></div>
   </div>
@@ -348,13 +348,13 @@
     <label for="wordCountInput">Type text here for live analysis</label>
     <textarea id="wordCountInput" oninput="analyzeText()" placeholder="Start typing or paste text..."></textarea>
     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:15px; text-align:center;">
-      <div style="background:rgba(15,23,42,0.5); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+      <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
         <b id="wcWords" style="font-size:1.4rem; color:var(--accent-primary);">0</b><br><small>Words</small>
       </div>
-      <div style="background:rgba(15,23,42,0.5); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+      <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
         <b id="wcChars" style="font-size:1.4rem; color:var(--accent-primary);">0</b><br><small>Characters</small>
       </div>
-      <div style="background:rgba(15,23,42,0.5); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+      <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
         <b id="wcTime" style="font-size:1.4rem; color:var(--accent-primary);">0s</b><br><small>Reading Time</small>
       </div>
     </div>
@@ -374,7 +374,7 @@
   </div>
 </main>
 
-<!-- ================= APP INFO & DEVELOPER MODAL ================= -->
+<!-- ================= APP INFO & DEVELOPER MODAL (Day/Night Mode Included) ================= -->
 <div class="modal-overlay" id="appInfoModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -390,6 +390,12 @@
         <p><b>Security:</b> 100% Client-Side Processing (Zero Server Uploads)</p>
       </div>
 
+      <!-- Day / Night Mode Toggle inside App Info -->
+      <label style="margin-top: 15px;">Appearance Theme</label>
+      <button class="action-btn secondary" id="themeToggleBtn" onclick="toggleTheme()" style="margin-bottom: 15px;">
+        <i class="fa-solid fa-moon" id="themeIcon"></i> Switch to Light Mode
+      </button>
+
       <label>Share This App Suite</label>
       <div class="share-options">
         <button class="header-btn" onclick="shareApp('whatsapp')"><i class="fa-brands fa-whatsapp" style="color:#25d366"></i> WhatsApp</button>
@@ -399,54 +405,32 @@
   </div>
 </div>
 
-<!-- ================= VIEW PROFILE MODAL (Single Click) ================= -->
-<div class="modal-overlay" id="viewProfileModal">
-  <div class="modal-card" style="text-align: center;">
-    <div class="modal-header">
-      <h3><i class="fa-solid fa-user" style="color:var(--accent-primary)"></i> User Profile</h3>
-      <button class="close-modal" onclick="closeViewProfileModal()">&times;</button>
-    </div>
-    <div class="modal-body" style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
-      <div id="profileLargeAvatar" style="width: 90px; height: 90px; border-radius: 50%; background: var(--accent-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; overflow: hidden; border: 3px solid var(--accent-primary);">
-        HK
-      </div>
-      <h2 id="profileLargeName" style="color: var(--text-main); font-size: 1.3rem;">kaushalji</h2>
-      <div class="dev-info-box" style="width: 100%; text-align: left;">
-        <p><b>Email:</b> <span id="profileLargeEmail">kaushalji@example.com</span></p>
-        <p><b>DOB:</b> <span id="profileLargeDob">2004-09-13</span></p>
-        <p><b>Address:</b> <span id="profileLargeAddress">India</span></p>
-      </div>
-      <button class="action-btn secondary" onclick="closeViewProfileModal(); openProfileModal();"><i class="fa-solid fa-user-pen"></i> Edit Profile</button>
-    </div>
-  </div>
-</div>
-
-<!-- ================= EDIT PROFILE MODAL (Double Click) ================= -->
+<!-- ================= REGISTRATION / EDIT PROFILE MODAL ================= -->
 <div class="modal-overlay" id="profileModal">
   <div class="modal-card">
     <div class="modal-header">
-      <h3><i class="fa-solid fa-user-pen" style="color:var(--accent-primary)"></i> Edit User Profile</h3>
+      <h3><i class="fa-solid fa-user-pen" style="color:var(--accent-primary)"></i> User Registration / Profile</h3>
       <button class="close-modal" onclick="closeProfileModal()">&times;</button>
     </div>
     <div class="modal-body">
       <form id="profileForm" onsubmit="saveProfile(event)">
-        <label>Profile Picture (URL or Upload Image)</label>
-        <input type="text" id="editAvatarUrl" placeholder="Image URL or pick file below">
-        <input type="file" id="editAvatarFile" accept="image/*" style="margin-bottom:12px; font-size:12px;" onchange="previewAvatarFile(this)">
+        <label>User ID</label>
+        <input type="text" id="editUserId" required placeholder="e.g. kaushalji9129">
 
-        <label>Username</label>
-        <input type="text" id="editUsername" required placeholder="e.g. kaushalji">
+        <label>Full Name</label>
+        <input type="text" id="editUsername" required placeholder="e.g. Harshit Kaushal">
 
-        <label>Email ID</label>
-        <input type="email" id="editEmail" placeholder="user@example.com">
+        <label>Mobile Number</label>
+        <input type="tel" id="editMobile" required placeholder="e.g. 9876543210">
 
         <label>Date of Birth (DOB)</label>
-        <input type="date" id="editDob" style="width:100%; border:1px solid var(--card-border); border-radius:10px; padding:10px 12px; background:rgba(15, 23, 42, 0.6); color:var(--text-main); margin-bottom:16px; outline:none;">
+        <input type="date" id="editDob" required style="width:100%; border:1.5px solid var(--card-border); border-radius:10px; padding:10px 12px; background:var(--bg-main); color:var(--text-main); margin-bottom:16px; outline:none;">
 
-        <label>Address</label>
-        <textarea id="editAddress" placeholder="Enter your address..." style="min-height:70px;"></textarea>
+        <label>Profile Picture (Upload Image or URL)</label>
+        <input type="text" id="editAvatarUrl" placeholder="Image URL or pick file below">
+        <input type="file" id="editAvatarFile" accept="image/*" style="margin-bottom:16px; font-size:12px; color:var(--text-muted);" onchange="previewAvatarFile(this)">
 
-        <button type="submit" class="action-btn" style="width:100%; margin-top:10px;">Save Profile</button>
+        <button type="submit" class="action-btn" style="width:100%;">Save to Local Storage</button>
       </form>
     </div>
   </div>
