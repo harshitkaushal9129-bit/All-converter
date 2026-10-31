@@ -131,6 +131,9 @@ function openTool(viewId) {
   document.querySelectorAll('.tool-view').forEach(el => el.classList.remove('active'));
   const target = document.getElementById(viewId);
   if (target) target.classList.add('active');
+  if (viewId === 'typingSpeedView') {
+    loadNewTypingPassage();
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -179,7 +182,130 @@ function saveBlob(blob, name) {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
-// ================= NAYE 3 TOOLS LOGIC =================
+// ================= TYPING SPEED TEST (WPM) LOGIC =================
+const typingPassages = {
+  tech: [
+    "Programming is the art of telling another human what the computer wants to do. Clean code always looks like it was written by someone who cares.",
+    "Artificial intelligence and machine learning are revolutionizing modern software architectures, enabling intelligent automation across web and mobile platforms.",
+    "JavaScript powers the interactive web, allowing developers to build responsive single page applications with offline caching and seamless user experiences."
+  ],
+  education: [
+    "Education is the most powerful weapon which you can use to change the world. Continuous learning sharpens the mind and opens new career pathways.",
+    "Computer literacy is essential in the digital age. Students mastering word processing, spreadsheets, and database tools gain a significant competitive edge.",
+    "Consistent daily practice and discipline are the true foundations of academic excellence and professional success in any technical domain."
+  ],
+  general: [
+    "An investment in knowledge pays the best interest. Success is not final, failure is not fatal: it is the courage to continue that counts.",
+    "Hard work beats talent when talent doesn't work hard. Stay focused on your goals, maintain a positive mindset, and embrace every daily challenge.",
+    "Time management is critical for productivity. Prioritizing important tasks and avoiding unnecessary distractions leads to remarkable achievements."
+  ]
+};
+
+let typingTimer = null;
+let timeLeft = 60;
+let isTestActive = false;
+let currentPassageText = "";
+
+function loadNewTypingPassage() {
+  const category = document.getElementById("typingCategory").value;
+  const list = typingPassages[category];
+  currentPassageText = list[Math.floor(Math.random() * list.length)];
+  
+  const displayBox = document.getElementById("passageDisplayBox");
+  displayBox.innerHTML = currentPassageText.split("").map(char => `<span>${char}</span>`).join("");
+  resetTypingTestState();
+}
+
+function startTypingTest() {
+  loadNewTypingPassage();
+  const textarea = document.getElementById("typingInput");
+  textarea.disabled = false;
+  textarea.value = "";
+  textarea.focus();
+  
+  timeLeft = 60;
+  isTestActive = true;
+  document.getElementById("tsTime").textContent = timeLeft + "s";
+  setStatus("typingStatus", "Test started! Type the passage above.");
+
+  if (typingTimer) clearInterval(typingTimer);
+  typingTimer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("tsTime").textContent = timeLeft + "s";
+    if (timeLeft <= 0) {
+      stopTypingTest();
+    }
+  }, 1000);
+}
+
+function stopTypingTest() {
+  isTestActive = false;
+  clearInterval(typingTimer);
+  document.getElementById("typingInput").disabled = true;
+  setStatus("typingStatus", "Time's up! Great effort.");
+}
+
+function resetTypingTest() {
+  stopTypingTest();
+  loadNewTypingPassage();
+  document.getElementById("typingInput").value = "";
+  document.getElementById("tsWpm").textContent = "0";
+  document.getElementById("tsAccuracy").textContent = "100%";
+  document.getElementById("tsTime").textContent = "60s";
+  document.getElementById("tsErrors").textContent = "0";
+  setStatus("typingStatus", "Test reset. Click 'Start Test' when ready.");
+}
+
+function resetTypingTestState() {
+  if (typingTimer) clearInterval(typingTimer);
+  isTestActive = false;
+  document.getElementById("typingInput").disabled = true;
+  document.getElementById("tsWpm").textContent = "0";
+  document.getElementById("tsAccuracy").textContent = "100%";
+  document.getElementById("tsTime").textContent = "60s";
+  document.getElementById("tsErrors").textContent = "0";
+}
+
+function evaluateTyping() {
+  if (!isTestActive) return;
+  
+  const typedVal = document.getElementById("typingInput").value;
+  const passageSpans = document.getElementById("passageDisplayBox").querySelectorAll("span");
+  
+  let errors = 0;
+  let correctChars = 0;
+
+  for (let i = 0; i < passageSpans.length; i++) {
+    const char = typedVal[i];
+    if (char == null) {
+      passageSpans[i].style.color = "var(--text-main)";
+      passageSpans[i].style.background = "transparent";
+    } else if (char === currentPassageText[i]) {
+      passageSpans[i].style.color = "#10b981";
+      passageSpans[i].style.background = "transparent";
+      correctChars++;
+    } else {
+      passageSpans[i].style.color = "#ef4444";
+      passageSpans[i].style.background = "rgba(239, 68, 68, 0.2)";
+      errors++;
+    }
+  }
+
+  const timeElapsedMinutes = (60 - timeLeft) / 60;
+  const wpm = timeElapsedMinutes > 0 ? Math.round((correctChars / 5) / timeElapsedMinutes) : 0;
+  const accuracy = typedVal.length > 0 ? Math.max(0, Math.round(((typedVal.length - errors) / typedVal.length) * 100)) : 100;
+
+  document.getElementById("tsWpm").textContent = wpm;
+  document.getElementById("tsAccuracy").textContent = accuracy + "%";
+  document.getElementById("tsErrors").textContent = errors;
+
+  if (typedVal.length >= currentPassageText.length) {
+    stopTypingTest();
+    setStatus("typingStatus", `Test completed! Final Speed: ${wpm} WPM with ${accuracy}% accuracy.`);
+  }
+}
+
+// ================= OTHER TOOLS LOGIC =================
 
 // 1. Ultra HD Image Enhancer
 function convertToUltraHD(scale) {
@@ -311,7 +437,7 @@ function downloadEditedImage() {
   }, "image/png");
 }
 
-// Baaki Converters
+// Other Converters
 function htmlToJson() {
   const value = document.getElementById("htmlInput").value;
   if (!value.trim()) return setStatus("h2jStatus", "Please enter HTML content first.", false);
