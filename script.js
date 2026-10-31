@@ -182,33 +182,31 @@ function saveBlob(blob, name) {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
-// ================= TYPING SPEED TEST (WPM) LOGIC =================
-const typingPassages = {
+// ================= ADVANCED TYPING SPEED TEST (WPM) LOGIC =================
+const typingPassagesLarge = {
   tech: [
-    "Programming is the art of telling another human what the computer wants to do. Clean code always looks like it was written by someone who cares.",
-    "Artificial intelligence and machine learning are revolutionizing modern software architectures, enabling intelligent automation across web and mobile platforms.",
-    "JavaScript powers the interactive web, allowing developers to build responsive single page applications with offline caching and seamless user experiences."
+    "Programming is the art of telling another human what the computer wants to do. Clean code always looks like it was written by someone who cares about software quality. Artificial intelligence and machine learning are rapidly revolutionizing modern software architectures, enabling intelligent automation across web and mobile platforms worldwide. JavaScript powers the interactive web, allowing developers to build responsive single page applications with offline caching, local databases, and seamless user experiences.",
+    "Web development toolchains are centered around native HTML5 layouts, custom Tailwind CSS styling rules, standalone JavaScript modules, and scalable vector graphics. Developers must ensure high performance, strict adherence to responsive design principles, and robust client-side storage management using IndexedDB and service workers for progressive web applications."
   ],
   education: [
-    "Education is the most powerful weapon which you can use to change the world. Continuous learning sharpens the mind and opens new career pathways.",
-    "Computer literacy is essential in the digital age. Students mastering word processing, spreadsheets, and database tools gain a significant competitive edge.",
-    "Consistent daily practice and discipline are the true foundations of academic excellence and professional success in any technical domain."
+    "Education is the most powerful weapon which you can use to change the world. Continuous learning sharpens the human mind, builds strong analytical thinking, and opens new career pathways for aspiring youth. Computer literacy is absolutely essential in the modern digital age. Students mastering word processing, advanced spreadsheets, database administration, and programming fundamentals gain a massive competitive edge in the global job market.",
+    "Consistent daily practice, deep focus, and self-discipline are the true foundational pillars of academic excellence and professional success in any technical domain. Institutions providing vocational training play a critical role in bridging the gap between theoretical knowledge and practical industry demands."
   ],
   general: [
-    "An investment in knowledge pays the best interest. Success is not final, failure is not fatal: it is the courage to continue that counts.",
-    "Hard work beats talent when talent doesn't work hard. Stay focused on your goals, maintain a positive mindset, and embrace every daily challenge.",
-    "Time management is critical for productivity. Prioritizing important tasks and avoiding unnecessary distractions leads to remarkable achievements."
+    "An investment in knowledge always pays the best interest. Success is never final, and failure is never fatal: it is the courageous mindset to continue moving forward that truly counts. Hard work consistently beats raw talent when talent refuses to work hard. Stay completely focused on your long-term goals, maintain a deeply positive attitude, and embrace every single daily challenge as an opportunity to grow.",
+    "Effective time management is critical for maximizing personal and professional productivity. Prioritizing high-impact tasks, eliminating unnecessary digital distractions, and maintaining a structured routine leads to remarkable achievements and a balanced, stress-free lifestyle."
   ]
 };
 
 let typingTimer = null;
+let totalTestTime = 60;
 let timeLeft = 60;
 let isTestActive = false;
 let currentPassageText = "";
 
 function loadNewTypingPassage() {
   const category = document.getElementById("typingCategory").value;
-  const list = typingPassages[category];
+  const list = typingPassagesLarge[category];
   currentPassageText = list[Math.floor(Math.random() * list.length)];
   
   const displayBox = document.getElementById("passageDisplayBox");
@@ -217,43 +215,77 @@ function loadNewTypingPassage() {
 }
 
 function startTypingTest() {
+  totalTestTime = parseInt(document.getElementById("typingTimeSelect").value) || 60;
   loadNewTypingPassage();
+  
   const textarea = document.getElementById("typingInput");
   textarea.disabled = false;
   textarea.value = "";
   textarea.focus();
   
-  timeLeft = 60;
+  timeLeft = totalTestTime;
   isTestActive = true;
   document.getElementById("tsTime").textContent = timeLeft + "s";
-  setStatus("typingStatus", "Test started! Type the passage above.");
+  setStatus("typingStatus", "Test started! Type the passage above quickly and accurately.");
 
   if (typingTimer) clearInterval(typingTimer);
   typingTimer = setInterval(() => {
     timeLeft--;
     document.getElementById("tsTime").textContent = timeLeft + "s";
+    
+    // Update Progress Bar
+    const progressPercent = ((totalTestTime - timeLeft) / totalTestTime) * 100;
+    document.getElementById("typingProgressBar").style.width = progressPercent + "%";
+
     if (timeLeft <= 0) {
-      stopTypingTest();
+      finishTypingTest();
     }
   }, 1000);
 }
 
-function stopTypingTest() {
+function finishTypingTest() {
   isTestActive = false;
   clearInterval(typingTimer);
   document.getElementById("typingInput").disabled = true;
-  setStatus("typingStatus", "Time's up! Great effort.");
+  
+  // Show result in modal popup
+  const finalWpm = document.getElementById("tsWpm").textContent;
+  const finalAcc = document.getElementById("tsAccuracy").textContent;
+  
+  document.getElementById("modalFinalWpm").textContent = finalWpm;
+  document.getElementById("modalFinalAcc").textContent = finalAcc;
+  document.getElementById("typingResultModal").classList.add("active");
+  
+  setStatus("typingStatus", "Test completed automatically!");
+}
+
+function closeTypingResultModal() {
+  document.getElementById("typingResultModal").classList.remove("active");
+}
+
+function closeTypingTestView() {
+  stopTypingTestForce();
+  goHome();
+}
+
+function stopTypingTestForce() {
+  isTestActive = false;
+  if (typingTimer) clearInterval(typingTimer);
+  const textarea = document.getElementById("typingInput");
+  if(textarea) textarea.disabled = true;
 }
 
 function resetTypingTest() {
-  stopTypingTest();
+  stopTypingTestForce();
   loadNewTypingPassage();
   document.getElementById("typingInput").value = "";
   document.getElementById("tsWpm").textContent = "0";
   document.getElementById("tsAccuracy").textContent = "100%";
-  document.getElementById("tsTime").textContent = "60s";
+  const selectedTime = document.getElementById("typingTimeSelect").value;
+  document.getElementById("tsTime").textContent = selectedTime + "s";
   document.getElementById("tsErrors").textContent = "0";
-  setStatus("typingStatus", "Test reset. Click 'Start Test' when ready.");
+  document.getElementById("typingProgressBar").style.width = "0%";
+  setStatus("typingStatus", "Test reset. Select time/topic and click 'Start Test'.");
 }
 
 function resetTypingTestState() {
@@ -262,8 +294,10 @@ function resetTypingTestState() {
   document.getElementById("typingInput").disabled = true;
   document.getElementById("tsWpm").textContent = "0";
   document.getElementById("tsAccuracy").textContent = "100%";
-  document.getElementById("tsTime").textContent = "60s";
+  const selectedTime = document.getElementById("typingTimeSelect").value;
+  document.getElementById("tsTime").textContent = selectedTime + "s";
   document.getElementById("tsErrors").textContent = "0";
+  document.getElementById("typingProgressBar").style.width = "0%";
 }
 
 function evaluateTyping() {
@@ -281,17 +315,17 @@ function evaluateTyping() {
       passageSpans[i].style.color = "var(--text-main)";
       passageSpans[i].style.background = "transparent";
     } else if (char === currentPassageText[i]) {
-      passageSpans[i].style.color = "#10b981";
+      passageSpans[i].style.color = "#10b981"; // Green for correct
       passageSpans[i].style.background = "transparent";
       correctChars++;
     } else {
-      passageSpans[i].style.color = "#ef4444";
+      passageSpans[i].style.color = "#ef4444"; // Red for error
       passageSpans[i].style.background = "rgba(239, 68, 68, 0.2)";
       errors++;
     }
   }
 
-  const timeElapsedMinutes = (60 - timeLeft) / 60;
+  const timeElapsedMinutes = (totalTestTime - timeLeft) / 60;
   const wpm = timeElapsedMinutes > 0 ? Math.round((correctChars / 5) / timeElapsedMinutes) : 0;
   const accuracy = typedVal.length > 0 ? Math.max(0, Math.round(((typedVal.length - errors) / typedVal.length) * 100)) : 100;
 
@@ -299,9 +333,9 @@ function evaluateTyping() {
   document.getElementById("tsAccuracy").textContent = accuracy + "%";
   document.getElementById("tsErrors").textContent = errors;
 
+  // Auto finish test if user finishes the entire passage before time runs out
   if (typedVal.length >= currentPassageText.length) {
-    stopTypingTest();
-    setStatus("typingStatus", `Test completed! Final Speed: ${wpm} WPM with ${accuracy}% accuracy.`);
+    finishTypingTest();
   }
 }
 
