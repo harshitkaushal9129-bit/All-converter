@@ -9,61 +9,34 @@
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="style.css">
-<style>
-/* Festival Banner Styling */
-.festival-banner {
-  background: linear-gradient(135deg, #ff416c, #ff4b2b);
-  color: #ffffff;
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 65, 108, 0.3);
-  position: relative;
-  z-index: 1000;
-  transition: opacity 0.3s ease;
-}
-.festival-banner-content {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-.festival-banner-content i {
-  font-size: 1.2rem;
-}
-.festival-exit-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: #ffffff;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 0.2s;
-}
-.festival-exit-btn:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-</style>
 </head>
 <body data-theme="dark">
 
-<!-- Top Festival Banner -->
-<div class="festival-banner" id="festivalBanner" onclick="window.location.href='festival.html'">
+<!-- Top Festival Trigger Banner -->
+<div class="festival-banner" id="festivalBanner" onclick="openFestivalModal()">
   <div class="festival-banner-content">
     <i class="fa-solid fa-gift"></i>
-    <span>Special Festival Offers & Greetings! Click to view Special Event Page 🎉</span>
+    <span>Special Festival Page! Click to open Full-Screen View 🎉</span>
   </div>
-  <button class="festival-exit-btn" title="Exit / Close Banner" onclick="event.stopPropagation(); document.getElementById('festivalBanner').style.display='none';">
+  <button class="festival-exit-btn" title="Close Banner" onclick="event.stopPropagation(); document.getElementById('festivalBanner').style.display='none';">
     <i class="fa-solid fa-xmark"></i>
   </button>
+</div>
+
+<!-- Full-Screen Festival Modal Container -->
+<div class="festival-modal-overlay" id="festivalModalOverlay">
+  <div class="festival-modal-container">
+    <div class="festival-modal-header">
+      <span class="festival-modal-title"><i class="fa-solid fa-star"></i> Festival Special Event</span>
+      <button class="festival-close-btn" onclick="closeFestivalModal()" title="Exit Full-Screen">
+        <i class="fa-solid fa-xmark"></i> Exit / Close
+      </button>
+    </div>
+    <div class="festival-modal-body">
+      <!-- festival.html will load inside this full-screen frame -->
+      <iframe src="festival.html" class="festival-iframe" id="festivalIframe"></iframe>
+    </div>
+  </div>
 </div>
 
 <!-- Universal App Header -->
@@ -253,13 +226,13 @@
     </div>
 
     <!-- Step 1: Selection Box (Hides on test start) -->
-    <div id="typingSetupBox" style="background:var(--bg-main); padding:20px; border-radius:12px; border:1.5px solid var(--card-border); margin-bottom:20px;">
-      <h3 style="margin-bottom:15px; font-size:1rem; color:var(--accent-primary);"><i class="fa-solid fa-sliders"></i> Test Configuration Setup</h3>
+    <div id="typingSetupBox" class="typing-setup-box">
+      <h3><i class="fa-solid fa-sliders"></i> Test Configuration Setup</h3>
       
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+      <div class="typing-config-grid">
         <div>
           <label>Select Test Duration</label>
-          <select id="typingTimeSelect" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--card-border); background:var(--card-bg); color:var(--text-main); outline:none;">
+          <select id="typingTimeSelect">
             <option value="30">30 Seconds</option>
             <option value="60" selected>1 Minute (60s)</option>
             <option value="120">2 Minutes (120s)</option>
@@ -268,7 +241,7 @@
         </div>
         <div>
           <label>Select Passage Topic</label>
-          <select id="typingCategory" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--card-border); background:var(--card-bg); color:var(--text-main); outline:none;">
+          <select id="typingCategory">
             <option value="tech">Technology & Web Architecture (Large)</option>
             <option value="education">Education & Digital Literacy (Large)</option>
             <option value="general">Success, Life & Productivity (Large)</option>
@@ -281,31 +254,30 @@
 
     <!-- Step 2: Active Test Workspace (Initially Hidden) -->
     <div id="typingWorkspace" class="hidden">
-      <!-- Beautiful Progress Bar -->
-      <div style="width: 100%; background: var(--bg-main); border-radius: 8px; height: 10px; border: 1px solid var(--card-border); margin-bottom: 15px; overflow: hidden;">
-        <div id="typingProgressBar" style="width: 0%; height: 100%; background: var(--accent-primary); transition: width 0.3s ease;"></div>
+      <!-- Progress Bar -->
+      <div class="typing-progress-track">
+        <div id="typingProgressBar" class="typing-progress-fill"></div>
       </div>
 
       <!-- Large Passage Display Box -->
-      <div id="passageDisplayBox" style="background:var(--bg-main); padding:15px; border-radius:10px; border:1px solid var(--card-border); font-size:1.05rem; line-height:1.8; margin-bottom:15px; user-select:none; font-family:monospace; max-height:180px; overflow-y:auto;">
-      </div>
+      <div id="passageDisplayBox" class="passage-display-box"></div>
 
       <!-- Typing Input Field -->
-      <textarea id="typingInput" placeholder="Start typing the passage above here..." oninput="evaluateTyping()" style="min-height:120px; margin-bottom:15px; font-family:monospace;"></textarea>
+      <textarea id="typingInput" placeholder="Start typing the passage above here..." oninput="evaluateTyping()" class="typing-input-area"></textarea>
 
       <!-- Live Stats Dashboard Grid -->
-      <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:15px; text-align:center;">
-        <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
-          <b id="tsWpm" style="font-size:1.4rem; color:var(--accent-primary);">0</b><br><small>WPM</small>
+      <div class="stats-dashboard-grid">
+        <div class="stat-card">
+          <b id="tsWpm">0</b><br><small>WPM</small>
         </div>
-        <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
-          <b id="tsAccuracy" style="font-size:1.4rem; color:var(--success);">100%</b><br><small>Accuracy</small>
+        <div class="stat-card">
+          <b id="tsAccuracy">100%</b><br><small>Accuracy</small>
         </div>
-        <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
-          <b id="tsTime" style="font-size:1.4rem; color:#f59e0b;">60s</b><br><small>Time Left</small>
+        <div class="stat-card">
+          <b id="tsTime">60s</b><br><small>Time Left</small>
         </div>
-        <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
-          <b id="tsErrors" style="font-size:1.4rem; color:var(--error);">0</b><br><small>Errors</small>
+        <div class="stat-card">
+          <b id="tsErrors">0</b><br><small>Errors</small>
         </div>
       </div>
 
@@ -344,7 +316,7 @@
       <input id="bgImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'bgImgText')">
     </div>
     <label for="bgTolerance">Background Removal Tolerance Sensitivity (1-100)</label>
-    <input type="number" id="bgTolerance" value="30" min="1" max="100" style="margin-bottom:12px;">
+    <input type="number" id="bgTolerance" value="30" min="1" max="100" class="full-input">
     <button class="action-btn" onclick="removeBackground()"><i class="fa-solid fa-wand-magic-sparkles"></i> Remove Background & Download PNG</button>
     <div class="status" id="bgRemStatus"></div>
   </div>
@@ -360,12 +332,12 @@
       <input id="editorImgFile" type="file" accept="image/*" onchange="loadEditorImage(this)">
     </div>
 
-    <div id="editorControls" style="display:none; margin-top:15px;">
-      <div style="text-align:center; margin-bottom:15px; background:var(--bg-main); padding:10px; border-radius:10px; border:1px solid var(--card-border);">
-        <canvas id="editorCanvas" style="max-width:100%; height:auto; border-radius:8px;"></canvas>
+    <div id="editorControls" class="hidden">
+      <div class="editor-canvas-wrapper">
+        <canvas id="editorCanvas"></canvas>
       </div>
 
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:15px;">
+      <div class="editor-sliders-grid">
         <div><label>Brightness</label><input type="range" id="eBrightness" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
         <div><label>Contrast</label><input type="range" id="eContrast" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
         <div><label>Saturate</label><input type="range" id="eSaturate" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
@@ -455,13 +427,13 @@
       <h2><i class="fa-solid fa-shapes"></i> SVG to PNG Rasterizer</h2>
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
-    <div class="drop-zone" onclick="document.getElementById('svgFile').click()" style="margin-bottom: 12px;">
+    <div class="drop-zone" onclick="document.getElementById('svgFile').click()">
       <div class="drop-zone-text" id="svgFileText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose SVG File</div>
       <input id="svgFile" type="file" accept=".svg,image/svg+xml" onchange="updateFileName(this, 'svgFileText')">
     </div>
-    <div style="text-align: center; margin: 10px 0; color: var(--text-muted); font-weight: 600;">— OR PASTE SVG CODE —</div>
+    <div class="separator-text">— OR PASTE SVG CODE —</div>
     <label for="svgCodeInput">Raw SVG Code</label>
-    <textarea id="svgCodeInput" placeholder='<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">...</svg>' style="min-height: 120px; font-family: monospace;"></textarea>
+    <textarea id="svgCodeInput" placeholder='<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">...</svg>' class="code-textarea"></textarea>
     <button class="action-btn" onclick="svgToPng()"><i class="fa-solid fa-file-export"></i> Convert SVG to PNG & Download</button>
     <div class="status" id="svgStatus"></div>
   </div>
@@ -561,9 +533,9 @@
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
     <label for="colorInput">Enter HEX (#ff5733) or RGB (255, 87, 51)</label>
-    <input type="text" id="colorInput" placeholder="#f97316 or 249, 115, 22" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--card-border); background:var(--bg-main); color:var(--text-main); margin-bottom:12px;">
+    <input type="text" id="colorInput" placeholder="#f97316 or 249, 115, 22" class="full-input">
     <button class="action-btn" onclick="convertColor()"><i class="fa-solid fa-sync"></i> Convert Color</button>
-    <div id="colorPreviewBox" style="margin-top:15px; height:50px; border-radius:8px; border:1px solid var(--card-border); display:flex; align-items:center; justify-content:center; font-weight:bold;">Preview Box</div>
+    <div id="colorPreviewBox" class="color-preview-box">Preview Box</div>
     <div class="status" id="colorStatus"></div>
   </div>
 
@@ -574,7 +546,7 @@
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
     <label>Generated Password Output</label>
-    <input type="text" id="generatedPassword" readonly style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--card-border); background:var(--bg-main); color:var(--text-main); font-family:monospace; font-size:1.1rem; margin-bottom:12px;">
+    <input type="text" id="generatedPassword" readonly class="code-input">
     <button class="action-btn" onclick="generateSecurePassword()"><i class="fa-solid fa-key"></i> Generate New Password</button>
     <div class="status" id="passGenStatus"></div>
   </div>
@@ -587,15 +559,15 @@
     </div>
     <label for="wordCountInput">Type text here for live analysis</label>
     <textarea id="wordCountInput" oninput="analyzeText()" placeholder="Start typing or paste text..."></textarea>
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:15px; text-align:center;">
-      <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
-        <b id="wcWords" style="font-size:1.4rem; color:var(--accent-primary);">0</b><br><small>Words</small>
+    <div class="stats-counter-grid">
+      <div class="stat-card">
+        <b id="wcWords">0</b><br><small>Words</small>
       </div>
-      <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
-        <b id="wcChars" style="font-size:1.4rem; color:var(--accent-primary);">0</b><br><small>Characters</small>
+      <div class="stat-card">
+        <b id="wcChars">0</b><br><small>Characters</small>
       </div>
-      <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
-        <b id="wcTime" style="font-size:1.4rem; color:var(--accent-primary);">0s</b><br><small>Reading Time</small>
+      <div class="stat-card">
+        <b id="wcTime">0s</b><br><small>Reading Time</small>
       </div>
     </div>
     <div class="status" id="wordCountStatus"></div>
@@ -610,7 +582,7 @@
     <label for="qrInput">Enter Link or Text</label>
     <input type="text" id="qrInput" placeholder="https://example.com">
     <button class="action-btn" onclick="generateQR()"><i class="fa-solid fa-qrcode"></i> Generate QR Code</button>
-    <div style="text-align: center; margin-top: 16px;" id="qrPreviewArea"></div>
+    <div id="qrPreviewArea" class="qr-preview-wrapper"></div>
     <div class="status" id="qrStatus"></div>
   </div>
 </main>
@@ -619,7 +591,7 @@
 <div class="modal-overlay" id="appInfoModal">
   <div class="modal-card">
     <div class="modal-header">
-      <h3><i class="fa-solid fa-circle-info" style="color:var(--accent-primary)"></i> App & Developer Info</h3>
+      <h3><i class="fa-solid fa-circle-info"></i> App & Developer Info</h3>
       <button class="close-modal" onclick="closeAppInfoModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -631,14 +603,14 @@
         <p><b>Security:</b> 100% Client-Side Processing (Zero Server Uploads)</p>
       </div>
 
-      <label style="margin-top: 15px;">Appearance Theme</label>
-      <button class="action-btn secondary" id="themeToggleBtn" onclick="toggleTheme()" style="margin-bottom: 15px;">
+      <label>Appearance Theme</label>
+      <button class="action-btn secondary mb-15" id="themeToggleBtn" onclick="toggleTheme()">
         <i class="fa-solid fa-moon" id="themeIcon"></i> Switch to Light Mode
       </button>
 
       <label>Share This App Suite</label>
       <div class="share-options">
-        <button class="header-btn" onclick="shareApp('whatsapp')"><i class="fa-brands fa-whatsapp" style="color:#25d366"></i> WhatsApp</button>
+        <button class="header-btn" onclick="shareApp('whatsapp')"><i class="fa-brands fa-whatsapp brand-green"></i> WhatsApp</button>
         <button class="header-btn" onclick="shareApp('copy')"><i class="fa-solid fa-copy"></i> Copy Link</button>
       </div>
     </div>
@@ -649,7 +621,7 @@
 <div class="modal-overlay" id="profileModal">
   <div class="modal-card">
     <div class="modal-header">
-      <h3><i class="fa-solid fa-user-pen" style="color:var(--accent-primary)"></i> User Registration / Profile</h3>
+      <h3><i class="fa-solid fa-user-pen"></i> User Registration / Profile</h3>
       <button class="close-modal" onclick="closeProfileModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -664,13 +636,13 @@
         <input type="tel" id="editMobile" required placeholder="e.g. 9876543210">
 
         <label>Date of Birth (DOB)</label>
-        <input type="date" id="editDob" required style="width:100%; border:1.5px solid var(--card-border); border-radius:10px; padding:10px 12px; background:var(--bg-main); color:var(--text-main); margin-bottom:16px; outline:none;">
+        <input type="date" id="editDob" required class="date-input">
 
         <label>Profile Picture (Upload Image or URL)</label>
         <input type="text" id="editAvatarUrl" placeholder="Image URL or pick file below">
-        <input type="file" id="editAvatarFile" accept="image/*" style="margin-bottom:16px; font-size:12px; color:var(--text-muted);" onchange="previewAvatarFile(this)">
+        <input type="file" id="editAvatarFile" accept="image/*" class="avatar-file-input" onchange="previewAvatarFile(this)">
 
-        <button type="submit" class="action-btn" style="width:100%;">Save to Local Storage</button>
+        <button type="submit" class="action-btn full-width">Save to Local Storage</button>
       </form>
     </div>
   </div>
@@ -678,25 +650,36 @@
 
 <!-- Test Completion Popup Modal -->
 <div class="modal-overlay" id="typingResultModal">
-  <div class="modal-card" style="text-align: center;">
+  <div class="modal-card text-center">
     <div class="modal-header">
-      <h3><i class="fa-solid fa-trophy" style="color:#f59e0b"></i> Test Completed!</h3>
+      <h3><i class="fa-solid fa-trophy trophy-gold"></i> Test Completed!</h3>
       <button class="close-modal" onclick="closeTypingResultModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <p style="margin-bottom: 15px;">Aapka typing test safaltaपूर्वक poora ho gaya hai. Yahan aapka final score hai:</p>
-      <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; margin-bottom:20px;">
-        <div style="background:var(--bg-main); padding:15px; border-radius:10px; border:1px solid var(--card-border);">
-          <b id="modalFinalWpm" style="font-size:1.8rem; color:var(--accent-primary);">0</b><br><span>Final WPM</span>
+      <p class="mb-15">Aapka typing test safaltaपूर्वक poora ho gaya hai. Yahan aapka final score hai:</p>
+      <div class="typing-score-grid">
+        <div class="score-card">
+          <b id="modalFinalWpm" class="score-wpm">0</b><br><span>Final WPM</span>
         </div>
-        <div style="background:var(--bg-main); padding:15px; border-radius:10px; border:1px solid var(--card-border);">
-          <b id="modalFinalAcc" style="font-size:1.8rem; color:var(--success);">0%</b><br><span>Accuracy</span>
+        <div class="score-card">
+          <b id="modalFinalAcc" class="score-acc">0%</b><br><span>Accuracy</span>
         </div>
       </div>
-      <button class="action-btn" onclick="closeTypingResultModal()" style="width:100%;">Back to Setup</button>
+      <button class="action-btn full-width" onclick="closeTypingResultModal()">Back to Setup</button>
     </div>
   </div>
 </div>
+
+<!-- JavaScript for Festival Modal Fullscreen Toggle -->
+<script>
+function openFestivalModal() {
+  document.getElementById('festivalModalOverlay').style.display = 'flex';
+}
+
+function closeFestivalModal() {
+  document.getElementById('festivalModalOverlay').style.display = 'none';
+}
+</script>
 
 <script src="script.js"></script>
 </body>
