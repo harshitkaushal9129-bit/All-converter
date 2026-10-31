@@ -46,7 +46,7 @@
       <div class="card-selector" onclick="openTool('typingSpeedView')">
         <div class="card-icon"><i class="fa-solid fa-keyboard"></i></div>
         <h3>Typing Speed Test (WPM)</h3>
-        <p>Test your typing speed with multiple passages, real-time WPM, and accuracy tracking.</p>
+        <p>Test your typing speed with multiple passages, real-time WPM, and accuracy tracking[span_1](start_span)[span_1](end_span).</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
@@ -194,24 +194,42 @@
   <!-- Typing Speed Test View -->
   <div id="typingSpeedView" class="tool-view">
     <div class="tool-header-bar">
-      <h2><i class="fa-solid fa-keyboard"></i> Typing Speed & WPM Master</h2>
-      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+      <h2><i class="fa-solid fa-keyboard"></i> Advanced Typing Speed & WPM Master</h2>
+      <button class="back-home-btn" onclick="closeTypingTestView()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
 
-    <!-- Category Selection -->
-    <label>Select Passage Category</label>
-    <select id="typingCategory" onchange="loadNewTypingPassage()" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--card-border); background:var(--bg-main); color:var(--text-main); margin-bottom:15px; outline:none;">
-      <option value="tech">Technology & Programming</option>
-      <option value="education">Education & Learning</option>
-      <option value="general">General Knowledge & Life</option>
-    </select>
+    <!-- Settings Bar: Time & Passage Selection -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+      <div>
+        <label>Select Test Duration</label>
+        <select id="typingTimeSelect" onchange="resetTypingTest()" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--card-border); background:var(--bg-main); color:var(--text-main); outline:none;">
+          <option value="30">30 Seconds</option>
+          <option value="60" selected>1 Minute (60s)</option>
+          <option value="120">2 Minutes (120s)</option>
+          <option value="300">5 Minutes (300s)</option>
+        </select>
+      </div>
+      <div>
+        <label>Select Passage Topic</label>
+        <select id="typingCategory" onchange="loadNewTypingPassage()" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--card-border); background:var(--bg-main); color:var(--text-main); outline:none;">
+          <option value="tech">Technology & Web Architecture (Large)</option>
+          <option value="education">Education & Digital Literacy (Large)</option>
+          <option value="general">Success, Life & Productivity (Large)</option>
+        </select>
+      </div>
+    </div>
 
-    <!-- Passage Display Box -->
-    <div id="passageDisplayBox" style="background:var(--bg-main); padding:15px; border-radius:10px; border:1px solid var(--card-border); font-size:1.1rem; line-height:1.6; margin-bottom:15px; user-select:none; font-family:monospace; max-height:140px; overflow-y:auto;">
+    <!-- Beautiful Progress Bar -->
+    <div style="width: 100%; background: var(--bg-main); border-radius: 8px; height: 10px; border: 1px solid var(--card-border); margin-bottom: 15px; overflow: hidden;">
+      <div id="typingProgressBar" style="width: 0%; height: 100%; background: var(--accent-primary); transition: width 0.3s ease;"></div>
+    </div>
+
+    <!-- Large Passage Display Box -->
+    <div id="passageDisplayBox" style="background:var(--bg-main); padding:15px; border-radius:10px; border:1px solid var(--card-border); font-size:1.05rem; line-height:1.8; margin-bottom:15px; user-select:none; font-family:monospace; max-height:180px; overflow-y:auto;">
     </div>
 
     <!-- Typing Input Field -->
-    <textarea id="typingInput" placeholder="Click 'Start Test' and start typing the passage above here..." oninput="evaluateTyping()" disabled style="min-height:100px; margin-bottom:15px;"></textarea>
+    <textarea id="typingInput" placeholder="Click 'Start Test' and start typing the passage above here..." oninput="evaluateTyping()" disabled style="min-height:120px; margin-bottom:15px; font-family:monospace;"></textarea>
 
     <!-- Live Stats Dashboard Grid -->
     <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:15px; text-align:center;">
@@ -593,6 +611,28 @@
 
         <button type="submit" class="action-btn" style="width:100%;">Save to Local Storage</button>
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- Test Completion Popup Modal -->
+<div class="modal-overlay" id="typingResultModal">
+  <div class="modal-card" style="text-align: center;">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-trophy" style="color:#f59e0b"></i> Test Completed!</h3>
+      <button class="close-modal" onclick="closeTypingResultModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom: 15px;">Aapka typing test safaltaपूर्वक poora ho gaya hai. Yahan aapka final score hai:</p>
+      <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; margin-bottom:20px;">
+        <div style="background:var(--bg-main); padding:15px; border-radius:10px; border:1px solid var(--card-border);">
+          <b id="modalFinalWpm" style="font-size:1.8rem; color:var(--accent-primary);">0</b><br><span>Final WPM</span>
+        </div>
+        <div style="background:var(--bg-main); padding:15px; border-radius:10px; border:1px solid var(--card-border);">
+          <b id="modalFinalAcc" style="font-size:1.8rem; color:#10b981;">0%</b><br><span>Accuracy</span>
+        </div>
+      </div>
+      <button class="action-btn" onclick="closeTypingResultModal(); goHome();" style="width:100%;">Back to Dashboard</button>
     </div>
   </div>
 </div>
