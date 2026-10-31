@@ -42,6 +42,14 @@
     </div>
 
     <div class="grid">
+      <!-- Typing Speed Test Tool -->
+      <div class="card-selector" onclick="openTool('typingSpeedView')">
+        <div class="card-icon"><i class="fa-solid fa-keyboard"></i></div>
+        <h3>Typing Speed Test (WPM)</h3>
+        <p>Test your typing speed with multiple passages, real-time WPM, and accuracy tracking.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
       <!-- 1. Ultra HD Converter -->
       <div class="card-selector" onclick="openTool('hdView')">
         <div class="card-icon"><i class="fa-solid fa-expand"></i></div>
@@ -183,7 +191,52 @@
 
   <!-- ================= TOOL VIEWS ================= -->
 
-  <!-- Naya Tool 1: Ultra HD Upscaler -->
+  <!-- Typing Speed Test View -->
+  <div id="typingSpeedView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-keyboard"></i> Typing Speed & WPM Master</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+
+    <!-- Category Selection -->
+    <label>Select Passage Category</label>
+    <select id="typingCategory" onchange="loadNewTypingPassage()" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--card-border); background:var(--bg-main); color:var(--text-main); margin-bottom:15px; outline:none;">
+      <option value="tech">Technology & Programming</option>
+      <option value="education">Education & Learning</option>
+      <option value="general">General Knowledge & Life</option>
+    </select>
+
+    <!-- Passage Display Box -->
+    <div id="passageDisplayBox" style="background:var(--bg-main); padding:15px; border-radius:10px; border:1px solid var(--card-border); font-size:1.1rem; line-height:1.6; margin-bottom:15px; user-select:none; font-family:monospace; max-height:140px; overflow-y:auto;">
+    </div>
+
+    <!-- Typing Input Field -->
+    <textarea id="typingInput" placeholder="Click 'Start Test' and start typing the passage above here..." oninput="evaluateTyping()" disabled style="min-height:100px; margin-bottom:15px;"></textarea>
+
+    <!-- Live Stats Dashboard Grid -->
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:15px; text-align:center;">
+      <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+        <b id="tsWpm" style="font-size:1.4rem; color:var(--accent-primary);">0</b><br><small>WPM</small>
+      </div>
+      <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+        <b id="tsAccuracy" style="font-size:1.4rem; color:#10b981;">100%</b><br><small>Accuracy</small>
+      </div>
+      <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+        <b id="tsTime" style="font-size:1.4rem; color:#f59e0b;">60s</b><br><small>Time Left</small>
+      </div>
+      <div style="background:var(--card-bg); padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+        <b id="tsErrors" style="font-size:1.4rem; color:#ef4444;">0</b><br><small>Errors</small>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="action-btn" onclick="startTypingTest()"><i class="fa-solid fa-play"></i> Start Test</button>
+      <button class="action-btn secondary" onclick="resetTypingTest()"><i class="fa-solid fa-rotate-right"></i> Reset</button>
+    </div>
+    <div class="status" id="typingStatus"></div>
+  </div>
+
+  <!-- Ultra HD Upscaler -->
   <div id="hdView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-expand"></i> Ultra HD 4K Image Enhancer</h2>
@@ -201,7 +254,7 @@
     <div class="status" id="hdStatus"></div>
   </div>
 
-  <!-- Naya Tool 2: BG Remover -->
+  <!-- BG Remover -->
   <div id="bgRemView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-scissors"></i> Image Background Remover</h2>
@@ -217,7 +270,7 @@
     <div class="status" id="bgRemStatus"></div>
   </div>
 
-  <!-- Naya Tool 3: Photoshop Image Editor -->
+  <!-- Photoshop Image Editor -->
   <div id="photoEditorView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-sliders"></i> Photoshop Image Editor</h2>
@@ -251,7 +304,7 @@
     <div class="status" id="editorStatus"></div>
   </div>
 
-  <!-- Baaki View Blocks -->
+  <!-- H2J View -->
   <div id="h2jView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-code"></i> HTML to JSON Converter</h2>
@@ -263,6 +316,7 @@
     <div class="status" id="h2jStatus"></div>
   </div>
 
+  <!-- J2H View -->
   <div id="j2hView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-file-code"></i> JSON to HTML Converter</h2>
@@ -274,6 +328,7 @@
     <div class="status" id="j2hStatus"></div>
   </div>
 
+  <!-- CSV View -->
   <div id="csvView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-file-csv"></i> CSV to JSON Converter</h2>
@@ -285,6 +340,7 @@
     <div class="status" id="csvStatus"></div>
   </div>
 
+  <!-- J2CSV View -->
   <div id="j2csvView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-file-excel"></i> JSON to CSV Converter</h2>
@@ -296,6 +352,7 @@
     <div class="status" id="j2csvStatus"></div>
   </div>
 
+  <!-- Image Converter View -->
   <div id="imgConvView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-image"></i> Image Converter (JPG / PNG / WebP)</h2>
@@ -313,6 +370,7 @@
     <div class="status" id="imgConvStatus"></div>
   </div>
 
+  <!-- SVG View -->
   <div id="svgView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-shapes"></i> SVG to PNG Rasterizer</h2>
@@ -329,6 +387,7 @@
     <div class="status" id="svgStatus"></div>
   </div>
 
+  <!-- Base64 View -->
   <div id="base64View" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-lock"></i> Base64 Utility</h2>
@@ -343,6 +402,7 @@
     <div class="status" id="base64Status"></div>
   </div>
 
+  <!-- URL View -->
   <div id="urlView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-link"></i> URL Encoder / Decoder</h2>
@@ -357,6 +417,7 @@
     <div class="status" id="urlStatus"></div>
   </div>
 
+  <!-- MD View -->
   <div id="mdView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-brands fa-markdown"></i> Markdown to HTML Converter</h2>
@@ -368,6 +429,7 @@
     <div class="status" id="mdStatus"></div>
   </div>
 
+  <!-- Text Case View -->
   <div id="textCaseView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-font"></i> Text Case Transformer</h2>
@@ -383,6 +445,7 @@
     <div class="status" id="textCaseStatus"></div>
   </div>
 
+  <!-- Morse View -->
   <div id="morseView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-signal"></i> Morse Code Converter</h2>
@@ -397,6 +460,7 @@
     <div class="status" id="morseStatus"></div>
   </div>
 
+  <!-- Binary View -->
   <div id="binaryView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-binary"></i> Binary to Text Converter</h2>
@@ -411,6 +475,7 @@
     <div class="status" id="binaryStatus"></div>
   </div>
 
+  <!-- Color View -->
   <div id="colorView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-palette"></i> HEX ⇄ RGB Color Converter</h2>
@@ -423,6 +488,7 @@
     <div class="status" id="colorStatus"></div>
   </div>
 
+  <!-- Pass Gen View -->
   <div id="passGenView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-shield-halved"></i> Secure Password Generator</h2>
@@ -434,6 +500,7 @@
     <div class="status" id="passGenStatus"></div>
   </div>
 
+  <!-- Word Count View -->
   <div id="wordCountView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-calculator"></i> Word & Character Counter</h2>
@@ -455,6 +522,7 @@
     <div class="status" id="wordCountStatus"></div>
   </div>
 
+  <!-- QR View -->
   <div id="qrView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-qrcode"></i> QR Code Generator</h2>
@@ -468,7 +536,7 @@
   </div>
 </main>
 
-<!-- APP INFO & DEVELOPER MODAL (Day/Night Mode) -->
+<!-- APP INFO & DEVELOPER MODAL -->
 <div class="modal-overlay" id="appInfoModal">
   <div class="modal-card">
     <div class="modal-header">
