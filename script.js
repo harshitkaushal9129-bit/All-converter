@@ -132,12 +132,13 @@ function openTool(viewId) {
   const target = document.getElementById(viewId);
   if (target) target.classList.add('active');
   if (viewId === 'typingSpeedView') {
-    loadNewTypingPassage();
+    resetTypingTest();
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function goHome() {
+  stopTypingTestForce();
   document.querySelectorAll('.tool-view').forEach(el => el.classList.remove('active'));
   const home = document.getElementById('homeDashboard');
   if (home) home.style.display = 'block';
@@ -204,36 +205,35 @@ let timeLeft = 60;
 let isTestActive = false;
 let currentPassageText = "";
 
-function loadNewTypingPassage() {
+function beginTypingTestSession() {
+  totalTestTime = parseInt(document.getElementById("typingTimeSelect").value) || 60;
   const category = document.getElementById("typingCategory").value;
   const list = typingPassagesLarge[category];
-  currentPassageText = list[Math.floor(Math.random() * list.length)];
-  
+  currentPassageText = list[Math.floor(Math.random() * list.length)].replace(/\s+/g, ' ').trim();
+
+  // Hide Setup Box and Show Workspace
+  document.getElementById("typingSetupBox").classList.add("hidden");
+  document.getElementById("typingWorkspace").classList.remove("hidden");
+
   const displayBox = document.getElementById("passageDisplayBox");
   displayBox.innerHTML = currentPassageText.split("").map(char => `<span>${char}</span>`).join("");
-  resetTypingTestState();
-}
 
-function startTypingTest() {
-  totalTestTime = parseInt(document.getElementById("typingTimeSelect").value) || 60;
-  loadNewTypingPassage();
-  
   const textarea = document.getElementById("typingInput");
-  textarea.disabled = false;
   textarea.value = "";
+  textarea.disabled = false;
   textarea.focus();
-  
+
   timeLeft = totalTestTime;
   isTestActive = true;
   document.getElementById("tsTime").textContent = timeLeft + "s";
-  setStatus("typingStatus", "Test started! Type the passage above quickly and accurately.");
+  document.getElementById("typingProgressBar").style.width = "0%";
+  setStatus("typingStatus", "Test is live! Start typing now.");
 
   if (typingTimer) clearInterval(typingTimer);
   typingTimer = setInterval(() => {
     timeLeft--;
     document.getElementById("tsTime").textContent = timeLeft + "s";
     
-    // Update Progress Bar
     const progressPercent = ((totalTestTime - timeLeft) / totalTestTime) * 100;
     document.getElementById("typingProgressBar").style.width = progressPercent + "%";
 
@@ -248,7 +248,6 @@ function finishTypingTest() {
   clearInterval(typingTimer);
   document.getElementById("typingInput").disabled = true;
   
-  // Show result in modal popup
   const finalWpm = document.getElementById("tsWpm").textContent;
   const finalAcc = document.getElementById("tsAccuracy").textContent;
   
@@ -261,6 +260,7 @@ function finishTypingTest() {
 
 function closeTypingResultModal() {
   document.getElementById("typingResultModal").classList.remove("active");
+  resetTypingTest();
 }
 
 function closeTypingTestView() {
@@ -271,33 +271,18 @@ function closeTypingTestView() {
 function stopTypingTestForce() {
   isTestActive = false;
   if (typingTimer) clearInterval(typingTimer);
-  const textarea = document.getElementById("typingInput");
-  if(textarea) textarea.disabled = true;
 }
 
 function resetTypingTest() {
   stopTypingTestForce();
-  loadNewTypingPassage();
+  document.getElementById("typingWorkspace").classList.add("hidden");
+  document.getElementById("typingSetupBox").classList.remove("hidden");
   document.getElementById("typingInput").value = "";
   document.getElementById("tsWpm").textContent = "0";
   document.getElementById("tsAccuracy").textContent = "100%";
-  const selectedTime = document.getElementById("typingTimeSelect").value;
-  document.getElementById("tsTime").textContent = selectedTime + "s";
   document.getElementById("tsErrors").textContent = "0";
   document.getElementById("typingProgressBar").style.width = "0%";
-  setStatus("typingStatus", "Test reset. Select time/topic and click 'Start Test'.");
-}
-
-function resetTypingTestState() {
-  if (typingTimer) clearInterval(typingTimer);
-  isTestActive = false;
-  document.getElementById("typingInput").disabled = true;
-  document.getElementById("tsWpm").textContent = "0";
-  document.getElementById("tsAccuracy").textContent = "100%";
-  const selectedTime = document.getElementById("typingTimeSelect").value;
-  document.getElementById("tsTime").textContent = selectedTime + "s";
-  document.getElementById("tsErrors").textContent = "0";
-  document.getElementById("typingProgressBar").style.width = "0%";
+  setStatus("typingStatus", "");
 }
 
 function evaluateTyping() {
@@ -315,12 +300,12 @@ function evaluateTyping() {
       passageSpans[i].style.color = "var(--text-main)";
       passageSpans[i].style.background = "transparent";
     } else if (char === currentPassageText[i]) {
-      passageSpans[i].style.color = "#10b981"; // Green for correct
+      passageSpans[i].style.color = "var(--success)";
       passageSpans[i].style.background = "transparent";
       correctChars++;
     } else {
-      passageSpans[i].style.color = "#ef4444"; // Red for error
-      passageSpans[i].style.background = "rgba(239, 68, 68, 0.2)";
+      passageSpans[i].style.color = "var(--error)";
+      passageSpans[i].style.background = "color-mix(in srgb, var(--error) 20%, transparent)";
       errors++;
     }
   }
@@ -333,7 +318,6 @@ function evaluateTyping() {
   document.getElementById("tsAccuracy").textContent = accuracy + "%";
   document.getElementById("tsErrors").textContent = errors;
 
-  // Auto finish test if user finishes the entire passage before time runs out
   if (typedVal.length >= currentPassageText.length) {
     finishTypingTest();
   }
