@@ -9,8 +9,62 @@
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="style.css">
+<style>
+/* Festival Banner Styling */
+.festival-banner {
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  color: #ffffff;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 65, 108, 0.3);
+  position: relative;
+  z-index: 1000;
+  transition: opacity 0.3s ease;
+}
+.festival-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.festival-banner-content i {
+  font-size: 1.2rem;
+}
+.festival-exit-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.festival-exit-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+</style>
 </head>
 <body data-theme="dark">
+
+<!-- Top Festival Banner -->
+<div class="festival-banner" id="festivalBanner" onclick="window.location.href='festival.html'">
+  <div class="festival-banner-content">
+    <i class="fa-solid fa-gift"></i>
+    <span>Special Festival Offers & Greetings! Click to view Special Event Page 🎉</span>
+  </div>
+  <button class="festival-exit-btn" title="Exit / Close Banner" onclick="event.stopPropagation(); document.getElementById('festivalBanner').style.display='none';">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+</div>
 
 <!-- Universal App Header -->
 <header class="app-header">
