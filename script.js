@@ -142,12 +142,10 @@ function initCanvasListeners() {
     isDrawingBrush = false;
   };
 
-  // Mouse Events
   canvas.addEventListener("mousedown", startAction);
   canvas.addEventListener("mousemove", moveAction);
   canvas.addEventListener("mouseup", endAction);
 
-  // Touch Events for Android
   canvas.addEventListener("touchstart", startAction, { passive: false });
   canvas.addEventListener("touchmove", moveAction, { passive: false });
   canvas.addEventListener("touchend", endAction, { passive: false });
@@ -270,7 +268,6 @@ function applyEditorFilters() {
   ctx.drawImage(photo.bufferCanvas, -photo.bufferCanvas.width / 2, -photo.bufferCanvas.height / 2);
   ctx.restore();
 
-  // Draw Freeform Lasso Selection Outline
   if (freeformPoints.length > 1) {
     ctx.save();
     ctx.strokeStyle = '#f97316'; ctx.lineWidth = 3; ctx.setLineDash([5, 5]);
@@ -294,7 +291,6 @@ function clearSelection() {
   setStatus("editorStatus", "Freeform shape cleared.");
 }
 
-// Fill custom lasso shape with chosen color
 function fillCustomShapeWithColor() {
   if (freeformPoints.length < 3) return alert("Pehle screen par koi shape/lasso draw karein!");
   const photo = openPhotosList[activePhotoIndex];
@@ -323,7 +319,6 @@ function editSelectedArea(type) {
   const photo = openPhotosList[activePhotoIndex];
   const bCtx = photo.bufferCanvas.getContext("2d");
 
-  // Create clipping path for irregular shape
   bCtx.save();
   bCtx.beginPath();
   bCtx.moveTo(freeformPoints[0].x, freeformPoints[0].y);
@@ -333,7 +328,6 @@ function editSelectedArea(type) {
   bCtx.closePath();
   bCtx.clip();
 
-  // Apply effect to clipped region
   const imgData = bCtx.getImageData(0, 0, photo.bufferCanvas.width, photo.bufferCanvas.height);
   const d = imgData.data;
   for (let i = 0; i < d.length; i += 4) {
@@ -403,7 +397,132 @@ function downloadEditedImage() {
   }, "image/png");
 }
 
-// Other quick utilities
+// ================= TYPING MASTER 12 =================
+const typingLessons = {
+  1: "asdf jkl; asdf jkl; ff jj dd kk ss ll aa ;; touch typing builds finger muscle memory for fast and accurate typing sessions.",
+  2: "client side web architecture relies heavily on efficient html markup cascading style sheets and modern modular javascript code structures.",
+  3: "graphic design and digital asset creation require distinct neon aesthetics vibrant color palettes and precise typography matching user branding.",
+  4: "firebase real-time databases and secure cloud storage configurations empower seamless user registration workflows and dynamic data handlers.",
+  5: "progressive web apps deploy robust offline caching mechanics via service workers ensuring continuity independent of live network connections.",
+  6: "maintaining a personal philosophy of helping others without causing distress fosters positive interpersonal experiences and supportive networks.",
+  7: "network device protocols routers and backend firewall security rules protect corporate servers against unauthorized external intrusion.",
+  8: "python programming logic and problem solving algorithms simplify complex data manipulation tasks and automate repetitive workflows.",
+  9: "tally prime software configurations optimize corporate invoice printing setups and financial record management within educational constraints.",
+  10: "expert touch typists achieve remarkable speed exceeding eighty words per minute by maintaining correct finger placement rhythm and absolute focus."
+};
+
+let typingTimer = null;
+let timeLeft = 60;
+let totalTimeSec = 60;
+let isTypingActive = false;
+let currentLessonText = "";
+
+function beginTypingTestSession() {
+  const lessonId = document.getElementById("typingLessonSelect").value;
+  currentLessonText = typingLessons[lessonId];
+  totalTimeSec = parseInt(document.getElementById("typingTimeSelect").value);
+  timeLeft = totalTimeSec;
+
+  document.getElementById("typingSetupBox").classList.add("hidden");
+  document.getElementById("typingWorkspace").classList.remove("hidden");
+  
+  const passageBox = document.getElementById("passageDisplayBox");
+  passageBox.innerHTML = currentLessonText.split("").map(c => `<span>${c}</span>`).join("");
+  
+  const inputArea = document.getElementById("typingInput");
+  inputArea.value = "";
+  inputArea.disabled = false;
+  inputArea.focus();
+
+  document.getElementById("tsTime").textContent = timeLeft + "s";
+  document.getElementById("tsWpm").textContent = "0";
+  document.getElementById("tsAccuracy").textContent = "100%";
+  document.getElementById("tsErrors").textContent = "0";
+  document.getElementById("typingProgressBar").style.width = "0%";
+
+  if (typingTimer) clearInterval(typingTimer);
+  isTypingActive = true;
+  
+  typingTimer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("tsTime").textContent = timeLeft + "s";
+    const progressPercent = ((totalTimeSec - timeLeft) / totalTimeSec) * 100;
+    document.getElementById("typingProgressBar").style.width = progressPercent + "%";
+
+    if (timeLeft <= 0) {
+      finishTypingTest();
+    }
+  }, 1000);
+}
+
+function evaluateTyping() {
+  if (!isTypingActive) return;
+  const typedVal = document.getElementById("typingInput").value;
+  const spans = document.getElementById("passageDisplayBox").querySelectorAll("span");
+
+  let errors = 0;
+  for (let i = 0; i < spans.length; i++) {
+    if (i < typedVal.length) {
+      if (typedVal[i] === currentLessonText[i]) {
+        spans[i].style.color = "var(--success)";
+      } else {
+        spans[i].style.color = "var(--error)";
+        errors++;
+      }
+    } else {
+      spans[i].style.color = "var(--text-main)";
+    }
+  }
+
+  const timeElapsedMin = (totalTimeSec - timeLeft) / 60;
+  const wordsTyped = typedVal.trim().split(/\s+/).filter(Boolean).length;
+  const wpm = timeElapsedMin > 0 ? Math.round(wordsTyped / timeElapsedMin) : 0;
+  const accuracy = typedVal.length > 0 ? Math.max(0, Math.round(((typedVal.length - errors) / typedVal.length) * 100)) : 100;
+
+  document.getElementById("tsWpm").textContent = wpm;
+  document.getElementById("tsAccuracy").textContent = accuracy + "%";
+  document.getElementById("tsErrors").textContent = errors;
+
+  if (typedVal.length >= currentLessonText.length) {
+    finishTypingTest();
+  }
+}
+
+function finishTypingTest() {
+  if (!isTypingActive) return;
+  isTypingActive = false;
+  clearInterval(typingTimer);
+  document.getElementById("typingInput").disabled = true;
+
+  const finalWpm = document.getElementById("tsWpm").textContent;
+  const finalAcc = document.getElementById("tsAccuracy").textContent;
+  const lessonNum = document.getElementById("typingLessonSelect").value;
+
+  document.getElementById("modalFinalWpm").textContent = finalWpm;
+  document.getElementById("modalFinalAcc").textContent = finalAcc;
+  document.getElementById("modalLessonName").textContent = `Completed Lesson ${lessonNum}: Typing Master 12 Certified`;
+  document.getElementById("typingResultModal").classList.add("active");
+}
+
+function closeTypingResultModal() {
+  document.getElementById("typingResultModal").classList.remove("active");
+  resetTypingTest();
+}
+
+function resetTypingTest() {
+  if (typingTimer) clearInterval(typingTimer);
+  isTypingActive = false;
+  document.getElementById("typingWorkspace").classList.add("hidden");
+  document.getElementById("typingSetupBox").classList.remove("hidden");
+  setStatus("typingStatus", "Lesson reset. Choose parameters to start again.");
+}
+
+function stopTypingTestForce() {
+  if (typingTimer) clearInterval(typingTimer);
+  isTypingActive = false;
+}
+
+// ================= ALL OTHER UTILITY TOOLS =================
 let bgSourceImageObj = null, currentBgColor = { r: 255, g: 255, b: 255 };
 function loadBgRemImage(input) {
   if (input.files && input.files[0]) {
