@@ -3,10 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>File Converter Pro 2027 - Photoshop Studio Freeform Edition</title>
+<title>File Converter Pro 2027 - Complete Suite</title>
 <meta name="theme-color" content="#0f172a">
-<link rel="manifest" href="./manifest.json">
-<link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -42,7 +40,7 @@
     <div class="brand-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
     <div>
       <div class="brand-title">File Converter Pro</div>
-      <div class="brand-subtitle">v2027.0 Freeform Studio Edition</div>
+      <div class="brand-subtitle">v2027.0 Complete Suite</div>
     </div>
   </div>
   <div class="header-actions">
@@ -59,7 +57,7 @@
   <div id="homeDashboard">
     <div class="dashboard-hero">
       <h1>Select an Advanced Tool</h1>
-      <p>Click on Photoshop Studio Pro to use freeform shape selections and custom color fills.</p>
+      <p>Click on any tool below to launch it instantly.</p>
     </div>
 
     <div class="grid">
@@ -121,7 +119,7 @@
   <div id="typingSpeedView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-keyboard"></i> Typing Master 12 Professional Tutor</h2>
-      <button class="back-home-btn" onclick="closeTypingTestView()"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
     </div>
     <div id="typingSetupBox" class="typing-setup-box">
       <h3><i class="fa-solid fa-list-check"></i> Select Lesson (1 to 10) & Duration</h3>
@@ -187,7 +185,7 @@
     </div>
 
     <div id="editorControls" class="hidden">
-      <!-- Photoshop Tools Navigation Bar -->
+      <!-- Photoshop Tools Left-Aligned Navigation Bar -->
       <div class="editor-mode-banner">
         <button class="action-btn secondary mode-tab-btn active" id="btnToolGlobal" onclick="setPhotoshopTool('global')"><i class="fa-solid fa-sliders"></i> 1. Global Filters</button>
         <button class="action-btn secondary mode-tab-btn" id="btnToolFreeform" onclick="setPhotoshopTool('freeform')"><i class="fa-solid fa-draw-polygon"></i> 2. Freeform Lasso Shape</button>
@@ -282,7 +280,7 @@
     <div class="status" id="bgRemStatus"></div>
   </div>
 
-  <!-- Other basic views included in code -->
+  <!-- Other Conversion Views -->
   <div id="h2jView" class="tool-view"><div class="tool-header-bar"><h2>HTML to JSON</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>HTML</label><textarea id="htmlInput" placeholder="<h1>Hello</h1>"></textarea><button class="action-btn" onclick="htmlToJson()">Convert</button><div class="status" id="h2jStatus"></div></div>
   <div id="j2hView" class="tool-view"><div class="tool-header-bar"><h2>JSON to HTML</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>JSON</label><textarea id="jsonInput" placeholder='{"html":"<h1>Hello</h1>"}'></textarea><button class="action-btn" onclick="jsonToHtml()">Convert</button><div class="status" id="j2hStatus"></div></div>
   <div id="csvView" class="tool-view"><div class="tool-header-bar"><h2>CSV to JSON</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>CSV</label><textarea id="csvInput" placeholder="name,age\nJohn,30"></textarea><button class="action-btn" onclick="csvToJson()">Convert</button><div class="status" id="csvStatus"></div></div>
