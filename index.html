@@ -286,7 +286,20 @@
   <div id="csvView" class="tool-view"><div class="tool-header-bar"><h2>CSV to JSON</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>CSV</label><textarea id="csvInput" placeholder="name,age\nJohn,30"></textarea><button class="action-btn" onclick="csvToJson()">Convert</button><div class="status" id="csvStatus"></div></div>
   <div id="j2csvView" class="tool-view"><div class="tool-header-bar"><h2>JSON to CSV</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>JSON</label><textarea id="j2csvInput" placeholder='[{"name":"John"}]'></textarea><button class="action-btn" onclick="jsonToCsv()">Convert</button><div class="status" id="j2csvStatus"></div></div>
   <div id="imgConvView" class="tool-view"><div class="tool-header-bar"><h2>Image Converter</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><div class="drop-zone" onclick="document.getElementById('generalImgFile').click()"><div class="drop-zone-text" id="generalImgText">Choose Image</div><input id="generalImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'generalImgText')"></div><div class="btn-group"><button class="action-btn" onclick="imageConvert('generalImgFile', 'png', 'imgConvStatus')">PNG</button><button class="action-btn secondary" onclick="imageConvert('generalImgFile', 'jpg', 'imgConvStatus')">JPG</button><button class="action-btn secondary" onclick="imageConvert('generalImgFile', 'webp', 'imgConvStatus')">WebP</button></div><div class="status" id="imgConvStatus"></div></div>
-  <div id="svgView" class="tool-view"><div class="tool-header-bar"><h2>SVG to PNG</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><div class="drop-zone" onclick="document.getElementById('svgFile').click()"><div class="drop-zone-text" id="svgFileText">Choose SVG</div><input id="svgFile" type="file" accept=".svg" onchange="updateFileName(this, 'svgFileText')"></div><textarea id="svgCodeInput" placeholder="<svg>...</svg>"></textarea><button class="action-btn" onclick="svgToPng()">Convert</button><div class="status" id="svgStatus"></div></div>
+  
+  <!-- SVG to PNG View (Fixed with File Upload & Code Textarea) -->
+  <div id="svgView" class="tool-view">
+    <div class="tool-header-bar"><h2>SVG to PNG Rasterizer</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div>
+    <div class="drop-zone" onclick="document.getElementById('svgFile').click()">
+      <div class="drop-zone-text" id="svgFileText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose SVG File</div>
+      <input id="svgFile" type="file" accept=".svg" onchange="loadSvgFile(this)">
+    </div>
+    <label>Or Paste SVG Code Below:</label>
+    <textarea id="svgCodeInput" placeholder="<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>...</svg>"></textarea>
+    <button class="action-btn" onclick="svgToPng()"><i class="fa-solid fa-file-arrow-down"></i> Convert SVG to PNG</button>
+    <div class="status" id="svgStatus"></div>
+  </div>
+
   <div id="base64View" class="tool-view"><div class="tool-header-bar"><h2>Base64</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="base64Input" placeholder="Text..."></textarea><div class="btn-group"><button class="action-btn" onclick="processBase64(true)">Encode</button><button class="action-btn secondary" onclick="processBase64(false)">Decode</button></div><div class="status" id="base64Status"></div></div>
   <div id="urlView" class="tool-view"><div class="tool-header-bar"><h2>URL Encoder</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="urlInput" placeholder="URL..."></textarea><div class="btn-group"><button class="action-btn" onclick="processUrl(true)">Encode</button><button class="action-btn secondary" onclick="processUrl(false)">Decode</button></div><div class="status" id="urlStatus"></div></div>
   <div id="mdView" class="tool-view"><div class="tool-header-bar"><h2>Markdown</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="mdInput" placeholder="# Heading"></textarea><button class="action-btn" onclick="mdToHtml()">Convert</button><div class="status" id="mdStatus"></div></div>
