@@ -154,7 +154,7 @@ function saveBlob(blob, name) {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
-// ================= ADVANCED BACKGROUND REMOVER WITH LIVE PREVIEW & COLOR PICKER =================
+// ================= MULTI-COLOR RANGE BACKGROUND REMOVER =================
 let bgSourceImageObj = null;
 let currentBgColor = { r: 255, g: 255, b: 255 };
 
@@ -166,7 +166,6 @@ function loadBgRemImage(input) {
       bgSourceImageObj = new Image();
       bgSourceImageObj.onload = () => {
         document.getElementById("bgControlsContainer").classList.remove("hidden");
-        // Set default picked color to top-left pixel
         setupBgCanvasAndDefaultColor();
       };
       bgSourceImageObj.src = e.target.result;
@@ -182,7 +181,6 @@ function setupBgCanvasAndDefaultColor() {
   srcCanvas.height = bgSourceImageObj.height;
   ctx.drawImage(bgSourceImageObj, 0, 0);
 
-  // Pick top-left pixel as default background color
   const pixel = ctx.getImageData(0, 0, 1, 1).data;
   currentBgColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
   document.getElementById("selectedColorDisplay").textContent = `RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
@@ -228,21 +226,32 @@ function processBgRemovalLive() {
   const imgData = pCtx.getImageData(0, 0, prevCanvas.width, prevCanvas.height);
   const data = imgData.data;
 
+  const targetR = currentBgColor.r;
+  const targetG = currentBgColor.g;
+  const targetB = currentBgColor.b;
+
   for (let i = 0; i < data.length; i += 4) {
     const r = data[i], g = data[i + 1], b = data[i + 2];
-    const diff = Math.abs(r - currentBgColor.r) + Math.abs(g - currentBgColor.g) + Math.abs(b - currentBgColor.b);
-    if (diff <= tolerance * 3) {
+    
+    // Euclidean distance formula to catch 20+ shades simultaneously within tolerance range
+    const distance = Math.sqrt(
+      Math.pow(r - targetR, 2) + 
+      Math.pow(g - targetG, 2) + 
+      Math.pow(b - targetB, 2)
+    );
+
+    if (distance <= tolerance * 3.5) {
       data[i + 3] = 0; // Make transparent
     }
   }
   pCtx.putImageData(imgData, 0, 0);
-  setStatus("bgRemStatus", "Live transparent preview updated successfully!");
+  setStatus("bgRemStatus", "Multi-color range processed successfully!");
 }
 
 function downloadBgRemovedImage() {
   const prevCanvas = document.getElementById("bgPreviewCanvas");
   prevCanvas.toBlob(blob => {
-    saveBlob(blob, "Transparent_Image_Pro.png");
+    saveBlob(blob, "MultiColor_Transparent_Image.png");
     setStatus("bgRemStatus", "Transparent PNG downloaded successfully!");
   }, "image/png");
 }
@@ -285,7 +294,7 @@ function loadEditorImage(input) {
     reader.onload = e => {
       editorImageObj = new Image();
       editorImageObj.onload = () => {
-        document.getElementById("editorControls").style.display = "block";
+        document.getElementById("editorControls").classList.remove("hidden");
         editorRotateAngle = 0;
         editorIsFlipped = false;
         activeSpecialEffect = 'none';
