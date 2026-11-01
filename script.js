@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   loadProfileData();
   initThemePreference();
-  initAndroidTouchSupport();
+  initCanvasListeners();
 });
 
 function toggleTheme() {
@@ -75,41 +75,57 @@ function saveBlob(blob, name) {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
-// ================= ANDROID TOUCH SUPPORT BRIDGE =================
-function initAndroidTouchSupport() {
+// ================= FREEFORM LASSO & TOUCH CANVAS ENGINE =================
+let openPhotosList = [];
+let activePhotoIndex = 0;
+let activePhotoshopTool = 'global';
+
+let freeformPoints = [];
+let isDrawingFreeform = false;
+let isDrawingBrush = false, lastX = 0, lastY = 0;
+
+function initCanvasListeners() {
   const canvas = document.getElementById("editorCanvas");
   if (!canvas) return;
 
-  const getTouchPos = (e) => {
+  const getPos = (e) => {
     const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0] || e.changedTouches[0];
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
     return {
-      x: (touch.clientX - rect.left) * (canvas.width / rect.width),
-      y: (touch.clientY - rect.top) * (canvas.height / rect.height)
+      x: (clientX - rect.left) * (canvas.width / rect.width),
+      y: (clientY - rect.top) * (canvas.height / rect.height)
     };
   };
 
-  canvas.addEventListener("touchstart", (e) => {
+  const startAction = (e) => {
     e.preventDefault();
-    const pos = getTouchPos(e);
+    if (openPhotosList.length === 0) return;
+    const pos = getPos(e);
+
     if (activePhotoshopTool === 'freeform' || activePhotoshopTool === 'crop') {
-      isSelecting = true;
-      startX = pos.x; startY = pos.y;
-      selectionRect = { x: startX, y: startY, w: 0, h: 0 };
+      if (!isDrawingFreeform) {
+        freeformPoints = [pos];
+        isDrawingFreeform = true;
+      } else {
+        freeformPoints.push(pos);
+      }
+      applyEditorFilters();
     } else if (activePhotoshopTool === 'brush') {
-      isDrawing = true;
+      isDrawingBrush = true;
       lastX = pos.x; lastY = pos.y;
     }
-  }, { passive: false });
+  };
 
-  canvas.addEventListener("touchmove", (e) => {
+  const moveAction = (e) => {
     e.preventDefault();
-    const pos = getTouchPos(e);
-    if (isSelecting) {
-      selectionRect.w = pos.x - startX;
-      selectionRect.h = pos.y - startY;
+    if (openPhotosList.length === 0) return;
+    const pos = getPos(e);
+
+    if (isDrawingFreeform) {
+      freeformPoints.push(pos);
       applyEditorFilters();
-    } else if (isDrawing) {
+    } else if (isDrawingBrush) {
       const photo = openPhotosList[activePhotoIndex];
       const bCtx = photo.bufferCanvas.getContext("2d");
       bCtx.strokeStyle = document.getElementById("brushColorPicker").value;
@@ -119,155 +135,23 @@ function initAndroidTouchSupport() {
       lastX = pos.x; lastY = pos.y;
       applyEditorFilters();
     }
-  }, { passive: false });
+  };
 
-  canvas.addEventListener("touchend", (e) => {
+  const endAction = (e) => {
     e.preventDefault();
-    if (isSelecting) {
-      isSelecting = false;
-      if (selectionRect.w < 0) { selectionRect.x += selectionRect.w; selectionRect.w = Math.abs(selectionRect.w); }
-      if (selectionRect.h < 0) { selectionRect.y += selectionRect.h; selectionRect.h = Math.abs(selectionRect.h); }
-      if (activePhotoshopTool === 'crop' && selectionRect.w > 10 && selectionRect.h > 10) {
-        executeCropPhoto();
-      }
-    }
-    isDrawing = false;
-  }, { passive: false });
+    isDrawingBrush = false;
+  };
+
+  // Mouse Events
+  canvas.addEventListener("mousedown", startAction);
+  canvas.addEventListener("mousemove", moveAction);
+  canvas.addEventListener("mouseup", endAction);
+
+  // Touch Events for Android
+  canvas.addEventListener("touchstart", startAction, { passive: false });
+  canvas.addEventListener("touchmove", moveAction, { passive: false });
+  canvas.addEventListener("touchend", endAction, { passive: false });
 }
-
-// ================= TYPING MASTER 12 (10 LESSONS & PRINT) =================
-const typingLessons = {
-  1: "asdf jkl; asdf jkl; ff jj dd kk ss ll aa ;; touch typing builds finger muscle memory for fast and accurate typing sessions.",
-  2: "client side web architecture relies heavily on efficient html markup cascading style sheets and modern modular javascript code structures.",
-  3: "graphic design and digital asset creation require distinct neon aesthetics vibrant color palettes and precise typography matching user branding.",
-  4: "firebase real-time databases and secure cloud storage configurations empower seamless user registration workflows and dynamic data handlers.",
-  5: "progressive web apps deploy robust offline caching mechanics via service workers ensuring continuity independent of live network connections.",
-  6: "maintaining a personal philosophy of helping others without causing distress fosters positive interpersonal experiences and supportive networks.",
-  7: "network device protocols routers and backend firewall security rules protect corporate servers against unauthorized external intrusion.",
-  8: "python programming logic and problem solving algorithms simplify complex data manipulation tasks and automate repetitive workflows.",
-  9: "tally prime software configurations optimize corporate invoice printing setups and financial record management within educational constraints.",
-  10: "expert touch typists achieve remarkable speed exceeding eighty words per minute by maintaining correct finger placement rhythm and absolute focus."
-};
-
-let typingTimer = null;
-let timeLeft = 60;
-let totalTimeSec = 60;
-let isTypingActive = false;
-let currentLessonText = "";
-
-function beginTypingTestSession() {
-  const lessonId = document.getElementById("typingLessonSelect").value;
-  currentLessonText = typingLessons[lessonId];
-  totalTimeSec = parseInt(document.getElementById("typingTimeSelect").value);
-  timeLeft = totalTimeSec;
-
-  document.getElementById("typingSetupBox").classList.add("hidden");
-  document.getElementById("typingWorkspace").classList.remove("hidden");
-  
-  const passageBox = document.getElementById("passageDisplayBox");
-  passageBox.innerHTML = currentLessonText.split("").map(c => `<span>${c}</span>`).join("");
-  
-  const inputArea = document.getElementById("typingInput");
-  inputArea.value = "";
-  inputArea.disabled = false;
-  inputArea.focus();
-
-  document.getElementById("tsTime").textContent = timeLeft + "s";
-  document.getElementById("tsWpm").textContent = "0";
-  document.getElementById("tsAccuracy").textContent = "100%";
-  document.getElementById("tsErrors").textContent = "0";
-  document.getElementById("typingProgressBar").style.width = "0%";
-
-  if (typingTimer) clearInterval(typingTimer);
-  isTypingActive = true;
-  
-  typingTimer = setInterval(() => {
-    timeLeft--;
-    document.getElementById("tsTime").textContent = timeLeft + "s";
-    const progressPercent = ((totalTimeSec - timeLeft) / totalTimeSec) * 100;
-    document.getElementById("typingProgressBar").style.width = progressPercent + "%";
-
-    if (timeLeft <= 0) {
-      finishTypingTest();
-    }
-  }, 1000);
-}
-
-function evaluateTyping() {
-  if (!isTypingActive) return;
-  const typedVal = document.getElementById("typingInput").value;
-  const spans = document.getElementById("passageDisplayBox").querySelectorAll("span");
-
-  let errors = 0;
-  for (let i = 0; i < spans.length; i++) {
-    if (i < typedVal.length) {
-      if (typedVal[i] === currentLessonText[i]) {
-        spans[i].style.color = "var(--success)";
-      } else {
-        spans[i].style.color = "var(--error)";
-        errors++;
-      }
-    } else {
-      spans[i].style.color = "var(--text-main)";
-    }
-  }
-
-  const timeElapsedMin = (totalTimeSec - timeLeft) / 60;
-  const wordsTyped = typedVal.trim().split(/\s+/).filter(Boolean).length;
-  const wpm = timeElapsedMin > 0 ? Math.round(wordsTyped / timeElapsedMin) : 0;
-  const accuracy = typedVal.length > 0 ? Math.max(0, Math.round(((typedVal.length - errors) / typedVal.length) * 100)) : 100;
-
-  document.getElementById("tsWpm").textContent = wpm;
-  document.getElementById("tsAccuracy").textContent = accuracy + "%";
-  document.getElementById("tsErrors").textContent = errors;
-
-  if (typedVal.length >= currentLessonText.length) {
-    finishTypingTest();
-  }
-}
-
-function finishTypingTest() {
-  if (!isTypingActive) return;
-  isTypingActive = false;
-  clearInterval(typingTimer);
-  document.getElementById("typingInput").disabled = true;
-
-  const finalWpm = document.getElementById("tsWpm").textContent;
-  const finalAcc = document.getElementById("tsAccuracy").textContent;
-  const lessonNum = document.getElementById("typingLessonSelect").value;
-
-  document.getElementById("modalFinalWpm").textContent = finalWpm;
-  document.getElementById("modalFinalAcc").textContent = finalAcc;
-  document.getElementById("modalLessonName").textContent = `Completed Lesson ${lessonNum}: Typing Master 12 Certified`;
-  document.getElementById("typingResultModal").classList.add("active");
-}
-
-function closeTypingResultModal() {
-  document.getElementById("typingResultModal").classList.remove("active");
-  resetTypingTest();
-}
-
-function resetTypingTest() {
-  if (typingTimer) clearInterval(typingTimer);
-  isTypingActive = false;
-  document.getElementById("typingWorkspace").classList.add("hidden");
-  document.getElementById("typingSetupBox").classList.remove("hidden");
-  setStatus("typingStatus", "Lesson reset. Choose parameters to start again.");
-}
-
-function stopTypingTestForce() {
-  if (typingTimer) clearInterval(typingTimer);
-  isTypingActive = false;
-}
-
-
-// ================= PHOTOSHOP STUDIO PRO (12 TOOLS) =================
-let openPhotosList = [];
-let activePhotoIndex = 0;
-let activePhotoshopTool = 'global';
-
-let isSelecting = false, startX = 0, startY = 0, selectionRect = null;
-let isDrawing = false, lastX = 0, lastY = 0;
 
 function loadMultipleEditorImages(input) {
   if (input.files && input.files.length > 0) {
@@ -318,7 +202,7 @@ function renderPhotoTabs() {
 
 function switchActivePhoto(idx) {
   activePhotoIndex = idx;
-  selectionRect = null;
+  freeformPoints = [];
   renderPhotoTabs();
   const photo = openPhotosList[activePhotoIndex];
   document.getElementById("eBrightness").value = photo.brightness;
@@ -353,7 +237,7 @@ function setPhotoshopTool(toolName) {
   document.getElementById("freeformControlsPanel").classList.toggle("hidden", toolName !== 'freeform');
   document.getElementById("brushControlsPanel").classList.toggle("hidden", toolName !== 'brush');
 
-  if (toolName !== 'freeform') { selectionRect = null; applyEditorFilters(); }
+  if (toolName !== 'freeform') { freeformPoints = []; isDrawingFreeform = false; applyEditorFilters(); }
   setStatus("editorStatus", `Active Tool: ${toolName.toUpperCase()}`);
 }
 
@@ -386,110 +270,84 @@ function applyEditorFilters() {
   ctx.drawImage(photo.bufferCanvas, -photo.bufferCanvas.width / 2, -photo.bufferCanvas.height / 2);
   ctx.restore();
 
-  if (selectionRect) {
+  // Draw Freeform Lasso Selection Outline
+  if (freeformPoints.length > 1) {
     ctx.save();
-    ctx.strokeStyle = '#f97316'; ctx.lineWidth = 3; ctx.setLineDash([6, 6]);
-    ctx.strokeRect(selectionRect.x, selectionRect.y, selectionRect.w, selectionRect.h);
-    ctx.fillStyle = 'rgba(249, 115, 22, 0.15)';
-    ctx.fillRect(selectionRect.x, selectionRect.y, selectionRect.w, selectionRect.h);
+    ctx.strokeStyle = '#f97316'; ctx.lineWidth = 3; ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(freeformPoints[0].x, freeformPoints[0].y);
+    for (let i = 1; i < freeformPoints.length; i++) {
+      ctx.lineTo(freeformPoints[i].x, freeformPoints[i].y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(249, 115, 22, 0.2)';
+    ctx.fill();
     ctx.restore();
   }
 }
 
-// Mouse events for PC testing
-function startCanvasInteraction(e) {
-  if (activePhotoshopTool === 'freeform' || activePhotoshopTool === 'crop') {
-    const canvas = document.getElementById("editorCanvas");
-    const rect = canvas.getBoundingClientRect();
-    isSelecting = true;
-    startX = (e.clientX - rect.left) * (canvas.width / rect.width);
-    startY = (e.clientY - rect.top) * (canvas.height / rect.height);
-    selectionRect = { x: startX, y: startY, w: 0, h: 0 };
-  } else if (activePhotoshopTool === 'brush') {
-    isDrawing = true;
-    const canvas = document.getElementById("editorCanvas");
-    const rect = canvas.getBoundingClientRect();
-    lastX = (e.clientX - rect.left) * (canvas.width / rect.width);
-    lastY = (e.clientY - rect.top) * (canvas.height / rect.height);
-  }
+function clearSelection() {
+  freeformPoints = [];
+  isDrawingFreeform = false;
+  applyEditorFilters();
+  setStatus("editorStatus", "Freeform shape cleared.");
 }
 
-function moveCanvasInteraction(e) {
-  if (!isSelecting && !isDrawing) return;
-  const canvas = document.getElementById("editorCanvas");
-  const rect = canvas.getBoundingClientRect();
-  const currX = (e.clientX - rect.left) * (canvas.width / rect.width);
-  const currY = (e.clientY - rect.top) * (canvas.height / rect.height);
-
-  if (isSelecting) {
-    selectionRect.w = currX - startX;
-    selectionRect.h = currY - startY;
-    applyEditorFilters();
-  } else if (isDrawing) {
-    const photo = openPhotosList[activePhotoIndex];
-    const bCtx = photo.bufferCanvas.getContext("2d");
-    bCtx.strokeStyle = document.getElementById("brushColorPicker").value;
-    bCtx.lineWidth = parseInt(document.getElementById("brushSizeRange").value) || 5;
-    bCtx.lineCap = "round"; bCtx.lineJoin = "round";
-    bCtx.beginPath(); bCtx.moveTo(lastX, lastY); bCtx.lineTo(currX, currY); bCtx.stroke();
-    lastX = currX; lastY = currY;
-    applyEditorFilters();
-  }
-}
-
-function endCanvasInteraction() {
-  if (isSelecting) {
-    isSelecting = false;
-    if (selectionRect.w < 0) { selectionRect.x += selectionRect.w; selectionRect.w = Math.abs(selectionRect.w); }
-    if (selectionRect.h < 0) { selectionRect.y += selectionRect.h; selectionRect.h = Math.abs(selectionRect.h); }
-    if (activePhotoshopTool === 'crop' && selectionRect.w > 10 && selectionRect.h > 10) {
-      executeCropPhoto();
-    }
-  }
-  isDrawing = false;
-}
-
-function clearSelection() { selectionRect = null; applyEditorFilters(); }
-
-function editSelectedArea(type) {
-  if (!selectionRect || selectionRect.w < 5) return alert("Please select an area first!");
+// Fill custom lasso shape with chosen color
+function fillCustomShapeWithColor() {
+  if (freeformPoints.length < 3) return alert("Pehle screen par koi shape/lasso draw karein!");
   const photo = openPhotosList[activePhotoIndex];
   const bCtx = photo.bufferCanvas.getContext("2d");
-  const x = Math.max(0, Math.floor(selectionRect.x)), y = Math.max(0, Math.floor(selectionRect.y));
-  const w = Math.min(photo.bufferCanvas.width - x, Math.floor(selectionRect.w));
-  const h = Math.min(photo.bufferCanvas.height - y, Math.floor(selectionRect.h));
-  const imgData = bCtx.getImageData(x, y, w, h);
-  const d = imgData.data;
+  const fillColor = document.getElementById("shapeFillColor").value;
 
+  bCtx.save();
+  bCtx.beginPath();
+  bCtx.moveTo(freeformPoints[0].x, freeformPoints[0].y);
+  for (let i = 1; i < freeformPoints.length; i++) {
+    bCtx.lineTo(freeformPoints[i].x, freeformPoints[i].y);
+  }
+  bCtx.closePath();
+  bCtx.fillStyle = fillColor;
+  bCtx.fill();
+  bCtx.restore();
+
+  freeformPoints = [];
+  isDrawingFreeform = false;
+  applyEditorFilters();
+  setStatus("editorStatus", "Color filled successfully inside the freeform shape!");
+}
+
+function editSelectedArea(type) {
+  if (freeformPoints.length < 3) return alert("Pehle screen par koi shape/lasso draw karein!");
+  const photo = openPhotosList[activePhotoIndex];
+  const bCtx = photo.bufferCanvas.getContext("2d");
+
+  // Create clipping path for irregular shape
+  bCtx.save();
+  bCtx.beginPath();
+  bCtx.moveTo(freeformPoints[0].x, freeformPoints[0].y);
+  for (let i = 1; i < freeformPoints.length; i++) {
+    bCtx.lineTo(freeformPoints[i].x, freeformPoints[i].y);
+  }
+  bCtx.closePath();
+  bCtx.clip();
+
+  // Apply effect to clipped region
+  const imgData = bCtx.getImageData(0, 0, photo.bufferCanvas.width, photo.bufferCanvas.height);
+  const d = imgData.data;
   for (let i = 0; i < d.length; i += 4) {
     if (type === 'brightness') { d[i] = Math.min(255, d[i]+50); d[i+1] = Math.min(255, d[i+1]+50); d[i+2] = Math.min(255, d[i+2]+50); }
     else if (type === 'darken') { d[i] = Math.max(0, d[i]-50); d[i+1] = Math.max(0, d[i+1]-50); d[i+2] = Math.max(0, d[i+2]-50); }
     else if (type === 'grayscale') { const avg = (d[i]+d[i+1]+d[i+2])/3; d[i]=avg; d[i+1]=avg; d[i+2]=avg; }
   }
-  bCtx.putImageData(imgData, x, y);
+  bCtx.putImageData(imgData, 0, 0);
+  bCtx.restore();
+
+  freeformPoints = [];
+  isDrawingFreeform = false;
   applyEditorFilters();
-  setStatus("editorStatus", `Applied ${type} to selected region!`);
-}
-
-function executeCropPhoto() {
-  const photo = openPhotosList[activePhotoIndex];
-  const bCtx = photo.bufferCanvas.getContext("2d");
-  const x = Math.floor(selectionRect.x), y = Math.floor(selectionRect.y);
-  const w = Math.floor(selectionRect.w), h = Math.floor(selectionRect.h);
-  const croppedData = bCtx.getImageData(x, y, w, h);
-  const newBuf = document.createElement("canvas");
-  newBuf.width = w; newBuf.height = h;
-  newBuf.getContext("2d").putImageData(croppedData, 0, 0);
-
-  const newImg = new Image();
-  newImg.onload = () => {
-    photo.bufferCanvas = newBuf;
-    photo.imgObj = newImg;
-    selectionRect = null;
-    applyEditorFilters();
-    setStatus("editorStatus", "Photo cropped successfully!");
-  };
-  newImg.src = newBuf.toDataURL();
+  setStatus("editorStatus", `Applied ${type} to freeform shape!`);
 }
 
 function rotateEditorImage(deg) {
@@ -531,7 +389,7 @@ function resetCurrentPhoto() {
   photo.bufferCanvas = buf;
   photo.brightness = 100; photo.contrast = 100; photo.saturate = 100; photo.blur = 0;
   photo.rotate = 0; photo.flip = false; photo.specialEffect = 'none';
-  selectionRect = null;
+  freeformPoints = [];
   applyEditorFilters();
   setStatus("editorStatus", "Photo reset to original state.");
 }
@@ -540,7 +398,7 @@ function downloadEditedImage() {
   if (openPhotosList.length === 0) return;
   const photo = openPhotosList[activePhotoIndex];
   document.getElementById("editorCanvas").toBlob(blob => {
-    saveBlob(blob, `PhotoshopPro_${photo.name}`);
+    saveBlob(blob, `PhotoshopFreeform_${photo.name}`);
     setStatus("editorStatus", "Photo downloaded successfully!");
   }, "image/png");
 }
