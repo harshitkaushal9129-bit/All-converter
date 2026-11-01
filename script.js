@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   loadProfileData();
   initThemePreference();
+  initAndroidTouchSupport();
 });
 
 function toggleTheme() {
@@ -72,6 +73,66 @@ function saveBlob(blob, name) {
   a.href = url; a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+// ================= ANDROID TOUCH SUPPORT BRIDGE =================
+function initAndroidTouchSupport() {
+  const canvas = document.getElementById("editorCanvas");
+  if (!canvas) return;
+
+  const getTouchPos = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0] || e.changedTouches[0];
+    return {
+      x: (touch.clientX - rect.left) * (canvas.width / rect.width),
+      y: (touch.clientY - rect.top) * (canvas.height / rect.height)
+    };
+  };
+
+  canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    const pos = getTouchPos(e);
+    if (activePhotoshopTool === 'freeform' || activePhotoshopTool === 'crop') {
+      isSelecting = true;
+      startX = pos.x; startY = pos.y;
+      selectionRect = { x: startX, y: startY, w: 0, h: 0 };
+    } else if (activePhotoshopTool === 'brush') {
+      isDrawing = true;
+      lastX = pos.x; lastY = pos.y;
+    }
+  }, { passive: false });
+
+  canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    const pos = getTouchPos(e);
+    if (isSelecting) {
+      selectionRect.w = pos.x - startX;
+      selectionRect.h = pos.y - startY;
+      applyEditorFilters();
+    } else if (isDrawing) {
+      const photo = openPhotosList[activePhotoIndex];
+      const bCtx = photo.bufferCanvas.getContext("2d");
+      bCtx.strokeStyle = document.getElementById("brushColorPicker").value;
+      bCtx.lineWidth = parseInt(document.getElementById("brushSizeRange").value) || 5;
+      bCtx.lineCap = "round"; bCtx.lineJoin = "round";
+      bCtx.beginPath(); bCtx.moveTo(lastX, lastY); bCtx.lineTo(pos.x, pos.y); bCtx.stroke();
+      lastX = pos.x; lastY = pos.y;
+      applyEditorFilters();
+    }
+  }, { passive: false });
+
+  canvas.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    if (isSelecting) {
+      isSelecting = false;
+      if (selectionRect.w < 0) { selectionRect.x += selectionRect.w; selectionRect.w = Math.abs(selectionRect.w); }
+      if (selectionRect.h < 0) { selectionRect.y += selectionRect.h; selectionRect.h = Math.abs(selectionRect.h); }
+      if (activePhotoshopTool === 'crop' && selectionRect.w > 10 && selectionRect.h > 10) {
+        executeCropPhoto();
+      }
+    }
+    isDrawing = false;
+  }, { passive: false });
 }
 
 // ================= TYPING MASTER 12 (10 LESSONS & PRINT) =================
@@ -335,6 +396,7 @@ function applyEditorFilters() {
   }
 }
 
+// Mouse events for PC testing
 function startCanvasInteraction(e) {
   if (activePhotoshopTool === 'freeform' || activePhotoshopTool === 'crop') {
     const canvas = document.getElementById("editorCanvas");
@@ -353,6 +415,7 @@ function startCanvasInteraction(e) {
 }
 
 function moveCanvasInteraction(e) {
+  if (!isSelecting && !isDrawing) return;
   const canvas = document.getElementById("editorCanvas");
   const rect = canvas.getBoundingClientRect();
   const currX = (e.clientX - rect.left) * (canvas.width / rect.width);
