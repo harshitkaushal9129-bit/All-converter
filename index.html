@@ -2,9 +2,11 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>File Converter Pro 2027 - Ultimate Suite</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>File Converter Pro 2027 - Android Mobile Edition</title>
 <meta name="theme-color" content="#0f172a">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -40,7 +42,7 @@
     <div class="brand-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
     <div>
       <div class="brand-title">File Converter Pro</div>
-      <div class="brand-subtitle">v2027.0 Ultimate Suite</div>
+      <div class="brand-subtitle">v2027.0 Android Touch Edition</div>
     </div>
   </div>
   <div class="header-actions">
@@ -57,7 +59,7 @@
   <div id="homeDashboard">
     <div class="dashboard-hero">
       <h1>Select an Advanced Tool</h1>
-      <p>Click on any box below to open the professional tool interface instantly.</p>
+      <p>Optimized for Android touch screens and desktop browsers.</p>
     </div>
 
     <div class="grid">
@@ -73,7 +75,7 @@
       <div class="card-selector" onclick="openTool('photoEditorView')">
         <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
         <h3>Photoshop Studio Pro (12 Tools)</h3>
-        <p>Multi-photo tabs, freeform region editing, brush/pencil drawing, filters & effects.</p>
+        <p>Multi-photo touch tabs, freeform region editing, brush/pencil drawing & filters.</p>
         <div class="card-footer-link">Open Studio <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
@@ -170,12 +172,12 @@
   <!-- Photoshop Studio Pro -->
   <div id="photoEditorView" class="tool-view">
     <div class="tool-header-bar">
-      <h2><i class="fa-solid fa-sliders"></i> Photoshop Studio Pro (12 Tools Suite)</h2>
+      <h2><i class="fa-solid fa-sliders"></i> Photoshop Studio Pro (Android Touch)</h2>
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
     </div>
 
     <div class="drop-zone" onclick="document.getElementById('editorImgFile').click()">
-      <div class="drop-zone-text" id="editorImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Open Photo(s) / Add More Photos</div>
+      <div class="drop-zone-text" id="editorImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Open Photo(s) from Phone Gallery</div>
       <input id="editorImgFile" type="file" accept="image/*" multiple onchange="loadMultipleEditorImages(this)">
     </div>
 
@@ -189,7 +191,7 @@
       <div class="editor-mode-banner">
         <button class="action-btn secondary mode-tab-btn active" id="btnToolGlobal" onclick="setPhotoshopTool('global')"><i class="fa-solid fa-sliders"></i> 1. Global Filters</button>
         <button class="action-btn secondary mode-tab-btn" id="btnToolFreeform" onclick="setPhotoshopTool('freeform')"><i class="fa-solid fa-draw-polygon"></i> 2. Freeform Area Edit</button>
-        <button class="action-btn secondary mode-tab-btn" id="btnToolBrush" onclick="setPhotoshopTool('brush')"><i class="fa-solid fa-paintbrush"></i> 3. Brush / Pencil</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolBrush" onclick="setPhotoshopTool('brush')"><i class="fa-solid fa-paintbrush"></i> 3. Touch Brush / Pencil</button>
         <button class="action-btn secondary mode-tab-btn" id="btnToolRotate" onclick="rotateEditorImage(90)"><i class="fa-solid fa-rotate-right"></i> 4. Rotate</button>
         <button class="action-btn secondary mode-tab-btn" id="btnToolFlip" onclick="flipEditorImage()"><i class="fa-solid fa-repeat"></i> 5. Flip Mirror</button>
         <button class="action-btn secondary mode-tab-btn" id="btnToolSepia" onclick="applySpecialEffect('sepia')"><i class="fa-solid fa-palette"></i> 6. Sepia Tone</button>
@@ -202,11 +204,7 @@
       </div>
 
       <div class="editor-canvas-wrapper" id="editorCanvasWrapper">
-        <canvas id="editorCanvas" 
-          onmousedown="startCanvasInteraction(event)" 
-          onmousemove="moveCanvasInteraction(event)" 
-          onmouseup="endCanvasInteraction(event)">
-        </canvas>
+        <canvas id="editorCanvas"></canvas>
       </div>
 
       <!-- Tool Specific Panels -->
@@ -220,7 +218,7 @@
       </div>
 
       <div id="freeformControlsPanel" class="hidden freeform-panel-box">
-        <p class="freeform-hint"><i class="fa-solid fa-circle-info"></i> Mouse se area drag karein aur neechay se selected area par effect apply karein:</p>
+        <p class="freeform-hint"><i class="fa-solid fa-circle-info"></i> Finger touch se screen par area drag karein aur neechay se effect apply karein:</p>
         <div class="btn-group">
           <button class="action-btn" onclick="editSelectedArea('brightness')"><i class="fa-solid fa-sun"></i> Brighten Selection</button>
           <button class="action-btn" onclick="editSelectedArea('darken')"><i class="fa-solid fa-moon"></i> Darken Selection</button>
@@ -232,7 +230,7 @@
       <div id="brushControlsPanel" class="hidden freeform-panel-box">
         <div class="editor-sliders-grid">
           <div>
-            <label>Brush / Pencil Color</label>
+            <label>Brush Color</label>
             <input type="color" id="brushColorPicker" value="#f97316" class="color-picker-input">
           </div>
           <div>
@@ -240,10 +238,10 @@
             <input type="range" id="brushSizeRange" min="1" max="50" value="5" oninput="document.getElementById('brushSizeVal').textContent=this.value">
           </div>
         </div>
-        <p class="freeform-hint"><i class="fa-solid fa-paintbrush"></i> Canvas par drag karke freehand painting karein.</p>
+        <p class="freeform-hint"><i class="fa-solid fa-paintbrush"></i> Finger drag karke screen par freehand painting karein.</p>
       </div>
 
-      <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Download Current Photo</button>
+      <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Download to Phone</button>
     </div>
     <div class="status" id="editorStatus"></div>
   </div>
@@ -251,7 +249,7 @@
   <!-- Ultra HD Enhancer -->
   <div id="hdView" class="tool-view">
     <div class="tool-header-bar"><h2><i class="fa-solid fa-expand"></i> Ultra HD 4K Enhancer Pro</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div>
-    <div class="drop-zone" onclick="document.getElementById('hdImgFile').click()"><div class="drop-zone-text" id="hdImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Low Res Image</div><input id="hdImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'hdImgText')"></div>
+    <div class="drop-zone" onclick="document.getElementById('hdImgFile').click()"><div class="drop-zone-text" id="hdImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image from Gallery</div><input id="hdImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'hdImgText')"></div>
     <div class="btn-group"><button class="action-btn" onclick="convertToUltraHD(2)">2X HD Upscale</button><button class="action-btn" onclick="convertToUltraHD(4)">4X Ultra HD AI</button></div>
     <div class="status" id="hdStatus"></div>
   </div>
@@ -262,7 +260,7 @@
     <div class="drop-zone" onclick="document.getElementById('bgImgFile').click()"><div class="drop-zone-text" id="bgImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image</div><input id="bgImgFile" type="file" accept="image/*" onchange="loadBgRemImage(this)"></div>
     <div id="bgControlsContainer" class="hidden">
       <div class="bg-preview-layout">
-        <div><label>1. Click to Pick Color</label><div class="canvas-click-wrapper" onclick="pickColorForBg(event)"><canvas id="bgSourceCanvas"></canvas></div></div>
+        <div><label>1. Tap to Pick Color</label><div class="canvas-click-wrapper" onclick="pickColorForBg(event)"><canvas id="bgSourceCanvas"></canvas></div></div>
         <div><label>2. Transparent Preview</label><div class="canvas-click-wrapper checkered-bg"><canvas id="bgPreviewCanvas"></canvas></div></div>
       </div>
       <div class="bg-settings-row">
