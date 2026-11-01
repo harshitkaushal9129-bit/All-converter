@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>File Converter Pro 2027 - Advanced Dashboard</title>
+<title>File Converter Pro 2027 - Photoshop Pro Studio</title>
 <meta name="theme-color" content="#0f172a">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
@@ -91,11 +91,11 @@
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
-      <!-- 3. Mini Photoshop Editor -->
+      <!-- 3. Photoshop Studio Pro -->
       <div class="card-selector" onclick="openTool('photoEditorView')">
         <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
-        <h3>Photoshop Pro Studio</h3>
-        <p>Advanced filters, sepia, invert, vignette, rotate, and transform utilities.</p>
+        <h3>Photoshop Studio Pro (Multi-Photo & Freeform)</h3>
+        <p>Open multiple photos, switch tabs, freeform selection, and localized color editing.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
@@ -222,7 +222,6 @@
       <h2><i class="fa-solid fa-keyboard"></i> Advanced Typing Speed & WPM Master</h2>
       <button class="back-home-btn" onclick="closeTypingTestView()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
-
     <div id="typingSetupBox" class="typing-setup-box">
       <h3><i class="fa-solid fa-sliders"></i> Test Configuration Setup</h3>
       <div class="typing-config-grid">
@@ -246,14 +245,10 @@
       </div>
       <button class="action-btn" onclick="beginTypingTestSession()"><i class="fa-solid fa-play"></i> Proceed & Start Test</button>
     </div>
-
     <div id="typingWorkspace" class="hidden">
-      <div class="typing-progress-track">
-        <div id="typingProgressBar" class="typing-progress-fill"></div>
-      </div>
+      <div class="typing-progress-track"><div id="typingProgressBar" class="typing-progress-fill"></div></div>
       <div id="passageDisplayBox" class="passage-display-box"></div>
       <textarea id="typingInput" placeholder="Start typing the passage above here..." oninput="evaluateTyping()" class="typing-input-area"></textarea>
-      
       <div class="stats-dashboard-grid">
         <div class="stat-card"><b id="tsWpm">0</b><br><small>WPM</small></div>
         <div class="stat-card"><b id="tsAccuracy">100%</b><br><small>Accuracy</small></div>
@@ -293,7 +288,6 @@
       <div class="drop-zone-text" id="bgImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image to Remove Multiple Colors</div>
       <input id="bgImgFile" type="file" accept="image/*" onchange="loadBgRemImage(this)">
     </div>
-
     <div id="bgControlsContainer" class="hidden">
       <div class="bg-preview-layout">
         <div>
@@ -305,12 +299,9 @@
         </div>
         <div>
           <label>2. Live Multi-Color Transparent Preview</label>
-          <div class="canvas-click-wrapper checkered-bg">
-            <canvas id="bgPreviewCanvas"></canvas>
-          </div>
+          <div class="canvas-click-wrapper checkered-bg"><canvas id="bgPreviewCanvas"></canvas></div>
         </div>
       </div>
-
       <div class="bg-settings-row">
         <div>
           <label>Selected Base Color (RGB)</label>
@@ -321,44 +312,70 @@
           <input type="range" id="bgTolerance" min="1" max="100" value="35" oninput="updateBgToleranceLabel(); processBgRemovalLive();">
         </div>
       </div>
-
       <button class="action-btn" onclick="downloadBgRemovedImage()"><i class="fa-solid fa-download"></i> Download Transparent PNG</button>
     </div>
     <div class="status" id="bgRemStatus"></div>
   </div>
 
-  <!-- Photoshop Image Editor Pro -->
+  <!-- Photoshop Studio Pro (Multi-Photo & Freeform Selection) -->
   <div id="photoEditorView" class="tool-view">
     <div class="tool-header-bar">
-      <h2><i class="fa-solid fa-sliders"></i> Photoshop Image Studio Pro</h2>
+      <h2><i class="fa-solid fa-sliders"></i> Photoshop Studio Pro</h2>
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
+
+    <!-- Multi-Photo Open Drop Zone & Tab Bar -->
     <div class="drop-zone" onclick="document.getElementById('editorImgFile').click()">
-      <div class="drop-zone-text" id="editorImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image to Edit & Activate Tools</div>
-      <input id="editorImgFile" type="file" accept="image/*" onchange="loadEditorImage(this)">
+      <div class="drop-zone-text" id="editorImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Open New Photo / Add Another Image</div>
+      <input id="editorImgFile" type="file" accept="image/*" multiple onchange="loadMultipleEditorImages(this)">
+    </div>
+
+    <!-- Active Open Photos Tabs Bar -->
+    <div id="photoTabsContainer" class="photo-tabs-bar hidden">
+      <span class="tab-bar-label"><i class="fa-solid fa-images"></i> Open Photos:</span>
+      <div id="tabsList" class="tabs-list-flex"></div>
     </div>
 
     <div id="editorControls" class="hidden">
-      <div class="editor-canvas-wrapper">
-        <canvas id="editorCanvas"></canvas>
+      <!-- Mode Selection: Global vs Freeform Selection -->
+      <div class="editor-mode-banner">
+        <button class="action-btn secondary mode-tab-btn active" id="btnModeGlobal" onclick="setEditorMode('global')"><i class="fa-solid fa-earth-americas"></i> Global Image Edit</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnModeFreeform" onclick="setEditorMode('freeform')"><i class="fa-solid fa-draw-polygon"></i> Freeform Region Selection</button>
       </div>
 
-      <div class="editor-sliders-grid">
-        <div><label>Brightness</label><input type="range" id="eBrightness" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
-        <div><label>Contrast</label><input type="range" id="eContrast" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
-        <div><label>Saturate</label><input type="range" id="eSaturate" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
-        <div><label>Blur (px)</label><input type="range" id="eBlur" min="0" max="20" value="0" oninput="applyEditorFilters()"></div>
+      <div class="editor-canvas-wrapper" id="editorCanvasWrapper">
+        <canvas id="editorCanvas" onmousedown="startFreeformSelection(event)" onmousemove="drawFreeformSelection(event)" onmouseup="endFreeformSelection(event)"></canvas>
       </div>
 
-      <div class="btn-group">
-        <button class="action-btn secondary" onclick="rotateEditorImage(-90)"><i class="fa-solid fa-rotate-left"></i> Rotate Left</button>
-        <button class="action-btn secondary" onclick="rotateEditorImage(90)"><i class="fa-solid fa-rotate-right"></i> Rotate Right</button>
-        <button class="action-btn secondary" onclick="flipEditorImage()"><i class="fa-solid fa-repeat"></i> Flip</button>
-        <button class="action-btn secondary" onclick="applySpecialEffect('sepia')"><i class="fa-solid fa-palette"></i> Sepia</button>
-        <button class="action-btn secondary" onclick="applySpecialEffect('invert')"><i class="fa-solid fa-circle-half-stroke"></i> Invert</button>
+      <!-- Global Controls -->
+      <div id="globalControlsPanel">
+        <div class="editor-sliders-grid">
+          <div><label>Brightness</label><input type="range" id="eBrightness" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
+          <div><label>Contrast</label><input type="range" id="eContrast" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
+          <div><label>Saturate</label><input type="range" id="eSaturate" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
+          <div><label>Blur (px)</label><input type="range" id="eBlur" min="0" max="20" value="0" oninput="applyEditorFilters()"></div>
+        </div>
+        <div class="btn-group">
+          <button class="action-btn secondary" onclick="rotateEditorImage(-90)"><i class="fa-solid fa-rotate-left"></i> Rotate Left</button>
+          <button class="action-btn secondary" onclick="rotateEditorImage(90)"><i class="fa-solid fa-rotate-right"></i> Rotate Right</button>
+          <button class="action-btn secondary" onclick="flipEditorImage()"><i class="fa-solid fa-repeat"></i> Flip</button>
+          <button class="action-btn secondary" onclick="applySpecialEffect('sepia')"><i class="fa-solid fa-palette"></i> Sepia</button>
+          <button class="action-btn secondary" onclick="applySpecialEffect('invert')"><i class="fa-solid fa-circle-half-stroke"></i> Invert</button>
+        </div>
       </div>
 
-      <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Download Edited Image</button>
+      <!-- Freeform Selection Controls (Visible only in freeform mode) -->
+      <div id="freeformControlsPanel" class="hidden freeform-panel-box">
+        <p class="freeform-hint"><i class="fa-solid fa-circle-info"></i> Mouse se canvas par drag karke rectangular/freeform area select karein:</p>
+        <div class="btn-group">
+          <button class="action-btn" onclick="editSelectedArea('brightness')"><i class="fa-solid fa-sun"></i> Brighten Selected Area</button>
+          <button class="action-btn" onclick="editSelectedArea('darken')"><i class="fa-solid fa-moon"></i> Darken Selected Area</button>
+          <button class="action-btn secondary" onclick="editSelectedArea('grayscale')"><i class="fa-solid fa-image"></i> Grayscale Selected Area</button>
+          <button class="action-btn secondary" onclick="clearSelection()"><i class="fa-solid fa-xmark"></i> Clear Selection</button>
+        </div>
+      </div>
+
+      <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Download Current Edited Photo</button>
     </div>
     <div class="status" id="editorStatus"></div>
   </div>
