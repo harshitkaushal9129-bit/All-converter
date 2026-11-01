@@ -522,6 +522,54 @@ function stopTypingTestForce() {
   isTypingActive = false;
 }
 
+// ================= SVG TO PNG RASTERIZER =================
+let loadedSvgString = "";
+
+function loadSvgFile(input) {
+  if (input.files && input.files[0]) {
+    updateFileName(input, 'svgFileText');
+    const reader = new FileReader();
+    reader.onload = e => {
+      loadedSvgString = e.target.result;
+      document.getElementById("svgCodeInput").value = loadedSvgString;
+      setStatus("svgStatus", "SVG file loaded successfully!");
+    };
+    reader.readAsText(input.files[0]);
+  }
+}
+
+function svgToPng() {
+  const code = document.getElementById("svgCodeInput").value.trim() || loadedSvgString;
+  if (!code) {
+    return setStatus("svgStatus", "Pehle SVG code paste karein ya file upload karein!", false);
+  }
+
+  const blob = new Blob([code], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+
+  img.onload = () => {
+    const c = document.createElement("canvas");
+    c.width = img.naturalWidth || 800;
+    c.height = img.naturalHeight || 600;
+    const ctx = c.getContext("2d");
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.drawImage(img, 0, 0);
+
+    c.toBlob(pngBlob => {
+      URL.revokeObjectURL(url);
+      saveBlob(pngBlob, "Converted_Logo.png");
+      setStatus("svgStatus", "SVG successfully converted & downloaded as PNG!");
+    }, "image/png");
+  };
+
+  img.onerror = () => {
+    setStatus("svgStatus", "Invalid SVG code format!", false);
+  };
+
+  img.src = url;
+}
+
 // ================= ALL OTHER UTILITY TOOLS =================
 let bgSourceImageObj = null, currentBgColor = { r: 255, g: 255, b: 255 };
 function loadBgRemImage(input) {
@@ -606,15 +654,6 @@ function imageConvert(id, fmt, stat) {
     ctx.drawImage(img,0,0); c.toBlob(b=>{URL.revokeObjectURL(url);saveBlob(b,`img.${fmt}`);setStatus(stat,"Converted!");},`image/${fmt==='jpg'?'jpeg':fmt}`);
   };
   img.src = url;
-}
-function svgToPng() {
-  const code = document.getElementById("svgCodeInput").value.trim();
-  if(code) {
-    const blob = new Blob([code],{type:"image/svg+xml;charset=utf-8"});
-    const url = URL.createObjectURL(blob); const img = new Image();
-    img.onload = () => { const c = document.createElement("canvas"); c.width=img.naturalWidth||800;c.height=img.naturalHeight||600; c.getContext("2d").drawImage(img,0,0); c.toBlob(b=>{URL.revokeObjectURL(url);saveBlob(b,"svg.png");setStatus("svgStatus","Converted!");}, "image/png"); };
-    img.src = url;
-  }
 }
 function processBase64(enc) {
   try{ const v=document.getElementById("base64Input").value; document.getElementById("base64Input").value = enc ? btoa(v) : atob(v); setStatus("base64Status","Success!");}catch(e){setStatus("base64Status","Error",false);}
