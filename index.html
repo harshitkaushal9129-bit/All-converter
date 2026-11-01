@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>File Converter Pro 2027 - Android Mobile Edition</title>
+<title>File Converter Pro 2027 - Photoshop Studio Freeform Edition</title>
 <meta name="theme-color" content="#0f172a">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
@@ -42,7 +42,7 @@
     <div class="brand-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
     <div>
       <div class="brand-title">File Converter Pro</div>
-      <div class="brand-subtitle">v2027.0 Android Touch Edition</div>
+      <div class="brand-subtitle">v2027.0 Freeform Studio Edition</div>
     </div>
   </div>
   <div class="header-actions">
@@ -59,7 +59,7 @@
   <div id="homeDashboard">
     <div class="dashboard-hero">
       <h1>Select an Advanced Tool</h1>
-      <p>Optimized for Android touch screens and desktop browsers.</p>
+      <p>Click on Photoshop Studio Pro to use freeform shape selections and custom color fills.</p>
     </div>
 
     <div class="grid">
@@ -74,8 +74,8 @@
       <!-- Photoshop Studio Pro -->
       <div class="card-selector" onclick="openTool('photoEditorView')">
         <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
-        <h3>Photoshop Studio Pro (12 Tools)</h3>
-        <p>Multi-photo touch tabs, freeform region editing, brush/pencil drawing & filters.</p>
+        <h3>Photoshop Studio Pro (Freeform & Color Fill)</h3>
+        <p>Freeform shape selection, custom color filling, multi-photo tabs & filters.</p>
         <div class="card-footer-link">Open Studio <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
@@ -172,12 +172,12 @@
   <!-- Photoshop Studio Pro -->
   <div id="photoEditorView" class="tool-view">
     <div class="tool-header-bar">
-      <h2><i class="fa-solid fa-sliders"></i> Photoshop Studio Pro (Android Touch)</h2>
+      <h2><i class="fa-solid fa-sliders"></i> Photoshop Studio Pro (Freeform Shape & Color Fill)</h2>
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
     </div>
 
     <div class="drop-zone" onclick="document.getElementById('editorImgFile').click()">
-      <div class="drop-zone-text" id="editorImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Open Photo(s) from Phone Gallery</div>
+      <div class="drop-zone-text" id="editorImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Open Photo(s) from Gallery</div>
       <input id="editorImgFile" type="file" accept="image/*" multiple onchange="loadMultipleEditorImages(this)">
     </div>
 
@@ -187,11 +187,11 @@
     </div>
 
     <div id="editorControls" class="hidden">
-      <!-- 12 Photoshop Tools Navigation Bar -->
+      <!-- Photoshop Tools Navigation Bar -->
       <div class="editor-mode-banner">
         <button class="action-btn secondary mode-tab-btn active" id="btnToolGlobal" onclick="setPhotoshopTool('global')"><i class="fa-solid fa-sliders"></i> 1. Global Filters</button>
-        <button class="action-btn secondary mode-tab-btn" id="btnToolFreeform" onclick="setPhotoshopTool('freeform')"><i class="fa-solid fa-draw-polygon"></i> 2. Freeform Area Edit</button>
-        <button class="action-btn secondary mode-tab-btn" id="btnToolBrush" onclick="setPhotoshopTool('brush')"><i class="fa-solid fa-paintbrush"></i> 3. Touch Brush / Pencil</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolFreeform" onclick="setPhotoshopTool('freeform')"><i class="fa-solid fa-draw-polygon"></i> 2. Freeform Lasso Shape</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolBrush" onclick="setPhotoshopTool('brush')"><i class="fa-solid fa-paintbrush"></i> 3. Touch Brush</button>
         <button class="action-btn secondary mode-tab-btn" id="btnToolRotate" onclick="rotateEditorImage(90)"><i class="fa-solid fa-rotate-right"></i> 4. Rotate</button>
         <button class="action-btn secondary mode-tab-btn" id="btnToolFlip" onclick="flipEditorImage()"><i class="fa-solid fa-repeat"></i> 5. Flip Mirror</button>
         <button class="action-btn secondary mode-tab-btn" id="btnToolSepia" onclick="applySpecialEffect('sepia')"><i class="fa-solid fa-palette"></i> 6. Sepia Tone</button>
@@ -217,13 +217,23 @@
         </div>
       </div>
 
+      <!-- Freeform Lasso Shape & Color Fill Panel -->
       <div id="freeformControlsPanel" class="hidden freeform-panel-box">
-        <p class="freeform-hint"><i class="fa-solid fa-circle-info"></i> Finger touch se screen par area drag karein aur neechay se effect apply karein:</p>
+        <p class="freeform-hint"><i class="fa-solid fa-circle-info"></i> Image par koi bhi irregular/freeform shape draw karein (Lasso select), phir niche se color fill karein ya adjustments apply karein:</p>
+        <div class="editor-sliders-grid" style="margin-bottom:10px;">
+          <div>
+            <label>Select Fill Color</label>
+            <input type="color" id="shapeFillColor" value="#22c55e" class="color-picker-input">
+          </div>
+          <div style="display:flex; align-items:flex-end;">
+            <button class="action-btn" onclick="fillCustomShapeWithColor()"><i class="fa-solid fa-fill-drip"></i> Fill Color in Shape</button>
+          </div>
+        </div>
         <div class="btn-group">
-          <button class="action-btn" onclick="editSelectedArea('brightness')"><i class="fa-solid fa-sun"></i> Brighten Selection</button>
-          <button class="action-btn" onclick="editSelectedArea('darken')"><i class="fa-solid fa-moon"></i> Darken Selection</button>
-          <button class="action-btn secondary" onclick="editSelectedArea('grayscale')"><i class="fa-solid fa-image"></i> Grayscale Selection</button>
-          <button class="action-btn secondary" onclick="clearSelection()"><i class="fa-solid fa-xmark"></i> Clear Selection</button>
+          <button class="action-btn" onclick="editSelectedArea('brightness')"><i class="fa-solid fa-sun"></i> Brighten Shape</button>
+          <button class="action-btn" onclick="editSelectedArea('darken')"><i class="fa-solid fa-moon"></i> Darken Shape</button>
+          <button class="action-btn secondary" onclick="editSelectedArea('grayscale')"><i class="fa-solid fa-image"></i> B&W Shape</button>
+          <button class="action-btn secondary" onclick="clearSelection()"><i class="fa-solid fa-xmark"></i> Clear Shape</button>
         </div>
       </div>
 
@@ -238,10 +248,10 @@
             <input type="range" id="brushSizeRange" min="1" max="50" value="5" oninput="document.getElementById('brushSizeVal').textContent=this.value">
           </div>
         </div>
-        <p class="freeform-hint"><i class="fa-solid fa-paintbrush"></i> Finger drag karke screen par freehand painting karein.</p>
+        <p class="freeform-hint"><i class="fa-solid fa-paintbrush"></i> Finger ya mouse drag karke freehand painting karein.</p>
       </div>
 
-      <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Download to Phone</button>
+      <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Download Final Photo</button>
     </div>
     <div class="status" id="editorStatus"></div>
   </div>
