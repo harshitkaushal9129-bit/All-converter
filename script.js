@@ -1,115 +1,46 @@
 document.addEventListener("DOMContentLoaded", () => {
   loadProfileData();
   initThemePreference();
-  registerPWA();
 });
-
-function registerPWA() {
-  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.log('PWA Service Worker failed:', err));
-  }
-}
 
 function toggleTheme() {
   const body = document.body;
-  const themeIcon = document.getElementById("themeIcon");
-  const themeBtn = document.getElementById("themeToggleBtn");
   const currentTheme = body.getAttribute("data-theme");
-  
-  if (currentTheme === "dark") {
-    body.setAttribute("data-theme", "light");
-    if(themeIcon) themeIcon.className = "fa-solid fa-sun";
-    if(themeBtn) themeBtn.innerHTML = `<i class="fa-solid fa-sun" id="themeIcon"></i> Switch to Dark Mode`;
-    localStorage.setItem("appTheme", "light");
-  } else {
-    body.setAttribute("data-theme", "dark");
-    if(themeIcon) themeIcon.className = "fa-solid fa-moon";
-    if(themeBtn) themeBtn.innerHTML = `<i class="fa-solid fa-moon" id="themeIcon"></i> Switch to Light Mode`;
-    localStorage.setItem("appTheme", "dark");
-  }
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+  body.setAttribute("data-theme", newTheme);
+  localStorage.setItem("appTheme", newTheme);
 }
 
 function initThemePreference() {
   const savedTheme = localStorage.getItem("appTheme") || "dark";
   document.body.setAttribute("data-theme", savedTheme);
-  const themeIcon = document.getElementById("themeIcon");
-  const themeBtn = document.getElementById("themeToggleBtn");
-  if (themeIcon && themeBtn) {
-    if (savedTheme === "light") {
-      themeIcon.className = "fa-solid fa-sun";
-      themeBtn.innerHTML = `<i class="fa-solid fa-sun" id="themeIcon"></i> Switch to Dark Mode`;
-    } else {
-      themeIcon.className = "fa-solid fa-moon";
-      themeBtn.innerHTML = `<i class="fa-solid fa-moon" id="themeIcon"></i> Switch to Light Mode`;
-    }
-  }
 }
 
 function loadProfileData() {
-  const profile = JSON.parse(localStorage.getItem("userProfile")) || {
-    userId: "kaushalji9129",
-    username: "kaushalji",
-    mobile: "9876543210",
-    dob: "2004-09-13",
-    avatar: ""
-  };
+  const profile = JSON.parse(localStorage.getItem("userProfile")) || { username: "kaushalji" };
   document.getElementById("navUsername").textContent = profile.username;
-  const avatarEl = document.getElementById("navAvatar");
-  if (profile.avatar) {
-    avatarEl.innerHTML = `<img src="${profile.avatar}" alt="Avatar">`;
-  } else {
-    avatarEl.textContent = profile.username.substring(0, 2).toUpperCase();
-  }
+  document.getElementById("navAvatar").textContent = profile.username.substring(0, 2).toUpperCase();
 }
 
 function openProfileModal() {
-  const profile = JSON.parse(localStorage.getItem("userProfile")) || { userId: "", username: "kaushalji", mobile: "", dob: "2004-09-13", avatar: "" };
-  document.getElementById("editUserId").value = profile.userId || "";
-  document.getElementById("editUsername").value = profile.username || "";
-  document.getElementById("editMobile").value = profile.mobile || "";
-  document.getElementById("editDob").value = profile.dob || "";
-  document.getElementById("editAvatarUrl").value = profile.avatar && !profile.avatar.startsWith("data:") ? profile.avatar : "";
+  const profile = JSON.parse(localStorage.getItem("userProfile")) || { username: "kaushalji" };
+  document.getElementById("editUsername").value = profile.username;
   document.getElementById("profileModal").classList.add("active");
 }
-
 function closeProfileModal() { document.getElementById("profileModal").classList.remove("active"); }
-
-let tempAvatarBase64 = "";
-function previewAvatarFile(input) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      tempAvatarBase64 = e.target.result;
-      document.getElementById("editAvatarUrl").value = "[Image Uploaded]";
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
 
 function saveProfile(event) {
   event.preventDefault();
-  const userId = document.getElementById("editUserId").value.trim();
   const username = document.getElementById("editUsername").value.trim();
-  const mobile = document.getElementById("editMobile").value.trim();
-  const dob = document.getElementById("editDob").value;
-  let avatar = document.getElementById("editAvatarUrl").value.trim();
-  if (tempAvatarBase64) avatar = tempAvatarBase64;
-  else if (avatar === "[Image Uploaded]") {
-    const existing = JSON.parse(localStorage.getItem("userProfile"));
-    avatar = existing ? existing.avatar : "";
-  }
-  localStorage.setItem("userProfile", JSON.stringify({ userId, username, mobile, dob, avatar }));
+  localStorage.setItem("userProfile", JSON.stringify({ username }));
   loadProfileData();
   closeProfileModal();
-  alert("Registration data saved successfully!");
 }
 
 function openTool(viewId) {
-  const home = document.getElementById('homeDashboard');
-  if (home) home.style.display = 'none';
+  document.getElementById('homeDashboard').style.display = 'none';
   document.querySelectorAll('.tool-view').forEach(el => el.classList.remove('active'));
-  const target = document.getElementById(viewId);
-  if (target) target.classList.add('active');
+  document.getElementById(viewId).classList.add('active');
   if (viewId === 'typingSpeedView') resetTypingTest();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -117,22 +48,12 @@ function openTool(viewId) {
 function goHome() {
   stopTypingTestForce();
   document.querySelectorAll('.tool-view').forEach(el => el.classList.remove('active'));
-  const home = document.getElementById('homeDashboard');
-  if (home) home.style.display = 'block';
+  document.getElementById('homeDashboard').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function openAppInfoModal() { document.getElementById('appInfoModal').classList.add('active'); }
 function closeAppInfoModal() { document.getElementById('appInfoModal').classList.remove('active'); }
-function shareApp(type) {
-  const url = window.location.href;
-  if (type === 'copy') {
-    navigator.clipboard.writeText(url);
-    alert('App link copied to clipboard!');
-  } else if (type === 'whatsapp') {
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('Check out File Converter Pro 2027: ' + url)}`, '_blank');
-  }
-}
 
 function setStatus(id, text, isSuccess = true) {
   const el = document.getElementById(id);
@@ -142,8 +63,7 @@ function setStatus(id, text, isSuccess = true) {
 }
 
 function updateFileName(input, textId) {
-  const label = document.getElementById(textId);
-  if (input.files && input.files[0]) label.innerHTML = `<i class="fa-solid fa-file"></i> ${input.files[0].name}`;
+  if (input.files && input.files[0]) document.getElementById(textId).innerHTML = `<i class="fa-solid fa-file"></i> ${input.files[0].name}`;
 }
 
 function saveBlob(blob, name) {
@@ -154,273 +74,111 @@ function saveBlob(blob, name) {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
-// ================= MULTI-COLOR RANGE BACKGROUND REMOVER =================
-let bgSourceImageObj = null;
-let currentBgColor = { r: 255, g: 255, b: 255 };
-
-function loadBgRemImage(input) {
-  if (input.files && input.files[0]) {
-    updateFileName(input, 'bgImgText');
-    const reader = new FileReader();
-    reader.onload = e => {
-      bgSourceImageObj = new Image();
-      bgSourceImageObj.onload = () => {
-        document.getElementById("bgControlsContainer").classList.remove("hidden");
-        setupBgCanvasAndDefaultColor();
-      };
-      bgSourceImageObj.src = e.target.result;
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
-function setupBgCanvasAndDefaultColor() {
-  const srcCanvas = document.getElementById("bgSourceCanvas");
-  const ctx = srcCanvas.getContext("2d");
-  srcCanvas.width = bgSourceImageObj.width;
-  srcCanvas.height = bgSourceImageObj.height;
-  ctx.drawImage(bgSourceImageObj, 0, 0);
-
-  const pixel = ctx.getImageData(0, 0, 1, 1).data;
-  currentBgColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
-  document.getElementById("selectedColorDisplay").textContent = `RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
-  document.getElementById("selectedColorDisplay").style.background = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
-
-  processBgRemovalLive();
-}
-
-function pickColorForBg(event) {
-  const srcCanvas = document.getElementById("bgSourceCanvas");
-  const rect = srcCanvas.getBoundingClientRect();
-  const scaleX = srcCanvas.width / rect.width;
-  const scaleY = srcCanvas.height / rect.height;
-
-  const clickX = Math.floor((event.clientX - rect.left) * scaleX);
-  const clickY = Math.floor((event.clientY - rect.top) * scaleY);
-
-  const ctx = srcCanvas.getContext("2d");
-  const pixel = ctx.getImageData(clickX, clickY, 1, 1).data;
-  currentBgColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
-
-  document.getElementById("selectedColorDisplay").textContent = `RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
-  document.getElementById("selectedColorDisplay").style.background = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
-
-  processBgRemovalLive();
-}
-
-function updateBgToleranceLabel() {
-  const val = document.getElementById("bgTolerance").value;
-  document.getElementById("tolValueLabel").textContent = val;
-}
-
-function processBgRemovalLive() {
-  if (!bgSourceImageObj) return;
-  const tolerance = parseInt(document.getElementById("bgTolerance").value) || 35;
-  
-  const prevCanvas = document.getElementById("bgPreviewCanvas");
-  prevCanvas.width = bgSourceImageObj.width;
-  prevCanvas.height = bgSourceImageObj.height;
-  const pCtx = prevCanvas.getContext("2d");
-  
-  pCtx.drawImage(bgSourceImageObj, 0, 0);
-  const imgData = pCtx.getImageData(0, 0, prevCanvas.width, prevCanvas.height);
-  const data = imgData.data;
-
-  const targetR = currentBgColor.r;
-  const targetG = currentBgColor.g;
-  const targetB = currentBgColor.b;
-
-  for (let i = 0; i < data.length; i += 4) {
-    const r = data[i], g = data[i + 1], b = data[i + 2];
-    
-    // Euclidean distance formula to catch 20+ shades simultaneously within tolerance range
-    const distance = Math.sqrt(
-      Math.pow(r - targetR, 2) + 
-      Math.pow(g - targetG, 2) + 
-      Math.pow(b - targetB, 2)
-    );
-
-    if (distance <= tolerance * 3.5) {
-      data[i + 3] = 0; // Make transparent
-    }
-  }
-  pCtx.putImageData(imgData, 0, 0);
-  setStatus("bgRemStatus", "Multi-color range processed successfully!");
-}
-
-function downloadBgRemovedImage() {
-  const prevCanvas = document.getElementById("bgPreviewCanvas");
-  prevCanvas.toBlob(blob => {
-    saveBlob(blob, "MultiColor_Transparent_Image.png");
-    setStatus("bgRemStatus", "Transparent PNG downloaded successfully!");
-  }, "image/png");
-}
-
-// ================= ULTRA HD UPSCALER =================
-function convertToUltraHD(scale) {
-  const input = document.getElementById("hdImgFile");
-  if (!input.files || !input.files[0]) return setStatus("hdStatus", "Please choose an image file first.", false);
-  const file = input.files[0];
-  const img = new Image();
-  const url = URL.createObjectURL(file);
-  img.onload = () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth * scale;
-    canvas.height = img.naturalHeight * scale;
-    const ctx = canvas.getContext("2d");
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    canvas.toBlob(blob => {
-      URL.revokeObjectURL(url);
-      saveBlob(blob, `UltraHD_${scale}X_Enhanced.png`);
-      setStatus("hdStatus", `Successfully upscaled to ${scale}X 4K Ultra HD!`);
-    }, "image/png", 1.0);
-  };
-  img.src = url;
-}
-
-// ================= PHOTOSHOP IMAGE EDITOR PRO =================
-let editorImageObj = null;
-let editorRotateAngle = 0;
-let editorIsFlipped = false;
-let activeSpecialEffect = 'none';
-
-function loadEditorImage(input) {
-  if (input.files && input.files[0]) {
-    updateFileName(input, 'editorImgText');
-    const reader = new FileReader();
-    reader.onload = e => {
-      editorImageObj = new Image();
-      editorImageObj.onload = () => {
-        document.getElementById("editorControls").classList.remove("hidden");
-        editorRotateAngle = 0;
-        editorIsFlipped = false;
-        activeSpecialEffect = 'none';
-        applyEditorFilters();
-      };
-      editorImageObj.src = e.target.result;
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
-function applyEditorFilters() {
-  if (!editorImageObj) return;
-  const canvas = document.getElementById("editorCanvas");
-  const ctx = canvas.getContext("2d");
-
-  const b = document.getElementById("eBrightness").value;
-  const c = document.getElementById("eContrast").value;
-  const s = document.getElementById("eSaturate").value;
-  const blur = document.getElementById("eBlur").value;
-
-  canvas.width = (editorRotateAngle % 180 === 0) ? editorImageObj.width : editorImageObj.height;
-  canvas.height = (editorRotateAngle % 180 === 0) ? editorImageObj.height : editorImageObj.width;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.save();
-  ctx.translate(canvas.width / 2, canvas.height / 2);
-  ctx.rotate((editorRotateAngle * Math.PI) / 180);
-  ctx.scale(editorIsFlipped ? -1 : 1, 1);
-  
-  let filterStr = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${blur}px)`;
-  if (activeSpecialEffect === 'sepia') filterStr += ' sepia(100%)';
-  if (activeSpecialEffect === 'invert') filterStr += ' invert(100%)';
-  
-  ctx.filter = filterStr;
-  ctx.drawImage(editorImageObj, -editorImageObj.width / 2, -editorImageObj.height / 2);
-  ctx.restore();
-}
-
-function rotateEditorImage(deg) {
-  editorRotateAngle = (editorRotateAngle + deg) % 360;
-  applyEditorFilters();
-}
-
-function flipEditorImage() {
-  editorIsFlipped = !editorIsFlipped;
-  applyEditorFilters();
-}
-
-function applySpecialEffect(effect) {
-  activeSpecialEffect = (activeSpecialEffect === effect) ? 'none' : effect;
-  applyEditorFilters();
-  setStatus("editorStatus", `Applied effect: ${effect.toUpperCase()}`);
-}
-
-function downloadEditedImage() {
-  const canvas = document.getElementById("editorCanvas");
-  canvas.toBlob(blob => {
-    saveBlob(blob, "Photoshop_Edited_Pro.png");
-    setStatus("editorStatus", "Edited image saved successfully!");
-  }, "image/png");
-}
-
-// ================= TYPING SPEED TEST LOGIC =================
-const typingPassagesLarge = {
-  tech: [
-    "Programming is the art of telling another human what the computer wants to do. Clean code always looks like it was written by someone who cares about software quality. Artificial intelligence and machine learning are rapidly revolutionizing modern software architectures, enabling intelligent automation across web and mobile platforms worldwide.",
-    "Web development toolchains are centered around native HTML5 layouts, custom Tailwind CSS styling rules, standalone JavaScript modules, and scalable vector graphics."
-  ],
-  education: [
-    "Education is the most powerful weapon which you can use to change the world. Continuous learning sharpens the human mind and builds strong analytical thinking.",
-    "Consistent daily practice, deep focus, and self-discipline are the true foundational pillars of academic excellence and professional success."
-  ],
-  general: [
-    "An investment in knowledge always pays the best interest. Success is never final, and failure is never fatal: it is the courageous mindset to continue moving forward.",
-    "Effective time management is critical for maximizing personal and professional productivity and maintaining a balanced, stress-free lifestyle."
-  ]
+// ================= TYPING MASTER 12 (10 LESSONS & PRINT) =================
+const typingLessons = {
+  1: "asdf jkl; asdf jkl; ff jj dd kk ss ll aa ;; touch typing builds finger muscle memory for fast and accurate typing sessions.",
+  2: "client side web architecture relies heavily on efficient html markup cascading style sheets and modern modular javascript code structures.",
+  3: "graphic design and digital asset creation require distinct neon aesthetics vibrant color palettes and precise typography matching user branding.",
+  4: "firebase real-time databases and secure cloud storage configurations empower seamless user registration workflows and dynamic data handlers.",
+  5: "progressive web apps deploy robust offline caching mechanics via service workers ensuring continuity independent of live network connections.",
+  6: "maintaining a personal philosophy of helping others without causing distress fosters positive interpersonal experiences and supportive networks.",
+  7: "network device protocols routers and backend firewall security rules protect corporate servers against unauthorized external intrusion.",
+  8: "python programming logic and problem solving algorithms simplify complex data manipulation tasks and automate repetitive workflows.",
+  9: "tally prime software configurations optimize corporate invoice printing setups and financial record management within educational constraints.",
+  10: "expert touch typists achieve remarkable speed exceeding eighty words per minute by maintaining correct finger placement rhythm and absolute focus."
 };
 
 let typingTimer = null;
-let totalTestTime = 60;
 let timeLeft = 60;
-let isTestActive = false;
-let currentPassageText = "";
+let totalTimeSec = 60;
+let isTypingActive = false;
+let currentLessonText = "";
 
 function beginTypingTestSession() {
-  totalTestTime = parseInt(document.getElementById("typingTimeSelect").value) || 60;
-  const category = document.getElementById("typingCategory").value;
-  const list = typingPassagesLarge[category];
-  currentPassageText = list[Math.floor(Math.random() * list.length)].replace(/\s+/g, ' ').trim();
+  const lessonId = document.getElementById("typingLessonSelect").value;
+  currentLessonText = typingLessons[lessonId];
+  totalTimeSec = parseInt(document.getElementById("typingTimeSelect").value);
+  timeLeft = totalTimeSec;
 
   document.getElementById("typingSetupBox").classList.add("hidden");
   document.getElementById("typingWorkspace").classList.remove("hidden");
+  
+  const passageBox = document.getElementById("passageDisplayBox");
+  passageBox.innerHTML = currentLessonText.split("").map(c => `<span>${c}</span>`).join("");
+  
+  const inputArea = document.getElementById("typingInput");
+  inputArea.value = "";
+  inputArea.disabled = false;
+  inputArea.focus();
 
-  const displayBox = document.getElementById("passageDisplayBox");
-  displayBox.innerHTML = currentPassageText.split("").map(char => `<span>${char}</span>`).join("");
-
-  const textarea = document.getElementById("typingInput");
-  textarea.value = "";
-  textarea.disabled = false;
-  textarea.focus();
-
-  timeLeft = totalTestTime;
-  isTestActive = true;
   document.getElementById("tsTime").textContent = timeLeft + "s";
+  document.getElementById("tsWpm").textContent = "0";
+  document.getElementById("tsAccuracy").textContent = "100%";
+  document.getElementById("tsErrors").textContent = "0";
   document.getElementById("typingProgressBar").style.width = "0%";
-  setStatus("typingStatus", "Test is live! Start typing now.");
 
   if (typingTimer) clearInterval(typingTimer);
+  isTypingActive = true;
+  
   typingTimer = setInterval(() => {
     timeLeft--;
     document.getElementById("tsTime").textContent = timeLeft + "s";
-    const progressPercent = ((totalTestTime - timeLeft) / totalTestTime) * 100;
+    const progressPercent = ((totalTimeSec - timeLeft) / totalTimeSec) * 100;
     document.getElementById("typingProgressBar").style.width = progressPercent + "%";
-    if (timeLeft <= 0) finishTypingTest();
+
+    if (timeLeft <= 0) {
+      finishTypingTest();
+    }
   }, 1000);
 }
 
+function evaluateTyping() {
+  if (!isTypingActive) return;
+  const typedVal = document.getElementById("typingInput").value;
+  const spans = document.getElementById("passageDisplayBox").querySelectorAll("span");
+
+  let errors = 0;
+  for (let i = 0; i < spans.length; i++) {
+    if (i < typedVal.length) {
+      if (typedVal[i] === currentLessonText[i]) {
+        spans[i].style.color = "var(--success)";
+      } else {
+        spans[i].style.color = "var(--error)";
+        errors++;
+      }
+    } else {
+      spans[i].style.color = "var(--text-main)";
+    }
+  }
+
+  const timeElapsedMin = (totalTimeSec - timeLeft) / 60;
+  const wordsTyped = typedVal.trim().split(/\s+/).filter(Boolean).length;
+  const wpm = timeElapsedMin > 0 ? Math.round(wordsTyped / timeElapsedMin) : 0;
+  const accuracy = typedVal.length > 0 ? Math.max(0, Math.round(((typedVal.length - errors) / typedVal.length) * 100)) : 100;
+
+  document.getElementById("tsWpm").textContent = wpm;
+  document.getElementById("tsAccuracy").textContent = accuracy + "%";
+  document.getElementById("tsErrors").textContent = errors;
+
+  if (typedVal.length >= currentLessonText.length) {
+    finishTypingTest();
+  }
+}
+
 function finishTypingTest() {
-  isTestActive = false;
+  if (!isTypingActive) return;
+  isTypingActive = false;
   clearInterval(typingTimer);
   document.getElementById("typingInput").disabled = true;
-  document.getElementById("modalFinalWpm").textContent = document.getElementById("tsWpm").textContent;
-  document.getElementById("modalFinalAcc").textContent = document.getElementById("tsAccuracy").textContent;
+
+  const finalWpm = document.getElementById("tsWpm").textContent;
+  const finalAcc = document.getElementById("tsAccuracy").textContent;
+  const lessonNum = document.getElementById("typingLessonSelect").value;
+
+  document.getElementById("modalFinalWpm").textContent = finalWpm;
+  document.getElementById("modalFinalAcc").textContent = finalAcc;
+  document.getElementById("modalLessonName").textContent = `Completed Lesson ${lessonNum}: Typing Master 12 Certified`;
   document.getElementById("typingResultModal").classList.add("active");
-  setStatus("typingStatus", "Test completed successfully!");
 }
 
 function closeTypingResultModal() {
@@ -428,261 +186,431 @@ function closeTypingResultModal() {
   resetTypingTest();
 }
 
-function closeTypingTestView() { stopTypingTestForce(); goHome(); }
-function stopTypingTestForce() { isTestActive = false; if (typingTimer) clearInterval(typingTimer); }
-
 function resetTypingTest() {
-  stopTypingTestForce();
+  if (typingTimer) clearInterval(typingTimer);
+  isTypingActive = false;
   document.getElementById("typingWorkspace").classList.add("hidden");
   document.getElementById("typingSetupBox").classList.remove("hidden");
-  document.getElementById("typingInput").value = "";
-  document.getElementById("tsWpm").textContent = "0";
-  document.getElementById("tsAccuracy").textContent = "100%";
-  document.getElementById("tsErrors").textContent = "0";
-  document.getElementById("typingProgressBar").style.width = "0%";
-  setStatus("typingStatus", "");
+  setStatus("typingStatus", "Lesson reset. Choose parameters to start again.");
 }
 
-function evaluateTyping() {
-  if (!isTestActive) return;
-  const typedVal = document.getElementById("typingInput").value;
-  const passageSpans = document.getElementById("passageDisplayBox").querySelectorAll("span");
-  let errors = 0, correctChars = 0;
+function stopTypingTestForce() {
+  if (typingTimer) clearInterval(typingTimer);
+  isTypingActive = false;
+}
 
-  for (let i = 0; i < passageSpans.length; i++) {
-    const char = typedVal[i];
-    if (char == null) {
-      passageSpans[i].style.color = "var(--text-main)";
-      passageSpans[i].style.background = "transparent";
-    } else if (char === currentPassageText[i]) {
-      passageSpans[i].style.color = "var(--success)";
-      passageSpans[i].style.background = "transparent";
-      correctChars++;
-    } else {
-      passageSpans[i].style.color = "var(--error)";
-      passageSpans[i].style.background = "color-mix(in srgb, var(--error) 20%, transparent)";
-      errors++;
-    }
+
+// ================= PHOTOSHOP STUDIO PRO (12 TOOLS) =================
+let openPhotosList = [];
+let activePhotoIndex = 0;
+let activePhotoshopTool = 'global';
+
+let isSelecting = false, startX = 0, startY = 0, selectionRect = null;
+let isDrawing = false, lastX = 0, lastY = 0;
+
+function loadMultipleEditorImages(input) {
+  if (input.files && input.files.length > 0) {
+    let loadedCount = 0;
+    Array.from(input.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const bufCanvas = document.createElement("canvas");
+          bufCanvas.width = img.width; bufCanvas.height = img.height;
+          bufCanvas.getContext("2d").drawImage(img, 0, 0);
+
+          openPhotosList.push({
+            name: file.name,
+            imgObj: img,
+            bufferCanvas: bufCanvas,
+            brightness: 100, contrast: 100, saturate: 100, blur: 0,
+            rotate: 0, flip: false, specialEffect: 'none'
+          });
+          loadedCount++;
+          if (loadedCount === input.files.length) {
+            activePhotoIndex = openPhotosList.length - 1;
+            document.getElementById("editorControls").classList.remove("hidden");
+            document.getElementById("photoTabsContainer").classList.remove("hidden");
+            renderPhotoTabs();
+            applyEditorFilters();
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+}
+
+function renderPhotoTabs() {
+  const list = document.getElementById("tabsList");
+  list.innerHTML = "";
+  openPhotosList.forEach((photo, idx) => {
+    const tab = document.createElement("button");
+    tab.className = `photo-tab-item ${idx === activePhotoIndex ? 'active' : ''}`;
+    tab.innerHTML = `<i class="fa-solid fa-image"></i> ${photo.name} <span class="tab-close" onclick="closePhotoTab(event, ${idx})">&times;</span>`;
+    tab.onclick = () => switchActivePhoto(idx);
+    list.appendChild(tab);
+  });
+}
+
+function switchActivePhoto(idx) {
+  activePhotoIndex = idx;
+  selectionRect = null;
+  renderPhotoTabs();
+  const photo = openPhotosList[activePhotoIndex];
+  document.getElementById("eBrightness").value = photo.brightness;
+  document.getElementById("eContrast").value = photo.contrast;
+  document.getElementById("eSaturate").value = photo.saturate;
+  document.getElementById("eBlur").value = photo.blur;
+  applyEditorFilters();
+  setStatus("editorStatus", `Switched to photo: ${photo.name}`);
+}
+
+function closePhotoTab(event, idx) {
+  event.stopPropagation();
+  openPhotosList.splice(idx, 1);
+  if (openPhotosList.length === 0) {
+    document.getElementById("editorControls").classList.add("hidden");
+    document.getElementById("photoTabsContainer").classList.add("hidden");
+  } else {
+    if (activePhotoIndex >= openPhotosList.length) activePhotoIndex = openPhotosList.length - 1;
+    renderPhotoTabs(); switchActivePhoto(activePhotoIndex);
+  }
+}
+
+function setPhotoshopTool(toolName) {
+  activePhotoshopTool = toolName;
+  document.querySelectorAll('.mode-tab-btn').forEach(b => b.classList.remove('active'));
+  if (toolName === 'global') document.getElementById('btnToolGlobal').classList.add('active');
+  if (toolName === 'freeform') document.getElementById('btnToolFreeform').classList.add('active');
+  if (toolName === 'brush') document.getElementById('btnToolBrush').classList.add('active');
+  if (toolName === 'crop') document.getElementById('btnToolCrop').classList.add('active');
+
+  document.getElementById("globalControlsPanel").classList.toggle("hidden", toolName !== 'global');
+  document.getElementById("freeformControlsPanel").classList.toggle("hidden", toolName !== 'freeform');
+  document.getElementById("brushControlsPanel").classList.toggle("hidden", toolName !== 'brush');
+
+  if (toolName !== 'freeform') { selectionRect = null; applyEditorFilters(); }
+  setStatus("editorStatus", `Active Tool: ${toolName.toUpperCase()}`);
+}
+
+function applyEditorFilters() {
+  if (openPhotosList.length === 0) return;
+  const photo = openPhotosList[activePhotoIndex];
+  if (activePhotoshopTool === 'global') {
+    photo.brightness = document.getElementById("eBrightness").value;
+    photo.contrast = document.getElementById("eContrast").value;
+    photo.saturate = document.getElementById("eSaturate").value;
+    photo.blur = document.getElementById("eBlur").value;
   }
 
-  const timeElapsedMinutes = (totalTestTime - timeLeft) / 60;
-  const wpm = timeElapsedMinutes > 0 ? Math.round((correctChars / 5) / timeElapsedMinutes) : 0;
-  const accuracy = typedVal.length > 0 ? Math.max(0, Math.round(((typedVal.length - errors) / typedVal.length) * 100)) : 100;
+  const canvas = document.getElementById("editorCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = (photo.rotate % 180 === 0) ? photo.bufferCanvas.width : photo.bufferCanvas.height;
+  canvas.height = (photo.rotate % 180 === 0) ? photo.bufferCanvas.height : photo.bufferCanvas.width;
 
-  document.getElementById("tsWpm").textContent = wpm;
-  document.getElementById("tsAccuracy").textContent = accuracy + "%";
-  document.getElementById("tsErrors").textContent = errors;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate((photo.rotate * Math.PI) / 180);
+  ctx.scale(photo.flip ? -1 : 1, 1);
 
-  if (typedVal.length >= currentPassageText.length) finishTypingTest();
+  let filter = `brightness(${photo.brightness}%) contrast(${photo.contrast}%) saturate(${photo.saturate}%) blur(${photo.blur}px)`;
+  if (photo.specialEffect === 'sepia') filter += ' sepia(100%)';
+  if (photo.specialEffect === 'invert') filter += ' invert(100%)';
+
+  ctx.filter = filter;
+  ctx.drawImage(photo.bufferCanvas, -photo.bufferCanvas.width / 2, -photo.bufferCanvas.height / 2);
+  ctx.restore();
+
+  if (selectionRect) {
+    ctx.save();
+    ctx.strokeStyle = '#f97316'; ctx.lineWidth = 3; ctx.setLineDash([6, 6]);
+    ctx.strokeRect(selectionRect.x, selectionRect.y, selectionRect.w, selectionRect.h);
+    ctx.fillStyle = 'rgba(249, 115, 22, 0.15)';
+    ctx.fillRect(selectionRect.x, selectionRect.y, selectionRect.w, selectionRect.h);
+    ctx.restore();
+  }
 }
 
-// Other Basic Converters (HTML2JSON, CSV, Base64, QR, etc.)
-function htmlToJson() {
-  const value = document.getElementById("htmlInput").value;
-  if (!value.trim()) return setStatus("h2jStatus", "Please enter HTML content first.", false);
-  saveBlob(new Blob([JSON.stringify({ html: value }, null, 2)], { type: "application/json" }), "converted.json");
-  setStatus("h2jStatus", "JSON file created successfully.");
+function startCanvasInteraction(e) {
+  if (activePhotoshopTool === 'freeform' || activePhotoshopTool === 'crop') {
+    const canvas = document.getElementById("editorCanvas");
+    const rect = canvas.getBoundingClientRect();
+    isSelecting = true;
+    startX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    startY = (e.clientY - rect.top) * (canvas.height / rect.height);
+    selectionRect = { x: startX, y: startY, w: 0, h: 0 };
+  } else if (activePhotoshopTool === 'brush') {
+    isDrawing = true;
+    const canvas = document.getElementById("editorCanvas");
+    const rect = canvas.getBoundingClientRect();
+    lastX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    lastY = (e.clientY - rect.top) * (canvas.height / rect.height);
+  }
 }
 
-function jsonToHtml() {
-  const value = document.getElementById("jsonInput").value;
-  try {
-    const obj = JSON.parse(value);
-    const html = typeof obj === "string" ? obj : obj.html;
-    saveBlob(new Blob([html], { type: "text/html;charset=utf-8" }), "converted.html");
-    setStatus("j2hStatus", "HTML file created successfully.");
-  } catch (e) { setStatus("j2hStatus", "Error: " + e.message, false); }
+function moveCanvasInteraction(e) {
+  const canvas = document.getElementById("editorCanvas");
+  const rect = canvas.getBoundingClientRect();
+  const currX = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const currY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+  if (isSelecting) {
+    selectionRect.w = currX - startX;
+    selectionRect.h = currY - startY;
+    applyEditorFilters();
+  } else if (isDrawing) {
+    const photo = openPhotosList[activePhotoIndex];
+    const bCtx = photo.bufferCanvas.getContext("2d");
+    bCtx.strokeStyle = document.getElementById("brushColorPicker").value;
+    bCtx.lineWidth = parseInt(document.getElementById("brushSizeRange").value) || 5;
+    bCtx.lineCap = "round"; bCtx.lineJoin = "round";
+    bCtx.beginPath(); bCtx.moveTo(lastX, lastY); bCtx.lineTo(currX, currY); bCtx.stroke();
+    lastX = currX; lastY = currY;
+    applyEditorFilters();
+  }
 }
 
-function csvToJson() {
-  const csv = document.getElementById("csvInput").value.trim();
-  if (!csv) return setStatus("csvStatus", "Please enter CSV data.", false);
-  try {
-    const lines = csv.split("\n").map(l => l.trim()).filter(l => l);
-    const headers = lines[0].split(",").map(h => h.trim());
-    const result = lines.slice(1).map(line => {
-      const values = line.split(",").map(v => v.trim());
-      const obj = {}; headers.forEach((h, i) => obj[h] = values[i] || ""); return obj;
-    });
-    saveBlob(new Blob([JSON.stringify(result, null, 2)], { type: "application/json" }), "csv_converted.json");
-    setStatus("csvStatus", "CSV successfully converted to JSON!");
-  } catch (e) { setStatus("csvStatus", "Error: " + e.message, false); }
+function endCanvasInteraction() {
+  if (isSelecting) {
+    isSelecting = false;
+    if (selectionRect.w < 0) { selectionRect.x += selectionRect.w; selectionRect.w = Math.abs(selectionRect.w); }
+    if (selectionRect.h < 0) { selectionRect.y += selectionRect.h; selectionRect.h = Math.abs(selectionRect.h); }
+    if (activePhotoshopTool === 'crop' && selectionRect.w > 10 && selectionRect.h > 10) {
+      executeCropPhoto();
+    }
+  }
+  isDrawing = false;
 }
 
-function jsonToCsv() {
-  const val = document.getElementById("j2csvInput").value.trim();
-  if (!val) return setStatus("j2csvStatus", "Please enter JSON data.", false);
-  try {
-    const data = JSON.parse(val);
-    const arr = Array.isArray(data) ? data : [data];
-    const keys = Object.keys(arr[0]);
-    let csv = keys.join(",") + "\n";
-    arr.forEach(row => { csv += keys.map(k => `"${String(row[k] !== undefined ? row[k] : '')}"`).join(",") + "\n"; });
-    saveBlob(new Blob([csv], { type: "text/csv;charset=utf-8" }), "converted.csv");
-    setStatus("j2csvStatus", "CSV file created successfully!");
-  } catch (err) { setStatus("j2csvStatus", "Error: " + err.message, false); }
+function clearSelection() { selectionRect = null; applyEditorFilters(); }
+
+function editSelectedArea(type) {
+  if (!selectionRect || selectionRect.w < 5) return alert("Please select an area first!");
+  const photo = openPhotosList[activePhotoIndex];
+  const bCtx = photo.bufferCanvas.getContext("2d");
+  const x = Math.max(0, Math.floor(selectionRect.x)), y = Math.max(0, Math.floor(selectionRect.y));
+  const w = Math.min(photo.bufferCanvas.width - x, Math.floor(selectionRect.w));
+  const h = Math.min(photo.bufferCanvas.height - y, Math.floor(selectionRect.h));
+  const imgData = bCtx.getImageData(x, y, w, h);
+  const d = imgData.data;
+
+  for (let i = 0; i < d.length; i += 4) {
+    if (type === 'brightness') { d[i] = Math.min(255, d[i]+50); d[i+1] = Math.min(255, d[i+1]+50); d[i+2] = Math.min(255, d[i+2]+50); }
+    else if (type === 'darken') { d[i] = Math.max(0, d[i]-50); d[i+1] = Math.max(0, d[i+1]-50); d[i+2] = Math.max(0, d[i+2]-50); }
+    else if (type === 'grayscale') { const avg = (d[i]+d[i+1]+d[i+2])/3; d[i]=avg; d[i+1]=avg; d[i+2]=avg; }
+  }
+  bCtx.putImageData(imgData, x, y);
+  applyEditorFilters();
+  setStatus("editorStatus", `Applied ${type} to selected region!`);
 }
 
-function imageConvert(inputId, format, statusId) {
-  const input = document.getElementById(inputId);
-  if (!input.files || !input.files[0]) return setStatus(statusId, "Please select an image file first.", false);
-  const file = input.files[0];
-  const img = new Image();
-  const url = URL.createObjectURL(file);
+function executeCropPhoto() {
+  const photo = openPhotosList[activePhotoIndex];
+  const bCtx = photo.bufferCanvas.getContext("2d");
+  const x = Math.floor(selectionRect.x), y = Math.floor(selectionRect.y);
+  const w = Math.floor(selectionRect.w), h = Math.floor(selectionRect.h);
+  const croppedData = bCtx.getImageData(x, y, w, h);
+  const newBuf = document.createElement("canvas");
+  newBuf.width = w; newBuf.height = h;
+  newBuf.getContext("2d").putImageData(croppedData, 0, 0);
+
+  const newImg = new Image();
+  newImg.onload = () => {
+    photo.bufferCanvas = newBuf;
+    photo.imgObj = newImg;
+    selectionRect = null;
+    applyEditorFilters();
+    setStatus("editorStatus", "Photo cropped successfully!");
+  };
+  newImg.src = newBuf.toDataURL();
+}
+
+function rotateEditorImage(deg) {
+  if (openPhotosList.length === 0) return;
+  const photo = openPhotosList[activePhotoIndex];
+  photo.rotate = (photo.rotate + deg) % 360;
+  applyEditorFilters();
+}
+
+function flipEditorImage() {
+  if (openPhotosList.length === 0) return;
+  const photo = openPhotosList[activePhotoIndex];
+  photo.flip = !photo.flip;
+  applyEditorFilters();
+}
+
+function applySpecialEffect(eff) {
+  if (openPhotosList.length === 0) return;
+  const photo = openPhotosList[activePhotoIndex];
+  photo.specialEffect = (photo.specialEffect === eff) ? 'none' : eff;
+  applyEditorFilters();
+}
+
+function quickFilterAdjust(type) {
+  if (openPhotosList.length === 0) return;
+  const photo = openPhotosList[activePhotoIndex];
+  if (type === 'brightness') { photo.brightness = 140; document.getElementById("eBrightness").value = 140; }
+  if (type === 'contrast') { photo.contrast = 150; document.getElementById("eContrast").value = 150; }
+  if (type === 'grayscale') { photo.saturate = 0; document.getElementById("eSaturate").value = 0; }
+  applyEditorFilters();
+}
+
+function resetCurrentPhoto() {
+  if (openPhotosList.length === 0) return;
+  const photo = openPhotosList[activePhotoIndex];
+  const buf = document.createElement("canvas");
+  buf.width = photo.imgObj.width; buf.height = photo.imgObj.height;
+  buf.getContext("2d").drawImage(photo.imgObj, 0, 0);
+  photo.bufferCanvas = buf;
+  photo.brightness = 100; photo.contrast = 100; photo.saturate = 100; photo.blur = 0;
+  photo.rotate = 0; photo.flip = false; photo.specialEffect = 'none';
+  selectionRect = null;
+  applyEditorFilters();
+  setStatus("editorStatus", "Photo reset to original state.");
+}
+
+function downloadEditedImage() {
+  if (openPhotosList.length === 0) return;
+  const photo = openPhotosList[activePhotoIndex];
+  document.getElementById("editorCanvas").toBlob(blob => {
+    saveBlob(blob, `PhotoshopPro_${photo.name}`);
+    setStatus("editorStatus", "Photo downloaded successfully!");
+  }, "image/png");
+}
+
+// Other quick utilities
+let bgSourceImageObj = null, currentBgColor = { r: 255, g: 255, b: 255 };
+function loadBgRemImage(input) {
+  if (input.files && input.files[0]) {
+    updateFileName(input, 'bgImgText');
+    const r = new FileReader();
+    r.onload = e => {
+      bgSourceImageObj = new Image();
+      bgSourceImageObj.onload = () => {
+        document.getElementById("bgControlsContainer").classList.remove("hidden");
+        const c = document.getElementById("bgSourceCanvas");
+        c.width = bgSourceImageObj.width; c.height = bgSourceImageObj.height;
+        c.getContext("2d").drawImage(bgSourceImageObj, 0, 0);
+        processBgRemovalLive();
+      };
+      bgSourceImageObj.src = e.target.result;
+    };
+    r.readAsDataURL(input.files[0]);
+  }
+}
+function pickColorForBg(e) {
+  const c = document.getElementById("bgSourceCanvas");
+  const rect = c.getBoundingClientRect();
+  const x = Math.floor((e.clientX - rect.left) * (c.width / rect.width));
+  const y = Math.floor((e.clientY - rect.top) * (c.height / rect.height));
+  const pixel = c.getContext("2d").getImageData(x, y, 1, 1).data;
+  currentBgColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
+  document.getElementById("selectedColorDisplay").textContent = `RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+  processBgRemovalLive();
+}
+function updateBgToleranceLabel() { document.getElementById("tolValueLabel").textContent = document.getElementById("bgTolerance").value; }
+function processBgRemovalLive() {
+  if (!bgSourceImageObj) return;
+  const tol = parseInt(document.getElementById("bgTolerance").value) || 35;
+  const p = document.getElementById("bgPreviewCanvas");
+  p.width = bgSourceImageObj.width; p.height = bgSourceImageObj.height;
+  const ctx = p.getContext("2d"); ctx.drawImage(bgSourceImageObj, 0, 0);
+  const imgData = ctx.getImageData(0, 0, p.width, p.height);
+  const d = imgData.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const dist = Math.sqrt(Math.pow(d[i]-currentBgColor.r, 2) + Math.pow(d[i+1]-currentBgColor.g, 2) + Math.pow(d[i+2]-currentBgColor.b, 2));
+    if (dist <= tol * 3.5) d[i+3] = 0;
+  }
+  ctx.putImageData(imgData, 0, 0);
+}
+function downloadBgRemovedImage() {
+  document.getElementById("bgPreviewCanvas").toBlob(b => saveBlob(b, "Transparent.png"), "image/png");
+}
+
+function convertToUltraHD(scale) {
+  const input = document.getElementById("hdImgFile");
+  if (!input.files || !input.files[0]) return setStatus("hdStatus", "Choose image first", false);
+  const img = new Image(); const url = URL.createObjectURL(input.files[0]);
   img.onload = () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext("2d");
-    if (format === "jpg") { ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height); }
-    ctx.drawImage(img, 0, 0);
-    const mimeMap = { jpg: "image/jpeg", png: "image/png", webp: "image/webp" };
-    canvas.toBlob(blob => {
-      URL.revokeObjectURL(url);
-      saveBlob(blob, `converted_image.${format}`);
-      setStatus(statusId, "Image converted & downloaded!");
-    }, mimeMap[format], 0.92);
+    const c = document.createElement("canvas");
+    c.width = img.naturalWidth * scale; c.height = img.naturalHeight * scale;
+    const ctx = c.getContext("2d"); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    c.toBlob(blob => { URL.revokeObjectURL(url); saveBlob(blob, `UltraHD_${scale}X.png`); setStatus("hdStatus", "Upscaled successfully!"); }, "image/png");
   };
   img.src = url;
 }
 
+function htmlToJson() { saveBlob(new Blob([JSON.stringify({html: document.getElementById("htmlInput").value}, null, 2)], {type:"application/json"}), "conv.json"); setStatus("h2jStatus","Converted!"); }
+function jsonToHtml() { try{ const o=JSON.parse(document.getElementById("jsonInput").value); saveBlob(new Blob([o.html||o],{type:"text/html"}),"conv.html"); setStatus("j2hStatus","Converted!"); }catch(e){setStatus("j2hStatus",e.message,false);}}
+function csvToJson() {
+  const lines = document.getElementById("csvInput").value.trim().split("\n");
+  const headers = lines[0].split(",");
+  const res = lines.slice(1).map(l => { const v = l.split(","); const o={}; headers.forEach((h,i)=>o[h]=v[i]||""); return o; });
+  saveBlob(new Blob([JSON.stringify(res, null, 2)],{type:"application/json"}),"csv.json"); setStatus("csvStatus","Converted!");
+}
+function jsonToCsv() {
+  try{ const d=JSON.parse(document.getElementById("j2csvInput").value); const keys=Object.keys(d[0]); let csv=keys.join(",")+"\n";
+  d.forEach(r=>csv+=keys.map(k=>`"${r[k]||""}"`).join(",")+"\n"); saveBlob(new Blob([csv],{type:"text/csv"}),"conv.csv"); setStatus("j2csvStatus","Converted!");}catch(e){setStatus("j2csvStatus",e.message,false);}
+}
+function imageConvert(id, fmt, stat) {
+  const inp = document.getElementById(id); if(!inp.files[0])return setStatus(stat,"Select image",false);
+  const img = new Image(); const url = URL.createObjectURL(inp.files[0]);
+  img.onload = () => {
+    const c = document.createElement("canvas"); c.width = img.naturalWidth; c.height = img.naturalHeight;
+    const ctx = c.getContext("2d"); if(fmt==='jpg'){ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);}
+    ctx.drawImage(img,0,0); c.toBlob(b=>{URL.revokeObjectURL(url);saveBlob(b,`img.${fmt}`);setStatus(stat,"Converted!");},`image/${fmt==='jpg'?'jpeg':fmt}`);
+  };
+  img.src = url;
+}
 function svgToPng() {
-  const fileInput = document.getElementById("svgFile");
-  const svgCodeInput = document.getElementById("svgCodeInput").value.trim();
-  if (fileInput.files && fileInput.files[0]) {
-    const reader = new FileReader();
-    reader.onload = e => processSvgString(e.target.result, "svg_converted");
-    reader.readAsText(fileInput.files[0]);
-  } else if (svgCodeInput) { processSvgString(svgCodeInput, "custom_svg"); }
-  else { setStatus("svgStatus", "Upload SVG or paste code first.", false); }
-}
-
-function processSvgString(svgText, filenamePrefix) {
-  try {
-    if (!svgText.includes("xmlns")) svgText = svgText.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
-    const blob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth || 800; canvas.height = img.naturalHeight || 600;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-      canvas.toBlob(pngBlob => { URL.revokeObjectURL(url); saveBlob(pngBlob, filenamePrefix + ".png"); setStatus("svgStatus", "SVG converted to PNG!"); }, "image/png");
-    };
+  const code = document.getElementById("svgCodeInput").value.trim();
+  if(code) {
+    const blob = new Blob([code],{type:"image/svg+xml;charset=utf-8"});
+    const url = URL.createObjectURL(blob); const img = new Image();
+    img.onload = () => { const c = document.createElement("canvas"); c.width=img.naturalWidth||800;c.height=img.naturalHeight||600; c.getContext("2d").drawImage(img,0,0); c.toBlob(b=>{URL.revokeObjectURL(url);saveBlob(b,"svg.png");setStatus("svgStatus","Converted!");}, "image/png"); };
     img.src = url;
-  } catch (err) { setStatus("svgStatus", "Error processing SVG.", false); }
-}
-
-function processBase64(isEncode) {
-  const val = document.getElementById("base64Input").value;
-  if (!val.trim()) return setStatus("base64Status", "Please enter input text.", false);
-  try {
-    document.getElementById("base64Input").value = isEncode ? btoa(unescape(encodeURIComponent(val))) : decodeURIComponent(escape(atob(val)));
-    setStatus("base64Status", isEncode ? "Encoded to Base64!" : "Decoded from Base64!");
-  } catch (err) { setStatus("base64Status", "Invalid string.", false); }
-}
-
-function processUrl(isEncode) {
-  const val = document.getElementById("urlInput").value;
-  if (!val.trim()) return setStatus("urlStatus", "Please enter URL text.", false);
-  try {
-    document.getElementById("urlInput").value = isEncode ? encodeURIComponent(val) : decodeURIComponent(val);
-    setStatus("urlStatus", isEncode ? "Encoded URL!" : "Decoded URL!");
-  } catch (err) { setStatus("urlStatus", "Invalid URL.", false); }
-}
-
-function mdToHtml() {
-  const md = document.getElementById("mdInput").value;
-  if (!md.trim()) return setStatus("mdStatus", "Enter markdown text.", false);
-  let html = md.replace(/^### (.*$)/gim, '<h3>$1</h3>').replace(/^## (.*$)/gim, '<h2>$1</h2>').replace(/^# (.*$)/gim, '<h1>$1</h1>').replace(/\*\*(.*)\*/gim, '<b>$1</b>');
-  saveBlob(new Blob([html.trim()], { type: "text/html;charset=utf-8" }), "markdown.html");
-  setStatus("mdStatus", "Markdown converted!");
-}
-
-function convertTextCase(type) {
-  const field = document.getElementById("caseInput");
-  const val = field.value;
-  if (!val.trim()) return setStatus("textCaseStatus", "Please enter text.", false);
-  if (type === 'upper') field.value = val.toUpperCase();
-  else if (type === 'lower') field.value = val.toLowerCase();
-  else if (type === 'title') field.value = val.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-  setStatus("textCaseStatus", "Text case converted!");
-}
-
-const morseMap = { 'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--', '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.', '0': '-----', ' ': '/' };
-const reverseMorseMap = Object.fromEntries(Object.entries(morseMap).map(([k, v]) => [v, k]));
-
-function textToMorse() {
-  const val = document.getElementById("morseInput").value.toUpperCase();
-  if (!val.trim()) return setStatus("morseStatus", "Enter text.", false);
-  document.getElementById("morseInput").value = val.split("").map(char => morseMap[char] || char).join(" ");
-  setStatus("morseStatus", "Converted to Morse!");
-}
-
-function morseToText() {
-  const val = document.getElementById("morseInput").value.trim();
-  if (!val) return setStatus("morseStatus", "Enter Morse code.", false);
-  document.getElementById("morseInput").value = val.split(" ").map(code => reverseMorseMap[code] || code).join("");
-  setStatus("morseStatus", "Converted to Text!");
-}
-
-function textToBinary() {
-  const val = document.getElementById("binaryInput").value;
-  if (!val.trim()) return setStatus("binaryStatus", "Enter text.", false);
-  document.getElementById("binaryInput").value = val.split("").map(char => char.charCodeAt(0).toString(2).padStart(8, '0')).join(" ");
-  setStatus("binaryStatus", "Converted to Binary!");
-}
-
-function binaryToText() {
-  const val = document.getElementById("binaryInput").value.trim();
-  if (!val) return setStatus("binaryStatus", "Enter binary.", false);
-  try {
-    document.getElementById("binaryInput").value = val.split(" ").map(bin => String.fromCharCode(parseInt(bin, 2))).join("");
-    setStatus("binaryStatus", "Converted to Text!");
-  } catch (e) { setStatus("binaryStatus", "Invalid binary.", false); }
-}
-
-function convertColor() {
-  const input = document.getElementById("colorInput").value.trim();
-  const preview = document.getElementById("colorPreviewBox");
-  if (!input) return setStatus("colorStatus", "Enter a color.", false);
-  let hex = "", rgb = "";
-  if (input.startsWith("#")) {
-    hex = input;
-    let cleanHex = hex.replace("#", "");
-    if (cleanHex.length === 3) cleanHex = cleanHex.split("").map(c => c + c).join("");
-    const r = parseInt(cleanHex.substring(0, 2), 16), g = parseInt(cleanHex.substring(2, 4), 16), b = parseInt(cleanHex.substring(4, 6), 16);
-    rgb = `rgb(${r}, ${g}, ${b})`;
-  } else if (input.includes(",")) {
-    const parts = input.replace(/[^\d,]/g, "").split(",").map(n => parseInt(n.trim()));
-    rgb = `rgb(${parts[0]}, ${parts[1]}, ${parts[2]})`;
-    hex = "#" + parts.map(x => x.toString(16).padStart(2, '0')).join("");
   }
-  preview.style.background = hex;
-  preview.textContent = `HEX: ${hex} | RGB: ${rgb}`;
-  setStatus("colorStatus", "Color converted!");
 }
-
+function processBase64(enc) {
+  try{ const v=document.getElementById("base64Input").value; document.getElementById("base64Input").value = enc ? btoa(v) : atob(v); setStatus("base64Status","Success!");}catch(e){setStatus("base64Status","Error",false);}
+}
+function processUrl(enc) {
+  const v=document.getElementById("urlInput").value; document.getElementById("urlInput").value = enc ? encodeURIComponent(v) : decodeURIComponent(v); setStatus("urlStatus","Success!");
+}
+function mdToHtml() {
+  let md=document.getElementById("mdInput").value; let html=md.replace(/^# (.*$)/gim, '<h1>$1</h1>').replace(/\*\*(.*)\*/gim, '<b>$1</b>');
+  saveBlob(new Blob([html],{type:"text/html"}),"md.html"); setStatus("mdStatus","Converted!");
+}
+function convertTextCase(t) {
+  let f=document.getElementById("caseInput"); let v=f.value;
+  if(t==='upper')f.value=v.toUpperCase(); else if(t==='lower')f.value=v.toLowerCase(); else f.value=v.replace(/\w\S*/g,txt=>txt.charAt(0).toUpperCase()+txt.substr(1).toLowerCase());
+  setStatus("textCaseStatus","Converted!");
+}
+const mmap={'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..',' ': '/'};
+const rmap=Object.fromEntries(Object.entries(mmap).map(([k,v])=>[v,k]));
+function textToMorse() { let v=document.getElementById("morseInput").value.toUpperCase(); document.getElementById("morseInput").value=v.split("").map(c=>mmap[c]||c).join(" "); setStatus("morseStatus","Converted!"); }
+function morseToText() { let v=document.getElementById("morseInput").value.trim(); document.getElementById("morseInput").value=v.split(" ").map(c=>rmap[c]||c).join(""); setStatus("morseStatus","Converted!"); }
+function textToBinary() { let v=document.getElementById("binaryInput").value; document.getElementById("binaryInput").value=v.split("").map(c=>c.charCodeAt(0).toString(2).padStart(8,'0')).join(" "); setStatus("binaryStatus","Converted!"); }
+function binaryToText() { try{let v=document.getElementById("binaryInput").value.trim(); document.getElementById("binaryInput").value=v.split(" ").map(b=>String.fromCharCode(parseInt(b,2))).join("");setStatus("binaryStatus","Converted!");}catch(e){setStatus("binaryStatus","Error",false);}}
+function convertColor() {
+  let i=document.getElementById("colorInput").value.trim(); let p=document.getElementById("colorPreviewBox");
+  p.style.background=i; p.textContent="Color: "+i; setStatus("colorStatus","Converted!");
+}
 function generateSecurePassword() {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!";
-  let pass = "";
-  for (let i = 0; i < 16; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
-  document.getElementById("generatedPassword").value = pass;
-  setStatus("passGenStatus", "Password generated!");
+  let chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$"; let p=""; for(let i=0;i<16;i++)p+=chars[Math.floor(Math.random()*chars.length)];
+  document.getElementById("generatedPassword").value=p; setStatus("passGenStatus","Generated!");
 }
-
 function analyzeText() {
-  const text = document.getElementById("wordCountInput").value;
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  document.getElementById("wcWords").textContent = words;
-  document.getElementById("wcChars").textContent = text.length;
-  document.getElementById("wcTime").textContent = Math.ceil(words / 3.3) + "s";
+  let t=document.getElementById("wordCountInput").value; let w=t.trim()?t.trim().split(/\s+/).length:0;
+  document.getElementById("wcWords").textContent=w; document.getElementById("wcChars").textContent=t.length; document.getElementById("wcTime").textContent=Math.ceil(w/3.3)+"s";
 }
-
 function generateQR() {
-  const text = document.getElementById("qrInput").value.trim();
-  if (!text) return setStatus("qrStatus", "Enter text or URL.", false);
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(text)}`;
-  document.getElementById("qrPreviewArea").innerHTML = `<img src="${qrUrl}" alt="QR" style="border-radius:8px; border:2px solid var(--card-border);">`;
-  setStatus("qrStatus", "QR Code generated!");
+  let t=document.getElementById("qrInput").value.trim(); if(!t)return setStatus("qrStatus","Enter text",false);
+  document.getElementById("qrPreviewArea").innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(t)}" alt="QR">`;
+  setStatus("qrStatus","Generated!");
 }
