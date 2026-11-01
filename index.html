@@ -86,8 +86,8 @@
       <!-- 2. BG Remover -->
       <div class="card-selector" onclick="openTool('bgRemView')">
         <div class="card-icon"><i class="fa-solid fa-scissors"></i></div>
-        <h3>Advanced BG Remover</h3>
-        <p>Live color picker, interactive tolerance preview, and transparent PNG download.</p>
+        <h3>Advanced Multi-Color BG Remover</h3>
+        <p>Live color picker, multi-shade range removal, and transparent PNG download.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
@@ -95,7 +95,7 @@
       <div class="card-selector" onclick="openTool('photoEditorView')">
         <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
         <h3>Photoshop Pro Studio</h3>
-        <p>Advanced filters, sepia, invert, vignette, crop, and transform utilities.</p>
+        <p>Advanced filters, sepia, invert, vignette, rotate, and transform utilities.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
@@ -283,28 +283,28 @@
     <div class="status" id="hdStatus"></div>
   </div>
 
-  <!-- Advanced BG Remover with Live Color Picker & Preview -->
+  <!-- Advanced Multi-Color BG Remover -->
   <div id="bgRemView" class="tool-view">
     <div class="tool-header-bar">
-      <h2><i class="fa-solid fa-scissors"></i> Interactive Background Remover</h2>
+      <h2><i class="fa-solid fa-scissors"></i> Multi-Color Range Background Remover</h2>
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
     <div class="drop-zone" onclick="document.getElementById('bgImgFile').click()">
-      <div class="drop-zone-text" id="bgImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image to Remove BG</div>
+      <div class="drop-zone-text" id="bgImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image to Remove Multiple Colors</div>
       <input id="bgImgFile" type="file" accept="image/*" onchange="loadBgRemImage(this)">
     </div>
 
     <div id="bgControlsContainer" class="hidden">
       <div class="bg-preview-layout">
         <div>
-          <label>1. Click on Image to Pick BG Color</label>
+          <label>1. Click on Image to Pick Base Color</label>
           <div class="canvas-click-wrapper" onclick="pickColorForBg(event)">
             <canvas id="bgSourceCanvas"></canvas>
-            <div class="canvas-instruction-overlay">Click anywhere on image to pick color</div>
+            <div class="canvas-instruction-overlay">Click anywhere to pick color</div>
           </div>
         </div>
         <div>
-          <label>2. Live Transparent Preview</label>
+          <label>2. Live Multi-Color Transparent Preview</label>
           <div class="canvas-click-wrapper checkered-bg">
             <canvas id="bgPreviewCanvas"></canvas>
           </div>
@@ -313,11 +313,11 @@
 
       <div class="bg-settings-row">
         <div>
-          <label>Selected Background Color (RGB)</label>
+          <label>Selected Base Color (RGB)</label>
           <div id="selectedColorDisplay" class="color-badge-box">RGB(255, 255, 255)</div>
         </div>
         <div>
-          <label for="bgTolerance">Tolerance Sensitivity: <span id="tolValueLabel">35</span></label>
+          <label for="bgTolerance">Multi-Color Range Tolerance: <span id="tolValueLabel">35</span></label>
           <input type="range" id="bgTolerance" min="1" max="100" value="35" oninput="updateBgToleranceLabel(); processBgRemovalLive();">
         </div>
       </div>
@@ -334,7 +334,7 @@
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
     <div class="drop-zone" onclick="document.getElementById('editorImgFile').click()">
-      <div class="drop-zone-text" id="editorImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image to Edit</div>
+      <div class="drop-zone-text" id="editorImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image to Edit & Activate Tools</div>
       <input id="editorImgFile" type="file" accept="image/*" onchange="loadEditorImage(this)">
     </div>
 
