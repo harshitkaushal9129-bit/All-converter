@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>File Converter Pro 2027 - Dashboard</title>
+<title>File Converter Pro 2027 - Advanced Dashboard</title>
 <meta name="theme-color" content="#0f172a">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
@@ -33,7 +33,6 @@
       </button>
     </div>
     <div class="festival-modal-body">
-      <!-- festival.html will load inside this full-screen frame -->
       <iframe src="festival.html" class="festival-iframe" id="festivalIframe"></iframe>
     </div>
   </div>
@@ -49,7 +48,6 @@
     </div>
   </div>
   <div class="header-actions">
-    <!-- User Profile Badge -->
     <div class="user-profile-badge" id="userProfileBadge" onclick="openProfileModal()" title="Click to register or edit profile">
       <div class="user-avatar" id="navAvatar">HK</div>
       <span id="navUsername">kaushalji</span>
@@ -64,7 +62,7 @@
   <!-- Home Dashboard View -->
   <div id="homeDashboard">
     <div class="dashboard-hero">
-      <h1>Select a Converter Tool</h1>
+      <h1>Select an Advanced Tool</h1>
       <p>Click on any box below to open the full-screen tool interface instantly.</p>
     </div>
 
@@ -80,24 +78,24 @@
       <!-- 1. Ultra HD Converter -->
       <div class="card-selector" onclick="openTool('hdView')">
         <div class="card-icon"><i class="fa-solid fa-expand"></i></div>
-        <h3>Ultra HD Enhancer</h3>
-        <p>Upscale image resolution to 4K Ultra HD with AI sharpness filters.</p>
+        <h3>Ultra HD Enhancer Pro</h3>
+        <p>Upscale image resolution with AI sharpness, denoise, and 4K filters.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <!-- 2. BG Remover -->
       <div class="card-selector" onclick="openTool('bgRemView')">
         <div class="card-icon"><i class="fa-solid fa-scissors"></i></div>
-        <h3>Background Remover</h3>
-        <p>Remove image background instantly and download transparent PNG.</p>
+        <h3>Advanced BG Remover</h3>
+        <p>Live color picker, interactive tolerance preview, and transparent PNG download.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
       <!-- 3. Mini Photoshop Editor -->
       <div class="card-selector" onclick="openTool('photoEditorView')">
         <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
-        <h3>Photoshop Image Editor</h3>
-        <p>Adjust brightness, contrast, blur, grayscale, rotate and flip images.</p>
+        <h3>Photoshop Pro Studio</h3>
+        <p>Advanced filters, sepia, invert, vignette, crop, and transform utilities.</p>
         <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
       </div>
 
@@ -225,10 +223,8 @@
       <button class="back-home-btn" onclick="closeTypingTestView()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
 
-    <!-- Step 1: Selection Box (Hides on test start) -->
     <div id="typingSetupBox" class="typing-setup-box">
       <h3><i class="fa-solid fa-sliders"></i> Test Configuration Setup</h3>
-      
       <div class="typing-config-grid">
         <div>
           <label>Select Test Duration</label>
@@ -242,89 +238,99 @@
         <div>
           <label>Select Passage Topic</label>
           <select id="typingCategory">
-            <option value="tech">Technology & Web Architecture (Large)</option>
-            <option value="education">Education & Digital Literacy (Large)</option>
-            <option value="general">Success, Life & Productivity (Large)</option>
+            <option value="tech">Technology & Web Architecture</option>
+            <option value="education">Education & Digital Literacy</option>
+            <option value="general">Success, Life & Productivity</option>
           </select>
         </div>
       </div>
-
       <button class="action-btn" onclick="beginTypingTestSession()"><i class="fa-solid fa-play"></i> Proceed & Start Test</button>
     </div>
 
-    <!-- Step 2: Active Test Workspace (Initially Hidden) -->
     <div id="typingWorkspace" class="hidden">
-      <!-- Progress Bar -->
       <div class="typing-progress-track">
         <div id="typingProgressBar" class="typing-progress-fill"></div>
       </div>
-
-      <!-- Large Passage Display Box -->
       <div id="passageDisplayBox" class="passage-display-box"></div>
-
-      <!-- Typing Input Field -->
       <textarea id="typingInput" placeholder="Start typing the passage above here..." oninput="evaluateTyping()" class="typing-input-area"></textarea>
-
-      <!-- Live Stats Dashboard Grid -->
+      
       <div class="stats-dashboard-grid">
-        <div class="stat-card">
-          <b id="tsWpm">0</b><br><small>WPM</small>
-        </div>
-        <div class="stat-card">
-          <b id="tsAccuracy">100%</b><br><small>Accuracy</small>
-        </div>
-        <div class="stat-card">
-          <b id="tsTime">60s</b><br><small>Time Left</small>
-        </div>
-        <div class="stat-card">
-          <b id="tsErrors">0</b><br><small>Errors</small>
-        </div>
+        <div class="stat-card"><b id="tsWpm">0</b><br><small>WPM</small></div>
+        <div class="stat-card"><b id="tsAccuracy">100%</b><br><small>Accuracy</small></div>
+        <div class="stat-card"><b id="tsTime">60s</b><br><small>Time Left</small></div>
+        <div class="stat-card"><b id="tsErrors">0</b><br><small>Errors</small></div>
       </div>
-
       <button class="action-btn secondary" onclick="resetTypingTest()"><i class="fa-solid fa-rotate-right"></i> Quit / Change Settings</button>
     </div>
-
     <div class="status" id="typingStatus"></div>
   </div>
 
-  <!-- Ultra HD Upscaler -->
+  <!-- Ultra HD Upscaler Pro -->
   <div id="hdView" class="tool-view">
     <div class="tool-header-bar">
-      <h2><i class="fa-solid fa-expand"></i> Ultra HD 4K Image Enhancer</h2>
+      <h2><i class="fa-solid fa-expand"></i> Ultra HD 4K Image Enhancer Pro</h2>
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
     <div class="drop-zone" onclick="document.getElementById('hdImgFile').click()">
       <div class="drop-zone-text" id="hdImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Low Res Image</div>
       <input id="hdImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'hdImgText')">
     </div>
-    <label>Upscale Scale Level</label>
+    <label>Upscale Multiplier & Enhancement Level</label>
     <div class="btn-group">
-      <button class="action-btn" onclick="convertToUltraHD(2)">2X HD</button>
-      <button class="action-btn" onclick="convertToUltraHD(4)">4X Ultra HD</button>
+      <button class="action-btn" onclick="convertToUltraHD(2)">2X HD + AI Sharpen</button>
+      <button class="action-btn" onclick="convertToUltraHD(4)">4X Ultra HD + Denoise</button>
     </div>
     <div class="status" id="hdStatus"></div>
   </div>
 
-  <!-- BG Remover -->
+  <!-- Advanced BG Remover with Live Color Picker & Preview -->
   <div id="bgRemView" class="tool-view">
     <div class="tool-header-bar">
-      <h2><i class="fa-solid fa-scissors"></i> Image Background Remover</h2>
+      <h2><i class="fa-solid fa-scissors"></i> Interactive Background Remover</h2>
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
     <div class="drop-zone" onclick="document.getElementById('bgImgFile').click()">
       <div class="drop-zone-text" id="bgImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image to Remove BG</div>
-      <input id="bgImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'bgImgText')">
+      <input id="bgImgFile" type="file" accept="image/*" onchange="loadBgRemImage(this)">
     </div>
-    <label for="bgTolerance">Background Removal Tolerance Sensitivity (1-100)</label>
-    <input type="number" id="bgTolerance" value="30" min="1" max="100" class="full-input">
-    <button class="action-btn" onclick="removeBackground()"><i class="fa-solid fa-wand-magic-sparkles"></i> Remove Background & Download PNG</button>
+
+    <div id="bgControlsContainer" class="hidden">
+      <div class="bg-preview-layout">
+        <div>
+          <label>1. Click on Image to Pick BG Color</label>
+          <div class="canvas-click-wrapper" onclick="pickColorForBg(event)">
+            <canvas id="bgSourceCanvas"></canvas>
+            <div class="canvas-instruction-overlay">Click anywhere on image to pick color</div>
+          </div>
+        </div>
+        <div>
+          <label>2. Live Transparent Preview</label>
+          <div class="canvas-click-wrapper checkered-bg">
+            <canvas id="bgPreviewCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-settings-row">
+        <div>
+          <label>Selected Background Color (RGB)</label>
+          <div id="selectedColorDisplay" class="color-badge-box">RGB(255, 255, 255)</div>
+        </div>
+        <div>
+          <label for="bgTolerance">Tolerance Sensitivity: <span id="tolValueLabel">35</span></label>
+          <input type="range" id="bgTolerance" min="1" max="100" value="35" oninput="updateBgToleranceLabel(); processBgRemovalLive();">
+        </div>
+      </div>
+
+      <button class="action-btn" onclick="downloadBgRemovedImage()"><i class="fa-solid fa-download"></i> Download Transparent PNG</button>
+    </div>
     <div class="status" id="bgRemStatus"></div>
   </div>
 
-  <!-- Photoshop Image Editor -->
+  <!-- Photoshop Image Editor Pro -->
   <div id="photoEditorView" class="tool-view">
     <div class="tool-header-bar">
-      <h2><i class="fa-solid fa-sliders"></i> Photoshop Image Editor</h2>
+      <h2><i class="fa-solid fa-sliders"></i> Photoshop Image Studio Pro</h2>
       <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
     </div>
     <div class="drop-zone" onclick="document.getElementById('editorImgFile').click()">
@@ -348,6 +354,8 @@
         <button class="action-btn secondary" onclick="rotateEditorImage(-90)"><i class="fa-solid fa-rotate-left"></i> Rotate Left</button>
         <button class="action-btn secondary" onclick="rotateEditorImage(90)"><i class="fa-solid fa-rotate-right"></i> Rotate Right</button>
         <button class="action-btn secondary" onclick="flipEditorImage()"><i class="fa-solid fa-repeat"></i> Flip</button>
+        <button class="action-btn secondary" onclick="applySpecialEffect('sepia')"><i class="fa-solid fa-palette"></i> Sepia</button>
+        <button class="action-btn secondary" onclick="applySpecialEffect('invert')"><i class="fa-solid fa-circle-half-stroke"></i> Invert</button>
       </div>
 
       <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Download Edited Image</button>
@@ -355,7 +363,7 @@
     <div class="status" id="editorStatus"></div>
   </div>
 
-  <!-- H2J View -->
+  <!-- Other Tool Views -->
   <div id="h2jView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-code"></i> HTML to JSON Converter</h2>
@@ -367,7 +375,6 @@
     <div class="status" id="h2jStatus"></div>
   </div>
 
-  <!-- J2H View -->
   <div id="j2hView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-file-code"></i> JSON to HTML Converter</h2>
@@ -379,7 +386,6 @@
     <div class="status" id="j2hStatus"></div>
   </div>
 
-  <!-- CSV View -->
   <div id="csvView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-file-csv"></i> CSV to JSON Converter</h2>
@@ -391,7 +397,6 @@
     <div class="status" id="csvStatus"></div>
   </div>
 
-  <!-- J2CSV View -->
   <div id="j2csvView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-file-excel"></i> JSON to CSV Converter</h2>
@@ -403,7 +408,6 @@
     <div class="status" id="j2csvStatus"></div>
   </div>
 
-  <!-- Image Converter View -->
   <div id="imgConvView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-image"></i> Image Converter (JPG / PNG / WebP)</h2>
@@ -421,7 +425,6 @@
     <div class="status" id="imgConvStatus"></div>
   </div>
 
-  <!-- SVG View -->
   <div id="svgView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-shapes"></i> SVG to PNG Rasterizer</h2>
@@ -438,7 +441,6 @@
     <div class="status" id="svgStatus"></div>
   </div>
 
-  <!-- Base64 View -->
   <div id="base64View" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-lock"></i> Base64 Utility</h2>
@@ -453,7 +455,6 @@
     <div class="status" id="base64Status"></div>
   </div>
 
-  <!-- URL View -->
   <div id="urlView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-link"></i> URL Encoder / Decoder</h2>
@@ -468,7 +469,6 @@
     <div class="status" id="urlStatus"></div>
   </div>
 
-  <!-- MD View -->
   <div id="mdView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-brands fa-markdown"></i> Markdown to HTML Converter</h2>
@@ -480,7 +480,6 @@
     <div class="status" id="mdStatus"></div>
   </div>
 
-  <!-- Text Case View -->
   <div id="textCaseView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-font"></i> Text Case Transformer</h2>
@@ -496,7 +495,6 @@
     <div class="status" id="textCaseStatus"></div>
   </div>
 
-  <!-- Morse View -->
   <div id="morseView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-signal"></i> Morse Code Converter</h2>
@@ -511,7 +509,6 @@
     <div class="status" id="morseStatus"></div>
   </div>
 
-  <!-- Binary View -->
   <div id="binaryView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-binary"></i> Binary to Text Converter</h2>
@@ -526,7 +523,6 @@
     <div class="status" id="binaryStatus"></div>
   </div>
 
-  <!-- Color View -->
   <div id="colorView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-palette"></i> HEX ⇄ RGB Color Converter</h2>
@@ -539,7 +535,6 @@
     <div class="status" id="colorStatus"></div>
   </div>
 
-  <!-- Pass Gen View -->
   <div id="passGenView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-shield-halved"></i> Secure Password Generator</h2>
@@ -551,7 +546,6 @@
     <div class="status" id="passGenStatus"></div>
   </div>
 
-  <!-- Word Count View -->
   <div id="wordCountView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-calculator"></i> Word & Character Counter</h2>
@@ -560,20 +554,13 @@
     <label for="wordCountInput">Type text here for live analysis</label>
     <textarea id="wordCountInput" oninput="analyzeText()" placeholder="Start typing or paste text..."></textarea>
     <div class="stats-counter-grid">
-      <div class="stat-card">
-        <b id="wcWords">0</b><br><small>Words</small>
-      </div>
-      <div class="stat-card">
-        <b id="wcChars">0</b><br><small>Characters</small>
-      </div>
-      <div class="stat-card">
-        <b id="wcTime">0s</b><br><small>Reading Time</small>
-      </div>
+      <div class="stat-card"><b id="wcWords">0</b><br><small>Words</small></div>
+      <div class="stat-card"><b id="wcChars">0</b><br><small>Characters</small></div>
+      <div class="stat-card"><b id="wcTime">0s</b><br><small>Reading Time</small></div>
     </div>
     <div class="status" id="wordCountStatus"></div>
   </div>
 
-  <!-- QR View -->
   <div id="qrView" class="tool-view">
     <div class="tool-header-bar">
       <h2><i class="fa-solid fa-qrcode"></i> QR Code Generator</h2>
@@ -587,7 +574,7 @@
   </div>
 </main>
 
-<!-- APP INFO & DEVELOPER MODAL -->
+<!-- Modals -->
 <div class="modal-overlay" id="appInfoModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -596,18 +583,15 @@
     </div>
     <div class="modal-body">
       <p><b>File Converter Pro 2027</b> is a secure, blazing-fast client-side web utility suite designed for total local privacy and efficiency.</p>
-      
       <div class="dev-info-box">
         <p><b>Developer:</b> kaushalji</p>
-        <p><b>Version:</b> 2027.0 Ultimate</p>
-        <p><b>Security:</b> 100% Client-Side Processing (Zero Server Uploads)</p>
+        <p><b>Version:</b> 2027.0 Ultimate Pro</p>
+        <p><b>Security:</b> 100% Client-Side Processing</p>
       </div>
-
       <label>Appearance Theme</label>
       <button class="action-btn secondary mb-15" id="themeToggleBtn" onclick="toggleTheme()">
         <i class="fa-solid fa-moon" id="themeIcon"></i> Switch to Light Mode
       </button>
-
       <label>Share This App Suite</label>
       <div class="share-options">
         <button class="header-btn" onclick="shareApp('whatsapp')"><i class="fa-brands fa-whatsapp brand-green"></i> WhatsApp</button>
@@ -617,7 +601,6 @@
   </div>
 </div>
 
-<!-- PROFILE REGISTRATION MODAL -->
 <div class="modal-overlay" id="profileModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -628,27 +611,21 @@
       <form id="profileForm" onsubmit="saveProfile(event)">
         <label>User ID</label>
         <input type="text" id="editUserId" required placeholder="e.g. kaushalji9129">
-
         <label>Full Name</label>
         <input type="text" id="editUsername" required placeholder="e.g. Harshit Kaushal">
-
         <label>Mobile Number</label>
         <input type="tel" id="editMobile" required placeholder="e.g. 9876543210">
-
         <label>Date of Birth (DOB)</label>
         <input type="date" id="editDob" required class="date-input">
-
         <label>Profile Picture (Upload Image or URL)</label>
         <input type="text" id="editAvatarUrl" placeholder="Image URL or pick file below">
         <input type="file" id="editAvatarFile" accept="image/*" class="avatar-file-input" onchange="previewAvatarFile(this)">
-
         <button type="submit" class="action-btn full-width">Save to Local Storage</button>
       </form>
     </div>
   </div>
 </div>
 
-<!-- Test Completion Popup Modal -->
 <div class="modal-overlay" id="typingResultModal">
   <div class="modal-card text-center">
     <div class="modal-header">
@@ -658,29 +635,18 @@
     <div class="modal-body">
       <p class="mb-15">Aapka typing test safaltaपूर्वक poora ho gaya hai. Yahan aapka final score hai:</p>
       <div class="typing-score-grid">
-        <div class="score-card">
-          <b id="modalFinalWpm" class="score-wpm">0</b><br><span>Final WPM</span>
-        </div>
-        <div class="score-card">
-          <b id="modalFinalAcc" class="score-acc">0%</b><br><span>Accuracy</span>
-        </div>
+        <div class="score-card"><b id="modalFinalWpm" class="score-wpm">0</b><br><span>Final WPM</span></div>
+        <div class="score-card"><b id="modalFinalAcc" class="score-acc">0%</b><br><span>Accuracy</span></div>
       </div>
       <button class="action-btn full-width" onclick="closeTypingResultModal()">Back to Setup</button>
     </div>
   </div>
 </div>
 
-<!-- JavaScript for Festival Modal Fullscreen Toggle -->
 <script>
-function openFestivalModal() {
-  document.getElementById('festivalModalOverlay').style.display = 'flex';
-}
-
-function closeFestivalModal() {
-  document.getElementById('festivalModalOverlay').style.display = 'none';
-}
+function openFestivalModal() { document.getElementById('festivalModalOverlay').style.display = 'flex'; }
+function closeFestivalModal() { document.getElementById('festivalModalOverlay').style.display = 'none'; }
 </script>
-
 <script src="script.js"></script>
 </body>
 </html>
