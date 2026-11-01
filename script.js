@@ -6,13 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function registerPWA() {
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('PWA Service Worker registered:', reg.scope))
-      .catch(err => console.log('PWA Service Worker failed:', err));
+    navigator.serviceWorker.register('./sw.js').catch(err => console.log('PWA Service Worker failed:', err));
   }
 }
 
-// Theme Toggle
 function toggleTheme() {
   const body = document.body;
   const themeIcon = document.getElementById("themeIcon");
@@ -48,7 +45,6 @@ function initThemePreference() {
   }
 }
 
-// Profile Header Data
 function loadProfileData() {
   const profile = JSON.parse(localStorage.getItem("userProfile")) || {
     userId: "kaushalji9129",
@@ -57,10 +53,8 @@ function loadProfileData() {
     dob: "2004-09-13",
     avatar: ""
   };
-
   document.getElementById("navUsername").textContent = profile.username;
   const avatarEl = document.getElementById("navAvatar");
-  
   if (profile.avatar) {
     avatarEl.innerHTML = `<img src="${profile.avatar}" alt="Avatar">`;
   } else {
@@ -69,26 +63,16 @@ function loadProfileData() {
 }
 
 function openProfileModal() {
-  const profile = JSON.parse(localStorage.getItem("userProfile")) || {
-    userId: "",
-    username: "kaushalji",
-    mobile: "",
-    dob: "2004-09-13",
-    avatar: ""
-  };
-
+  const profile = JSON.parse(localStorage.getItem("userProfile")) || { userId: "", username: "kaushalji", mobile: "", dob: "2004-09-13", avatar: "" };
   document.getElementById("editUserId").value = profile.userId || "";
   document.getElementById("editUsername").value = profile.username || "";
   document.getElementById("editMobile").value = profile.mobile || "";
   document.getElementById("editDob").value = profile.dob || "";
   document.getElementById("editAvatarUrl").value = profile.avatar && !profile.avatar.startsWith("data:") ? profile.avatar : "";
-
   document.getElementById("profileModal").classList.add("active");
 }
 
-function closeProfileModal() {
-  document.getElementById("profileModal").classList.remove("active");
-}
+function closeProfileModal() { document.getElementById("profileModal").classList.remove("active"); }
 
 let tempAvatarBase64 = "";
 function previewAvatarFile(input) {
@@ -109,20 +93,15 @@ function saveProfile(event) {
   const mobile = document.getElementById("editMobile").value.trim();
   const dob = document.getElementById("editDob").value;
   let avatar = document.getElementById("editAvatarUrl").value.trim();
-
-  if (tempAvatarBase64) {
-    avatar = tempAvatarBase64;
-  } else if (avatar === "[Image Uploaded]") {
+  if (tempAvatarBase64) avatar = tempAvatarBase64;
+  else if (avatar === "[Image Uploaded]") {
     const existing = JSON.parse(localStorage.getItem("userProfile"));
     avatar = existing ? existing.avatar : "";
   }
-
-  const profile = { userId, username, mobile, dob, avatar };
-  localStorage.setItem("userProfile", JSON.stringify(profile));
-
+  localStorage.setItem("userProfile", JSON.stringify({ userId, username, mobile, dob, avatar }));
   loadProfileData();
   closeProfileModal();
-  alert("Registration data saved successfully to Local Storage!");
+  alert("Registration data saved successfully!");
 }
 
 function openTool(viewId) {
@@ -131,9 +110,7 @@ function openTool(viewId) {
   document.querySelectorAll('.tool-view').forEach(el => el.classList.remove('active'));
   const target = document.getElementById(viewId);
   if (target) target.classList.add('active');
-  if (viewId === 'typingSpeedView') {
-    resetTypingTest();
-  }
+  if (viewId === 'typingSpeedView') resetTypingTest();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -145,12 +122,8 @@ function goHome() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function openAppInfoModal() {
-  document.getElementById('appInfoModal').classList.add('active');
-}
-function closeAppInfoModal() {
-  document.getElementById('appInfoModal').classList.remove('active');
-}
+function openAppInfoModal() { document.getElementById('appInfoModal').classList.add('active'); }
+function closeAppInfoModal() { document.getElementById('appInfoModal').classList.remove('active'); }
 function shareApp(type) {
   const url = window.location.href;
   if (type === 'copy') {
@@ -170,9 +143,7 @@ function setStatus(id, text, isSuccess = true) {
 
 function updateFileName(input, textId) {
   const label = document.getElementById(textId);
-  if (input.files && input.files[0]) {
-    label.innerHTML = `<i class="fa-solid fa-file"></i> ${input.files[0].name}`;
-  }
+  if (input.files && input.files[0]) label.innerHTML = `<i class="fa-solid fa-file"></i> ${input.files[0].name}`;
 }
 
 function saveBlob(blob, name) {
@@ -183,218 +154,129 @@ function saveBlob(blob, name) {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
-// ================= ADVANCED TYPING SPEED TEST (WPM) LOGIC =================
-const typingPassagesLarge = {
-  tech: [
-    "Programming is the art of telling another human what the computer wants to do. Clean code always looks like it was written by someone who cares about software quality. Artificial intelligence and machine learning are rapidly revolutionizing modern software architectures, enabling intelligent automation across web and mobile platforms worldwide. JavaScript powers the interactive web, allowing developers to build responsive single page applications with offline caching, local databases, and seamless user experiences.",
-    "Web development toolchains are centered around native HTML5 layouts, custom Tailwind CSS styling rules, standalone JavaScript modules, and scalable vector graphics. Developers must ensure high performance, strict adherence to responsive design principles, and robust client-side storage management using IndexedDB and service workers for progressive web applications."
-  ],
-  education: [
-    "Education is the most powerful weapon which you can use to change the world. Continuous learning sharpens the human mind, builds strong analytical thinking, and opens new career pathways for aspiring youth. Computer literacy is absolutely essential in the modern digital age. Students mastering word processing, advanced spreadsheets, database administration, and programming fundamentals gain a massive competitive edge in the global job market.",
-    "Consistent daily practice, deep focus, and self-discipline are the true foundational pillars of academic excellence and professional success in any technical domain. Institutions providing vocational training play a critical role in bridging the gap between theoretical knowledge and practical industry demands."
-  ],
-  general: [
-    "An investment in knowledge always pays the best interest. Success is never final, and failure is never fatal: it is the courageous mindset to continue moving forward that truly counts. Hard work consistently beats raw talent when talent refuses to work hard. Stay completely focused on your long-term goals, maintain a deeply positive attitude, and embrace every single daily challenge as an opportunity to grow.",
-    "Effective time management is critical for maximizing personal and professional productivity. Prioritizing high-impact tasks, eliminating unnecessary digital distractions, and maintaining a structured routine leads to remarkable achievements and a balanced, stress-free lifestyle."
-  ]
-};
+// ================= ADVANCED BACKGROUND REMOVER WITH LIVE PREVIEW & COLOR PICKER =================
+let bgSourceImageObj = null;
+let currentBgColor = { r: 255, g: 255, b: 255 };
 
-let typingTimer = null;
-let totalTestTime = 60;
-let timeLeft = 60;
-let isTestActive = false;
-let currentPassageText = "";
-
-function beginTypingTestSession() {
-  totalTestTime = parseInt(document.getElementById("typingTimeSelect").value) || 60;
-  const category = document.getElementById("typingCategory").value;
-  const list = typingPassagesLarge[category];
-  currentPassageText = list[Math.floor(Math.random() * list.length)].replace(/\s+/g, ' ').trim();
-
-  // Hide Setup Box and Show Workspace
-  document.getElementById("typingSetupBox").classList.add("hidden");
-  document.getElementById("typingWorkspace").classList.remove("hidden");
-
-  const displayBox = document.getElementById("passageDisplayBox");
-  displayBox.innerHTML = currentPassageText.split("").map(char => `<span>${char}</span>`).join("");
-
-  const textarea = document.getElementById("typingInput");
-  textarea.value = "";
-  textarea.disabled = false;
-  textarea.focus();
-
-  timeLeft = totalTestTime;
-  isTestActive = true;
-  document.getElementById("tsTime").textContent = timeLeft + "s";
-  document.getElementById("typingProgressBar").style.width = "0%";
-  setStatus("typingStatus", "Test is live! Start typing now.");
-
-  if (typingTimer) clearInterval(typingTimer);
-  typingTimer = setInterval(() => {
-    timeLeft--;
-    document.getElementById("tsTime").textContent = timeLeft + "s";
-    
-    const progressPercent = ((totalTestTime - timeLeft) / totalTestTime) * 100;
-    document.getElementById("typingProgressBar").style.width = progressPercent + "%";
-
-    if (timeLeft <= 0) {
-      finishTypingTest();
-    }
-  }, 1000);
-}
-
-function finishTypingTest() {
-  isTestActive = false;
-  clearInterval(typingTimer);
-  document.getElementById("typingInput").disabled = true;
-  
-  const finalWpm = document.getElementById("tsWpm").textContent;
-  const finalAcc = document.getElementById("tsAccuracy").textContent;
-  
-  document.getElementById("modalFinalWpm").textContent = finalWpm;
-  document.getElementById("modalFinalAcc").textContent = finalAcc;
-  document.getElementById("typingResultModal").classList.add("active");
-  
-  setStatus("typingStatus", "Test completed automatically!");
-}
-
-function closeTypingResultModal() {
-  document.getElementById("typingResultModal").classList.remove("active");
-  resetTypingTest();
-}
-
-function closeTypingTestView() {
-  stopTypingTestForce();
-  goHome();
-}
-
-function stopTypingTestForce() {
-  isTestActive = false;
-  if (typingTimer) clearInterval(typingTimer);
-}
-
-function resetTypingTest() {
-  stopTypingTestForce();
-  document.getElementById("typingWorkspace").classList.add("hidden");
-  document.getElementById("typingSetupBox").classList.remove("hidden");
-  document.getElementById("typingInput").value = "";
-  document.getElementById("tsWpm").textContent = "0";
-  document.getElementById("tsAccuracy").textContent = "100%";
-  document.getElementById("tsErrors").textContent = "0";
-  document.getElementById("typingProgressBar").style.width = "0%";
-  setStatus("typingStatus", "");
-}
-
-function evaluateTyping() {
-  if (!isTestActive) return;
-  
-  const typedVal = document.getElementById("typingInput").value;
-  const passageSpans = document.getElementById("passageDisplayBox").querySelectorAll("span");
-  
-  let errors = 0;
-  let correctChars = 0;
-
-  for (let i = 0; i < passageSpans.length; i++) {
-    const char = typedVal[i];
-    if (char == null) {
-      passageSpans[i].style.color = "var(--text-main)";
-      passageSpans[i].style.background = "transparent";
-    } else if (char === currentPassageText[i]) {
-      passageSpans[i].style.color = "var(--success)";
-      passageSpans[i].style.background = "transparent";
-      correctChars++;
-    } else {
-      passageSpans[i].style.color = "var(--error)";
-      passageSpans[i].style.background = "color-mix(in srgb, var(--error) 20%, transparent)";
-      errors++;
-    }
-  }
-
-  const timeElapsedMinutes = (totalTestTime - timeLeft) / 60;
-  const wpm = timeElapsedMinutes > 0 ? Math.round((correctChars / 5) / timeElapsedMinutes) : 0;
-  const accuracy = typedVal.length > 0 ? Math.max(0, Math.round(((typedVal.length - errors) / typedVal.length) * 100)) : 100;
-
-  document.getElementById("tsWpm").textContent = wpm;
-  document.getElementById("tsAccuracy").textContent = accuracy + "%";
-  document.getElementById("tsErrors").textContent = errors;
-
-  if (typedVal.length >= currentPassageText.length) {
-    finishTypingTest();
+function loadBgRemImage(input) {
+  if (input.files && input.files[0]) {
+    updateFileName(input, 'bgImgText');
+    const reader = new FileReader();
+    reader.onload = e => {
+      bgSourceImageObj = new Image();
+      bgSourceImageObj.onload = () => {
+        document.getElementById("bgControlsContainer").classList.remove("hidden");
+        // Set default picked color to top-left pixel
+        setupBgCanvasAndDefaultColor();
+      };
+      bgSourceImageObj.src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
   }
 }
 
-// ================= OTHER TOOLS LOGIC =================
+function setupBgCanvasAndDefaultColor() {
+  const srcCanvas = document.getElementById("bgSourceCanvas");
+  const ctx = srcCanvas.getContext("2d");
+  srcCanvas.width = bgSourceImageObj.width;
+  srcCanvas.height = bgSourceImageObj.height;
+  ctx.drawImage(bgSourceImageObj, 0, 0);
 
-// 1. Ultra HD Image Enhancer
+  // Pick top-left pixel as default background color
+  const pixel = ctx.getImageData(0, 0, 1, 1).data;
+  currentBgColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
+  document.getElementById("selectedColorDisplay").textContent = `RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+  document.getElementById("selectedColorDisplay").style.background = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+
+  processBgRemovalLive();
+}
+
+function pickColorForBg(event) {
+  const srcCanvas = document.getElementById("bgSourceCanvas");
+  const rect = srcCanvas.getBoundingClientRect();
+  const scaleX = srcCanvas.width / rect.width;
+  const scaleY = srcCanvas.height / rect.height;
+
+  const clickX = Math.floor((event.clientX - rect.left) * scaleX);
+  const clickY = Math.floor((event.clientY - rect.top) * scaleY);
+
+  const ctx = srcCanvas.getContext("2d");
+  const pixel = ctx.getImageData(clickX, clickY, 1, 1).data;
+  currentBgColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
+
+  document.getElementById("selectedColorDisplay").textContent = `RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+  document.getElementById("selectedColorDisplay").style.background = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+
+  processBgRemovalLive();
+}
+
+function updateBgToleranceLabel() {
+  const val = document.getElementById("bgTolerance").value;
+  document.getElementById("tolValueLabel").textContent = val;
+}
+
+function processBgRemovalLive() {
+  if (!bgSourceImageObj) return;
+  const tolerance = parseInt(document.getElementById("bgTolerance").value) || 35;
+  
+  const prevCanvas = document.getElementById("bgPreviewCanvas");
+  prevCanvas.width = bgSourceImageObj.width;
+  prevCanvas.height = bgSourceImageObj.height;
+  const pCtx = prevCanvas.getContext("2d");
+  
+  pCtx.drawImage(bgSourceImageObj, 0, 0);
+  const imgData = pCtx.getImageData(0, 0, prevCanvas.width, prevCanvas.height);
+  const data = imgData.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const diff = Math.abs(r - currentBgColor.r) + Math.abs(g - currentBgColor.g) + Math.abs(b - currentBgColor.b);
+    if (diff <= tolerance * 3) {
+      data[i + 3] = 0; // Make transparent
+    }
+  }
+  pCtx.putImageData(imgData, 0, 0);
+  setStatus("bgRemStatus", "Live transparent preview updated successfully!");
+}
+
+function downloadBgRemovedImage() {
+  const prevCanvas = document.getElementById("bgPreviewCanvas");
+  prevCanvas.toBlob(blob => {
+    saveBlob(blob, "Transparent_Image_Pro.png");
+    setStatus("bgRemStatus", "Transparent PNG downloaded successfully!");
+  }, "image/png");
+}
+
+// ================= ULTRA HD UPSCALER =================
 function convertToUltraHD(scale) {
   const input = document.getElementById("hdImgFile");
   if (!input.files || !input.files[0]) return setStatus("hdStatus", "Please choose an image file first.", false);
-  
   const file = input.files[0];
   const img = new Image();
   const url = URL.createObjectURL(file);
-  
   img.onload = () => {
     const canvas = document.createElement("canvas");
     canvas.width = img.naturalWidth * scale;
     canvas.height = img.naturalHeight * scale;
     const ctx = canvas.getContext("2d");
-
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
     canvas.toBlob(blob => {
       URL.revokeObjectURL(url);
-      saveBlob(blob, `UltraHD_${scale}X_${file.name}`);
-      setStatus("hdStatus", `Successfully converted to ${scale}X Ultra HD!`);
+      saveBlob(blob, `UltraHD_${scale}X_Enhanced.png`);
+      setStatus("hdStatus", `Successfully upscaled to ${scale}X 4K Ultra HD!`);
     }, "image/png", 1.0);
   };
   img.src = url;
 }
 
-// 2. Background Remover
-function removeBackground() {
-  const input = document.getElementById("bgImgFile");
-  if (!input.files || !input.files[0]) return setStatus("bgRemStatus", "Please choose an image file first.", false);
-  
-  const file = input.files[0];
-  const tolerance = parseInt(document.getElementById("bgTolerance").value) || 30;
-  const img = new Image();
-  const url = URL.createObjectURL(file);
-
-  img.onload = () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imgData.data;
-    const bgR = data[0], bgG = data[1], bgB = data[2];
-
-    for (let i = 0; i < data.length; i += 4) {
-      const r = data[i], g = data[i + 1], b = data[i + 2];
-      if (Math.abs(r - bgR) < tolerance && Math.abs(g - bgG) < tolerance && Math.abs(b - bgB) < tolerance) {
-        data[i + 3] = 0;
-      }
-    }
-
-    ctx.putImageData(imgData, 0, 0);
-    canvas.toBlob(blob => {
-      URL.revokeObjectURL(url);
-      saveBlob(blob, `BG_Removed_${file.name.replace(/\.[^.]+$/, "")}.png`);
-      setStatus("bgRemStatus", "Background removed successfully!");
-    }, "image/png");
-  };
-  img.src = url;
-}
-
-// 3. Photoshop Image Editor
+// ================= PHOTOSHOP IMAGE EDITOR PRO =================
 let editorImageObj = null;
 let editorRotateAngle = 0;
 let editorIsFlipped = false;
+let activeSpecialEffect = 'none';
 
 function loadEditorImage(input) {
   if (input.files && input.files[0]) {
@@ -406,6 +288,7 @@ function loadEditorImage(input) {
         document.getElementById("editorControls").style.display = "block";
         editorRotateAngle = 0;
         editorIsFlipped = false;
+        activeSpecialEffect = 'none';
         applyEditorFilters();
       };
       editorImageObj.src = e.target.result;
@@ -432,7 +315,12 @@ function applyEditorFilters() {
   ctx.translate(canvas.width / 2, canvas.height / 2);
   ctx.rotate((editorRotateAngle * Math.PI) / 180);
   ctx.scale(editorIsFlipped ? -1 : 1, 1);
-  ctx.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${blur}px)`;
+  
+  let filterStr = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${blur}px)`;
+  if (activeSpecialEffect === 'sepia') filterStr += ' sepia(100%)';
+  if (activeSpecialEffect === 'invert') filterStr += ' invert(100%)';
+  
+  ctx.filter = filterStr;
   ctx.drawImage(editorImageObj, -editorImageObj.width / 2, -editorImageObj.height / 2);
   ctx.restore();
 }
@@ -447,15 +335,139 @@ function flipEditorImage() {
   applyEditorFilters();
 }
 
+function applySpecialEffect(effect) {
+  activeSpecialEffect = (activeSpecialEffect === effect) ? 'none' : effect;
+  applyEditorFilters();
+  setStatus("editorStatus", `Applied effect: ${effect.toUpperCase()}`);
+}
+
 function downloadEditedImage() {
   const canvas = document.getElementById("editorCanvas");
   canvas.toBlob(blob => {
-    saveBlob(blob, "edited_photoshop_image.png");
+    saveBlob(blob, "Photoshop_Edited_Pro.png");
     setStatus("editorStatus", "Edited image saved successfully!");
   }, "image/png");
 }
 
-// Other Converters
+// ================= TYPING SPEED TEST LOGIC =================
+const typingPassagesLarge = {
+  tech: [
+    "Programming is the art of telling another human what the computer wants to do. Clean code always looks like it was written by someone who cares about software quality. Artificial intelligence and machine learning are rapidly revolutionizing modern software architectures, enabling intelligent automation across web and mobile platforms worldwide.",
+    "Web development toolchains are centered around native HTML5 layouts, custom Tailwind CSS styling rules, standalone JavaScript modules, and scalable vector graphics."
+  ],
+  education: [
+    "Education is the most powerful weapon which you can use to change the world. Continuous learning sharpens the human mind and builds strong analytical thinking.",
+    "Consistent daily practice, deep focus, and self-discipline are the true foundational pillars of academic excellence and professional success."
+  ],
+  general: [
+    "An investment in knowledge always pays the best interest. Success is never final, and failure is never fatal: it is the courageous mindset to continue moving forward.",
+    "Effective time management is critical for maximizing personal and professional productivity and maintaining a balanced, stress-free lifestyle."
+  ]
+};
+
+let typingTimer = null;
+let totalTestTime = 60;
+let timeLeft = 60;
+let isTestActive = false;
+let currentPassageText = "";
+
+function beginTypingTestSession() {
+  totalTestTime = parseInt(document.getElementById("typingTimeSelect").value) || 60;
+  const category = document.getElementById("typingCategory").value;
+  const list = typingPassagesLarge[category];
+  currentPassageText = list[Math.floor(Math.random() * list.length)].replace(/\s+/g, ' ').trim();
+
+  document.getElementById("typingSetupBox").classList.add("hidden");
+  document.getElementById("typingWorkspace").classList.remove("hidden");
+
+  const displayBox = document.getElementById("passageDisplayBox");
+  displayBox.innerHTML = currentPassageText.split("").map(char => `<span>${char}</span>`).join("");
+
+  const textarea = document.getElementById("typingInput");
+  textarea.value = "";
+  textarea.disabled = false;
+  textarea.focus();
+
+  timeLeft = totalTestTime;
+  isTestActive = true;
+  document.getElementById("tsTime").textContent = timeLeft + "s";
+  document.getElementById("typingProgressBar").style.width = "0%";
+  setStatus("typingStatus", "Test is live! Start typing now.");
+
+  if (typingTimer) clearInterval(typingTimer);
+  typingTimer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("tsTime").textContent = timeLeft + "s";
+    const progressPercent = ((totalTestTime - timeLeft) / totalTestTime) * 100;
+    document.getElementById("typingProgressBar").style.width = progressPercent + "%";
+    if (timeLeft <= 0) finishTypingTest();
+  }, 1000);
+}
+
+function finishTypingTest() {
+  isTestActive = false;
+  clearInterval(typingTimer);
+  document.getElementById("typingInput").disabled = true;
+  document.getElementById("modalFinalWpm").textContent = document.getElementById("tsWpm").textContent;
+  document.getElementById("modalFinalAcc").textContent = document.getElementById("tsAccuracy").textContent;
+  document.getElementById("typingResultModal").classList.add("active");
+  setStatus("typingStatus", "Test completed successfully!");
+}
+
+function closeTypingResultModal() {
+  document.getElementById("typingResultModal").classList.remove("active");
+  resetTypingTest();
+}
+
+function closeTypingTestView() { stopTypingTestForce(); goHome(); }
+function stopTypingTestForce() { isTestActive = false; if (typingTimer) clearInterval(typingTimer); }
+
+function resetTypingTest() {
+  stopTypingTestForce();
+  document.getElementById("typingWorkspace").classList.add("hidden");
+  document.getElementById("typingSetupBox").classList.remove("hidden");
+  document.getElementById("typingInput").value = "";
+  document.getElementById("tsWpm").textContent = "0";
+  document.getElementById("tsAccuracy").textContent = "100%";
+  document.getElementById("tsErrors").textContent = "0";
+  document.getElementById("typingProgressBar").style.width = "0%";
+  setStatus("typingStatus", "");
+}
+
+function evaluateTyping() {
+  if (!isTestActive) return;
+  const typedVal = document.getElementById("typingInput").value;
+  const passageSpans = document.getElementById("passageDisplayBox").querySelectorAll("span");
+  let errors = 0, correctChars = 0;
+
+  for (let i = 0; i < passageSpans.length; i++) {
+    const char = typedVal[i];
+    if (char == null) {
+      passageSpans[i].style.color = "var(--text-main)";
+      passageSpans[i].style.background = "transparent";
+    } else if (char === currentPassageText[i]) {
+      passageSpans[i].style.color = "var(--success)";
+      passageSpans[i].style.background = "transparent";
+      correctChars++;
+    } else {
+      passageSpans[i].style.color = "var(--error)";
+      passageSpans[i].style.background = "color-mix(in srgb, var(--error) 20%, transparent)";
+      errors++;
+    }
+  }
+
+  const timeElapsedMinutes = (totalTestTime - timeLeft) / 60;
+  const wpm = timeElapsedMinutes > 0 ? Math.round((correctChars / 5) / timeElapsedMinutes) : 0;
+  const accuracy = typedVal.length > 0 ? Math.max(0, Math.round(((typedVal.length - errors) / typedVal.length) * 100)) : 100;
+
+  document.getElementById("tsWpm").textContent = wpm;
+  document.getElementById("tsAccuracy").textContent = accuracy + "%";
+  document.getElementById("tsErrors").textContent = errors;
+
+  if (typedVal.length >= currentPassageText.length) finishTypingTest();
+}
+
+// Other Basic Converters (HTML2JSON, CSV, Base64, QR, etc.)
 function htmlToJson() {
   const value = document.getElementById("htmlInput").value;
   if (!value.trim()) return setStatus("h2jStatus", "Please enter HTML content first.", false);
@@ -467,11 +479,10 @@ function jsonToHtml() {
   const value = document.getElementById("jsonInput").value;
   try {
     const obj = JSON.parse(value);
-    const html = typeof obj === "string" ? obj : (obj && typeof obj.html === "string" ? obj.html : null);
-    if (html === null) throw new Error('Requires "html" property.');
+    const html = typeof obj === "string" ? obj : obj.html;
     saveBlob(new Blob([html], { type: "text/html;charset=utf-8" }), "converted.html");
     setStatus("j2hStatus", "HTML file created successfully.");
-  } catch (error) { setStatus("j2hStatus", "Error: " + error.message, false); }
+  } catch (e) { setStatus("j2hStatus", "Error: " + e.message, false); }
 }
 
 function csvToJson() {
