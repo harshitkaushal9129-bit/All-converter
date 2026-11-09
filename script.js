@@ -665,7 +665,7 @@ function downloadBgRemovedImage() {
 }
 
 // ================= TEXT ⇄ EMOJI CONVERTER (EXPANDED ~1000+ CONTENTS) =================
-const textEmojiMap = {
+const textToEmojiMap = {
   // Common Phrases & Greetings
   "i love you":"❤️", "love you":"❤️", "good morning":"🌅", "good night":"🌙", "thank you":"🙏", "thanks":"🙏",
   "happy birthday":"🎂🎉", "congratulations":"🎉", "good luck":"🍀", "well done":"👏", "take care":"🤗",
