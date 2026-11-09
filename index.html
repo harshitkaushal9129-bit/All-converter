@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>File Converter Pro 2027 - Complete Suite</title>
+<meta name="theme-color" content="#0f172a">
+<meta name="description" content="All-in-One File Converter and productivity tools.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+<!-- Top Festival Trigger Banner -->
+<div class="festival-banner" id="festivalBanner" onclick="openFestivalModal()">
+  <div class="festival-banner-content">
+    <i class="fa-solid fa-gift"></i>
+    <span>Special Festival Page! Click to open Full-Screen View 🎉</span>
+  </div>
+  <button class="festival-exit-btn" title="Close Banner" onclick="event.stopPropagation(); document.getElementById('festivalBanner').style.display='none';">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+</div>
+
+<!-- Full-Screen Festival Modal -->
+<div class="festival-modal-overlay" id="festivalModalOverlay">
+  <div class="festival-modal-container">
+    <div class="festival-modal-header">
+      <span class="festival-modal-title"><i class="fa-solid fa-star"></i> Festival Special Event</span>
+      <button class="festival-close-btn" onclick="closeFestivalModal()"><i class="fa-solid fa-xmark"></i> Close</button>
+    </div>
+    <div class="festival-modal-body">
+      <iframe src="festival.html" class="festival-iframe"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- Universal App Header -->
+<header class="app-header">
+  <div class="brand-box">
+    <div class="brand-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+    <div>
+      <div class="brand-title">File Converter Pro</div>
+      <div class="brand-subtitle">v2027.0 Complete Suite</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="user-profile-badge" id="userProfileBadge" onclick="openProfileModal()">
+      <div class="user-avatar" id="navAvatar">HK</div>
+      <span id="navUsername">kaushalji</span>
+    </div>
+    <button class="header-btn" onclick="openAppInfoModal()"><i class="fa-solid fa-circle-info"></i> Info</button>
+  </div>
+</header>
+
+<main>
+  <!-- Home Dashboard -->
+  <div id="homeDashboard">
+    <div class="dashboard-hero">
+      <h1>Select an Advanced Tool</h1>
+      <p>Click on any tool below to launch it instantly.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card-selector" onclick="openTool('calendarView')">
+        <div class="card-icon"><i class="fa-solid fa-calendar-days"></i></div>
+        <h3>Calendar & Live Clock</h3>
+        <p>Live date, time, monthly calendar and date selection.</p>
+        <div class="card-footer-link">Open Calendar <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+      <!-- Typing Master 12 -->
+      <div class="card-selector" onclick="openTool('typingSpeedView')">
+        <div class="card-icon"><i class="fa-solid fa-keyboard"></i></div>
+        <h3>Typing Master 12 Pro</h3>
+        <p>10 Professional lessons, WPM tracking, live errors, and printable certificates.</p>
+        <div class="card-footer-link">Open Master <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <!-- Photoshop Studio Pro -->
+      <div class="card-selector" onclick="openTool('photoEditorView')">
+        <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
+        <h3>Photoshop Studio Pro (Freeform & Color Fill)</h3>
+        <p>Freeform shape selection, custom color filling, multi-photo tabs & filters.</p>
+        <div class="card-footer-link">Open Studio <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <!-- Ultra HD Enhancer -->
+      <div class="card-selector" onclick="openTool('hdView')">
+        <div class="card-icon"><i class="fa-solid fa-expand"></i></div>
+        <h3>Ultra HD Enhancer Pro</h3>
+        <p>Upscale low-res images to 4K with AI sharpness and denoise filters.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <!-- BG Remover -->
+      <div class="card-selector" onclick="openTool('bgRemView')">
+        <div class="card-icon"><i class="fa-solid fa-scissors"></i></div>
+        <h3>Multi-Color BG Remover</h3>
+        <p>Live color picker, range tolerance, and transparent PNG export.</p>
+        <div class="card-footer-link">Open Tool <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <!-- Other Tools -->
+      <div class="card-selector" onclick="openTool('h2jView')"><div class="card-icon"><i class="fa-code"></i></div><h3>HTML → JSON</h3><p>Convert HTML markup to JSON objects.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('j2hView')"><div class="card-icon"><i class="fa-file-code"></i></div><h3>JSON → HTML</h3><p>Extract HTML elements from JSON code.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('csvView')"><div class="card-icon"><i class="fa-file-csv"></i></div><h3>CSV → JSON</h3><p>Transform tabular CSV into JSON arrays.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('j2csvView')"><div class="card-icon"><i class="fa-solid fa-file-excel"></i></div><h3>JSON → CSV</h3><p>Export JSON data into spreadsheet CSV.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('imgConvView')"><div class="card-icon"><i class="fa-image"></i></div><h3>Image Format Converter</h3><p>Switch between JPG, PNG, and WebP.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('svgView')"><div class="card-icon"><i class="fa-shapes"></i></div><h3>SVG → PNG Rasterizer</h3><p>Render SVG files or code into high-res PNG.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('base64View')"><div class="card-icon"><i class="fa-lock"></i></div><h3>Base64 Utility</h3><p>Encode and decode text strings safely.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('urlView')"><div class="card-icon"><i class="fa-solid fa-link"></i></div><h3>URL Encoder / Decoder</h3><p>Manage special web URL characters.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('mdView')"><div class="card-icon"><i class="fa-brands fa-markdown"></i></div><h3>Markdown → HTML</h3><p>Convert markdown formatting to HTML.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('textCaseView')"><div class="card-icon"><i class="fa-solid fa-font"></i></div><h3>Text Case Transformer</h3><p>Change text case instantly.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('morseView')"><div class="card-icon"><i class="fa-solid fa-signal"></i></div><h3>Morse Code Converter</h3><p>Translate text to Morse code & vice versa.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('binaryView')"><div class="card-icon"><i class="fa-solid fa-binary"></i></div><h3>Binary ⇄ Text</h3><p>Convert characters to 8-bit binary code.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('colorView')"><div class="card-icon"><i class="fa-solid fa-palette"></i></div><h3>HEX ⇄ RGB Converter</h3><p>Switch color codes seamlessly.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('passGenView')"><div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div><h3>Secure Password Generator</h3><p>Create unbreakable passwords.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('wordCountView')"><div class="card-icon"><i class="fa-solid fa-calculator"></i></div><h3>Word & Char Counter</h3><p>Live text statistics analysis.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+      <div class="card-selector" onclick="openTool('qrView')"><div class="card-icon"><i class="fa-qrcode"></i></div><h3>QR Code Generator</h3><p>Generate downloadable QR codes.</p><div class="card-footer-link">Open <i class="fa-solid fa-arrow-right"></i></div></div>
+    </div>
+  </div>
+
+  <!-- ================= TOOL VIEWS ================= -->
+
+  <!-- Typing Master 12 View -->
+  <div id="typingSpeedView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-keyboard"></i> Typing Master 12 Professional Tutor</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
+    </div>
+    <div id="typingSetupBox" class="typing-setup-box">
+      <h3><i class="fa-solid fa-list-check"></i> Select Lesson (1 to 10) & Duration</h3>
+      <div class="typing-config-grid">
+        <div>
+          <label>Select Lesson / Passage</label>
+          <select id="typingLessonSelect">
+            <option value="1">Lesson 1: Home Row Mastery & Touch Typing Basics</option>
+            <option value="2">Lesson 2: Advanced Web Architecture & Client-Side Logic</option>
+            <option value="3">Lesson 3: Graphic Design Principles & Neon Aesthetics</option>
+            <option value="4">Lesson 4: Cloud Databases and Firebase Integration</option>
+            <option value="5">Lesson 5: Progressive Web Apps & Offline Service Workers</option>
+            <option value="6">Lesson 6: Professional Ethics & Altruistic Interpersonal Skills</option>
+            <option value="7">Lesson 7: Network Protocols, Routers and Security Rules</option>
+            <option value="8">Lesson 8: Python Programming and Algorithmic Problem Solving</option>
+            <option value="9">Lesson 9: Tally Prime & Corporate Accounting Formatting</option>
+            <option value="10">Lesson 10: Ultimate Speed Master Challenge (Expert Level)</option>
+          </select>
+        </div>
+        <div>
+          <label>Test Duration</label>
+          <select id="typingTimeSelect">
+            <option value="30">30 Seconds</option>
+            <option value="60" selected>1 Minute (60s)</option>
+            <option value="120">2 Minutes (120s)</option>
+            <option value="300">5 Minutes (300s)</option>
+          </select>
+        </div>
+      </div>
+      <button class="action-btn" onclick="beginTypingTestSession()"><i class="fa-solid fa-play"></i> Start Typing Lesson</button>
+    </div>
+
+    <div id="typingWorkspace" class="hidden">
+      <div class="typing-progress-track"><div id="typingProgressBar" class="typing-progress-fill"></div></div>
+      <div id="passageDisplayBox" class="passage-display-box"></div>
+      <textarea id="typingInput" placeholder="Start typing the passage above here..." oninput="evaluateTyping()" class="typing-input-area"></textarea>
+      <div class="stats-dashboard-grid">
+        <div class="stat-card"><b id="tsWpm">0</b><br><small>WPM</small></div>
+        <div class="stat-card"><b id="tsAccuracy">100%</b><br><small>Accuracy</small></div>
+        <div class="stat-card"><b id="tsTime">60s</b><br><small>Time Left</small></div>
+        <div class="stat-card"><b id="tsErrors">0</b><br><small>Errors</small></div>
+      </div>
+      <button class="action-btn secondary" onclick="resetTypingTest()"><i class="fa-solid fa-rotate-right"></i> Change Lesson / Quit</button>
+    </div>
+    <div class="status" id="typingStatus"></div>
+  </div>
+
+  <!-- Photoshop Studio Pro -->
+  <div id="photoEditorView" class="tool-view">
+    <div class="tool-header-bar">
+      <h2><i class="fa-solid fa-sliders"></i> Photoshop Studio Pro (Freeform Shape & Color Fill)</h2>
+      <button class="back-home-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
+    </div>
+
+    <div class="drop-zone" onclick="document.getElementById('editorImgFile').click()">
+      <div class="drop-zone-text" id="editorImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Open Photo(s) from Gallery</div>
+      <input id="editorImgFile" type="file" accept="image/*" multiple onchange="loadMultipleEditorImages(this)">
+    </div>
+
+    <div id="photoTabsContainer" class="photo-tabs-bar hidden">
+      <span class="tab-bar-label"><i class="fa-solid fa-images"></i> Open Photos:</span>
+      <div id="tabsList" class="tabs-list-flex"></div>
+    </div>
+
+    <div id="editorControls" class="hidden">
+      <!-- Photoshop Tools Left-Aligned Navigation Bar -->
+      <div class="editor-mode-banner">
+        <button class="action-btn secondary mode-tab-btn active" id="btnToolGlobal" onclick="setPhotoshopTool('global')"><i class="fa-solid fa-sliders"></i> 1. Global Filters</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolFreeform" onclick="setPhotoshopTool('freeform')"><i class="fa-solid fa-draw-polygon"></i> 2. Freeform Lasso Shape</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolBrush" onclick="setPhotoshopTool('brush')"><i class="fa-solid fa-paintbrush"></i> 3. Touch Brush</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolRotate" onclick="rotateEditorImage(90)"><i class="fa-solid fa-rotate-right"></i> 4. Rotate</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolFlip" onclick="flipEditorImage()"><i class="fa-solid fa-repeat"></i> 5. Flip Mirror</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolSepia" onclick="applySpecialEffect('sepia')"><i class="fa-solid fa-palette"></i> 6. Sepia Tone</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolInvert" onclick="applySpecialEffect('invert')"><i class="fa-solid fa-circle-half-stroke"></i> 7. Invert Colors</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolCrop" onclick="setPhotoshopTool('crop')"><i class="fa-solid fa-crop"></i> 8. Crop Region</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolBrightness" onclick="quickFilterAdjust('brightness')"><i class="fa-solid fa-sun"></i> 9. Auto Brighten</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolContrast" onclick="quickFilterAdjust('contrast')"><i class="fa-solid fa-circle-half-stroke"></i> 10. Auto Contrast</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolGrayscale" onclick="quickFilterAdjust('grayscale')"><i class="fa-solid fa-image"></i> 11. B&W Grayscale</button>
+        <button class="action-btn secondary mode-tab-btn" id="btnToolReset" onclick="resetCurrentPhoto()"><i class="fa-solid fa-rotate-left"></i> 12. Reset Original</button>
+      </div>
+
+      <div class="editor-canvas-wrapper" id="editorCanvasWrapper">
+        <canvas id="editorCanvas"></canvas>
+      </div>
+
+      <!-- Tool Specific Panels -->
+      <div id="globalControlsPanel">
+        <div class="editor-sliders-grid">
+          <div><label>Brightness</label><input type="range" id="eBrightness" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
+          <div><label>Contrast</label><input type="range" id="eContrast" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
+          <div><label>Saturate</label><input type="range" id="eSaturate" min="0" max="200" value="100" oninput="applyEditorFilters()"></div>
+          <div><label>Blur (px)</label><input type="range" id="eBlur" min="0" max="20" value="0" oninput="applyEditorFilters()"></div>
+        </div>
+      </div>
+
+      <!-- Freeform Lasso Shape & Color Fill Panel -->
+      <div id="freeformControlsPanel" class="hidden freeform-panel-box">
+        <p class="freeform-hint"><i class="fa-solid fa-circle-info"></i> Image par koi bhi irregular/freeform shape draw karein (Lasso select), phir niche se color fill karein ya adjustments apply karein:</p>
+        <div class="editor-sliders-grid" style="margin-bottom:10px;">
+          <div>
+            <label>Select Fill Color</label>
+            <input type="color" id="shapeFillColor" value="#22c55e" class="color-picker-input">
+          </div>
+          <div style="display:flex; align-items:flex-end;">
+            <button class="action-btn" onclick="fillCustomShapeWithColor()"><i class="fa-solid fa-fill-drip"></i> Fill Color in Shape</button>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="action-btn" onclick="editSelectedArea('brightness')"><i class="fa-solid fa-sun"></i> Brighten Shape</button>
+          <button class="action-btn" onclick="editSelectedArea('darken')"><i class="fa-solid fa-moon"></i> Darken Shape</button>
+          <button class="action-btn secondary" onclick="editSelectedArea('grayscale')"><i class="fa-solid fa-image"></i> B&W Shape</button>
+          <button class="action-btn secondary" onclick="clearSelection()"><i class="fa-solid fa-xmark"></i> Clear Shape</button>
+        </div>
+      </div>
+
+      <div id="brushControlsPanel" class="hidden freeform-panel-box">
+        <div class="editor-sliders-grid">
+          <div>
+            <label>Brush Color</label>
+            <input type="color" id="brushColorPicker" value="#f97316" class="color-picker-input">
+          </div>
+          <div>
+            <label>Brush Size: <span id="brushSizeVal">5</span>px</label>
+            <input type="range" id="brushSizeRange" min="1" max="50" value="5" oninput="document.getElementById('brushSizeVal').textContent=this.value">
+          </div>
+        </div>
+        <p class="freeform-hint"><i class="fa-solid fa-paintbrush"></i> Finger ya mouse drag karke freehand painting karein.</p>
+      </div>
+
+      <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Download Final Photo</button>
+    </div>
+    <div class="status" id="editorStatus"></div>
+  </div>
+
+  <!-- Ultra HD Enhancer -->
+  <div id="hdView" class="tool-view">
+    <div class="tool-header-bar"><h2><i class="fa-solid fa-expand"></i> Ultra HD 4K Enhancer Pro</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div>
+    <div class="drop-zone" onclick="document.getElementById('hdImgFile').click()"><div class="drop-zone-text" id="hdImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image from Gallery</div><input id="hdImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'hdImgText')"></div>
+    <div class="btn-group"><button class="action-btn" onclick="convertToUltraHD(2)">2X HD Upscale</button><button class="action-btn" onclick="convertToUltraHD(4)">4X Ultra HD AI</button></div>
+    <div class="status" id="hdStatus"></div>
+  </div>
+
+  <!-- BG Remover -->
+  <div id="bgRemView" class="tool-view">
+    <div class="tool-header-bar"><h2><i class="fa-solid fa-scissors"></i> Multi-Color BG Remover</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div>
+    <div class="drop-zone" onclick="document.getElementById('bgImgFile').click()"><div class="drop-zone-text" id="bgImgText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose Image</div><input id="bgImgFile" type="file" accept="image/*" onchange="loadBgRemImage(this)"></div>
+    <div id="bgControlsContainer" class="hidden">
+      <div class="bg-preview-layout">
+        <div><label>1. Tap to Pick Color</label><div class="canvas-click-wrapper" onclick="pickColorForBg(event)"><canvas id="bgSourceCanvas"></canvas></div></div>
+        <div><label>2. Transparent Preview</label><div class="canvas-click-wrapper checkered-bg"><canvas id="bgPreviewCanvas"></canvas></div></div>
+      </div>
+      <div class="bg-settings-row">
+        <div id="selectedColorDisplay" class="color-badge-box">RGB(255, 255, 255)</div>
+        <div><label>Tolerance: <span id="tolValueLabel">35</span></label><input type="range" id="bgTolerance" min="1" max="100" value="35" oninput="updateBgToleranceLabel(); processBgRemovalLive();"></div>
+      </div>
+      <button class="action-btn" onclick="downloadBgRemovedImage()">Download PNG</button>
+    </div>
+    <div class="status" id="bgRemStatus"></div>
+  </div>
+
+  <!-- Other Conversion Views -->
+  <div id="h2jView" class="tool-view"><div class="tool-header-bar"><h2>HTML to JSON</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>HTML</label><textarea id="htmlInput" placeholder="<h1>Hello</h1>"></textarea><button class="action-btn" onclick="htmlToJson()">Convert</button><div class="status" id="h2jStatus"></div></div>
+  <div id="j2hView" class="tool-view"><div class="tool-header-bar"><h2>JSON to HTML</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>JSON</label><textarea id="jsonInput" placeholder='{"html":"<h1>Hello</h1>"}'></textarea><button class="action-btn" onclick="jsonToHtml()">Convert</button><div class="status" id="j2hStatus"></div></div>
+  <div id="csvView" class="tool-view"><div class="tool-header-bar"><h2>CSV to JSON</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>CSV</label><textarea id="csvInput" placeholder="name,age\nJohn,30"></textarea><button class="action-btn" onclick="csvToJson()">Convert</button><div class="status" id="csvStatus"></div></div>
+  <div id="j2csvView" class="tool-view"><div class="tool-header-bar"><h2>JSON to CSV</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>JSON</label><textarea id="j2csvInput" placeholder='[{"name":"John"}]'></textarea><button class="action-btn" onclick="jsonToCsv()">Convert</button><div class="status" id="j2csvStatus"></div></div>
+  <div id="imgConvView" class="tool-view"><div class="tool-header-bar"><h2>Image Converter</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><div class="drop-zone" onclick="document.getElementById('generalImgFile').click()"><div class="drop-zone-text" id="generalImgText">Choose Image</div><input id="generalImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'generalImgText')"></div><div class="btn-group"><button class="action-btn" onclick="imageConvert('generalImgFile', 'png', 'imgConvStatus')">PNG</button><button class="action-btn secondary" onclick="imageConvert('generalImgFile', 'jpg', 'imgConvStatus')">JPG</button><button class="action-btn secondary" onclick="imageConvert('generalImgFile', 'webp', 'imgConvStatus')">WebP</button></div><div class="status" id="imgConvStatus"></div></div>
+  
+  <!-- SVG to PNG View (Fixed with File Upload & Code Textarea) -->
+  <div id="svgView" class="tool-view">
+    <div class="tool-header-bar"><h2>SVG to PNG Rasterizer</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div>
+    <div class="drop-zone" onclick="document.getElementById('svgFile').click()">
+      <div class="drop-zone-text" id="svgFileText"><i class="fa-solid fa-cloud-arrow-up"></i> Choose SVG File</div>
+      <input id="svgFile" type="file" accept=".svg" onchange="loadSvgFile(this)">
+    </div>
+    <label>Or Paste SVG Code Below:</label>
+    <textarea id="svgCodeInput" placeholder="<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>...</svg>"></textarea>
+    <button class="action-btn" onclick="svgToPng()"><i class="fa-solid fa-file-arrow-down"></i> Convert SVG to PNG</button>
+    <div class="status" id="svgStatus"></div>
+  </div>
+
+  <div id="base64View" class="tool-view"><div class="tool-header-bar"><h2>Base64</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="base64Input" placeholder="Text..."></textarea><div class="btn-group"><button class="action-btn" onclick="processBase64(true)">Encode</button><button class="action-btn secondary" onclick="processBase64(false)">Decode</button></div><div class="status" id="base64Status"></div></div>
+  <div id="urlView" class="tool-view"><div class="tool-header-bar"><h2>URL Encoder</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="urlInput" placeholder="URL..."></textarea><div class="btn-group"><button class="action-btn" onclick="processUrl(true)">Encode</button><button class="action-btn secondary" onclick="processUrl(false)">Decode</button></div><div class="status" id="urlStatus"></div></div>
+  <div id="mdView" class="tool-view"><div class="tool-header-bar"><h2>Markdown</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="mdInput" placeholder="# Heading"></textarea><button class="action-btn" onclick="mdToHtml()">Convert</button><div class="status" id="mdStatus"></div></div>
+  <div id="textCaseView" class="tool-view"><div class="tool-header-bar"><h2>Text Case</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="caseInput" placeholder="Text..."></textarea><div class="btn-group"><button class="action-btn" onclick="convertTextCase('upper')">UPPER</button><button class="action-btn secondary" onclick="convertTextCase('lower')">lower</button><button class="action-btn secondary" onclick="convertTextCase('title')">Title</button></div><div class="status" id="textCaseStatus"></div></div>
+  <div id="morseView" class="tool-view"><div class="tool-header-bar"><h2>Morse Code</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="morseInput" placeholder="Text or Morse..."></textarea><div class="btn-group"><button class="action-btn" onclick="textToMorse()">To Morse</button><button class="action-btn secondary" onclick="morseToText()">To Text</button></div><div class="status" id="morseStatus"></div></div>
+  <div id="binaryView" class="tool-view"><div class="tool-header-bar"><h2>Binary</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="binaryInput" placeholder="Text or Binary..."></textarea><div class="btn-group"><button class="action-btn" onclick="textToBinary()">To Binary</button><button class="action-btn secondary" onclick="binaryToText()">To Text</button></div><div class="status" id="binaryStatus"></div></div>
+  <div id="colorView" class="tool-view"><div class="tool-header-bar"><h2>HEX ⇄ RGB</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><input type="text" id="colorInput" placeholder="#f97316 or 249,115,22"><button class="action-btn" onclick="convertColor()">Convert</button><div id="colorPreviewBox" class="color-preview-box">Preview</div><div class="status" id="colorStatus"></div></div>
+  <div id="passGenView" class="tool-view"><div class="tool-header-bar"><h2>Password Gen</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><input type="text" id="generatedPassword" readonly><button class="action-btn" onclick="generateSecurePassword()">Generate</button><div class="status" id="passGenStatus"></div></div>
+  <div id="wordCountView" class="tool-view"><div class="tool-header-bar"><h2>Word Counter</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="wordCountInput" oninput="analyzeText()" placeholder="Type here..."></textarea><div class="stats-counter-grid"><div class="stat-card"><b id="wcWords">0</b><br><small>Words</small></div><div class="stat-card"><b id="wcChars">0</b><br><small>Chars</small></div><div class="stat-card"><b id="wcTime">0s</b><br><small>Time</small></div></div><div class="status" id="wordCountStatus"></div></div>
+  <div id="qrView" class="tool-view"><div class="tool-header-bar"><h2>QR Generator</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><input type="text" id="qrInput" placeholder="https://..."><button class="action-btn" onclick="generateQR()">Generate QR</button><div id="qrPreviewArea" class="qr-preview-wrapper"></div><div class="status" id="qrStatus"></div></div>
+  <div id="calendarView" class="tool-view">
+    <div class="tool-header-bar"><h2><i class="fa-solid fa-calendar-days"></i> Calendar & Live Clock</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div>
+    <div class="clock-panel">
+      <div class="clock-label">CURRENT DATE & TIME</div>
+      <div id="liveClock" class="live-clock">--:--:--</div>
+      <div id="liveDate" class="live-date">Loading date...</div>
+    </div>
+    <div class="calendar-panel">
+      <div class="calendar-toolbar">
+        <button class="calendar-nav" onclick="changeCalendarMonth(-1)" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button>
+        <h3 id="calendarMonthYear">Month Year</h3>
+        <button class="calendar-nav" onclick="changeCalendarMonth(1)" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+      <div class="calendar-weekdays">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div id="calendarDays" class="calendar-days"></div>
+      <div class="calendar-selected">Selected date: <strong id="selectedCalendarDate">--</strong></div>
+      <button class="action-btn secondary" onclick="goToToday()">Go to Today</button>
+    </div>
+  </div>
+</main>
+
+<!-- Modals -->
+<div class="modal-overlay" id="appInfoModal"><div class="modal-card">
+  <div class="modal-header"><h3><i class="fa-solid fa-circle-info"></i> App Info</h3><button class="close-modal" onclick="closeAppInfoModal()">&times;</button></div>
+  <div class="modal-body app-info-content">
+    <div class="developer-card"><div class="developer-avatar">K</div><div><h4>File Converter Pro</h4><p>Version 2027.1 · All-in-One Utility App</p></div></div>
+    <h4>Developer Information</h4><p><b>Developer:</b> Kaushalji</p><p><b>App:</b> File Converter Pro</p>
+    <h4>Connect & Share</h4>
+    <div class="btn-group info-actions">
+      <a class="action-btn info-link" href="https://www.youtube.com/" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i> YouTube</a>
+      <button class="action-btn secondary" onclick="shareToInstagram()"><i class="fa-brands fa-instagram"></i> Share on Instagram</button>
+    </div>
+    <button class="action-btn secondary mb-15" id="themeToggleBtn" onclick="toggleTheme()"> <i class="fa-solid fa-circle-half-stroke"></i> Toggle Theme</button>
+    <p class="small-note" id="shareStatus" aria-live="polite">Instagram sharing uses your device share menu when available.</p>
+  </div>
+</div></div>
+
+<div class="modal-overlay" id="profileModal"><div class="modal-card"><div class="modal-header"><h3>Profile</h3><button class="close-modal" onclick="closeProfileModal()">&times;</button></div><div class="modal-body"><form onsubmit="saveProfile(event)"><label>Username</label><input type="text" id="editUsername" required><button type="submit" class="action-btn full-width">Save</button></form></div></div></div>
+
+<!-- Typing Result Modal with Print Button -->
+<div class="modal-overlay" id="typingResultModal">
+  <div class="modal-card text-center">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-trophy trophy-gold"></i> Typing Master Result</h3>
+      <button class="close-modal" onclick="closeTypingResultModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="printableCertificateArea">
+      <p class="mb-15"><b>Typing Master 12 Performance Diploma</b></p>
+      <div class="typing-score-grid">
+        <div class="score-card"><b id="modalFinalWpm" class="score-wpm">0</b><br><span>WPM Speed</span></div>
+        <div class="score-card"><b id="modalFinalAcc" class="score-acc">0%</b><br><span>Accuracy</span></div>
+      </div>
+      <p id="modalLessonName" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;"></p>
+    </div>
+    <div class="btn-group">
+      <button class="action-btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Certificate</button>
+      <button class="action-btn secondary" onclick="closeTypingResultModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openFestivalModal() { document.getElementById('festivalModalOverlay').style.display = 'flex'; }
+function closeFestivalModal() { document.getElementById('festivalModalOverlay').style.display = 'none'; }
+</script>
+<script src="script.js"></script>
+</body>
+</html>
