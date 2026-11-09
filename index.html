@@ -14,10 +14,11 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="style.css">
+<style>
+.bg-color-selection{display:flex;flex-direction:column;gap:9px;min-width:0}.bg-selected-colors{display:flex;flex-wrap:wrap;gap:8px}.bg-color-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid var(--border-color,#475569);border-radius:999px;background:var(--card-bg,#1e293b);font-size:12px}.bg-color-swatch{width:17px;height:17px;border-radius:50%;border:1px solid #94a3b8}.bg-color-chip button{border:0;background:transparent;color:inherit;cursor:pointer;font-size:16px}.muted-note{color:var(--text-muted);font-size:.9rem;line-height:1.5}
+</style>
 </head>
 <body data-theme="dark">
-
-<!-- Top Festival Trigger Banner -->
 <div class="festival-banner" id="festivalBanner" onclick="openFestivalModal()">
   <div class="festival-banner-content">
     <i class="fa-solid fa-gift"></i>
@@ -68,6 +69,12 @@
     </div>
 
     <div class="grid">
+      <div class="card-selector" onclick="openTool('emojiView')">
+        <div class="card-icon"><i class="fa-solid fa-face-smile"></i></div>
+        <h3>Text ⇄ Emoji Converter</h3>
+        <p>Sentence ko emoji mein aur emoji ko text mein badlein.</p>
+        <div class="card-footer-link">Open Emoji Converter <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
       <div class="card-selector" onclick="openTool('calendarView')">
         <div class="card-icon"><i class="fa-solid fa-calendar-days"></i></div>
         <h3>Calendar & Live Clock</h3>
@@ -285,12 +292,25 @@
         <div><label>2. Transparent Preview</label><div class="canvas-click-wrapper checkered-bg"><canvas id="bgPreviewCanvas"></canvas></div></div>
       </div>
       <div class="bg-settings-row">
-        <div id="selectedColorDisplay" class="color-badge-box">RGB(255, 255, 255)</div>
+        <div class="bg-color-selection"><div id="selectedColorDisplay" class="color-badge-box">Selected colors: 0</div><div id="bgSelectedColors" class="bg-selected-colors"><span class="muted-note">Image par alag-alag background colors tap karke select karein.</span></div><button class="action-btn secondary" type="button" onclick="clearBgSelectedColors()">Clear selected colors</button></div>
         <div><label>Tolerance: <span id="tolValueLabel">35</span></label><input type="range" id="bgTolerance" min="1" max="100" value="35" oninput="updateBgToleranceLabel(); processBgRemovalLive();"></div>
       </div>
-      <button class="action-btn" onclick="downloadBgRemovedImage()">Download PNG</button>
+      <button class="action-btn" onclick="downloadBgRemovedImage()">Download Transparent PNG</button>
     </div>
     <div class="status" id="bgRemStatus"></div>
+  </div>
+
+  <!-- Text and Emoji Converter -->
+  <div id="emojiView" class="tool-view">
+    <div class="tool-header-bar"><h2><i class="fa-solid fa-face-smile"></i> Text ⇄ Emoji Converter</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div>
+    <p class="muted-note">Sentence likhein aur “Text to Emoji” dabayein. Emoji ko wapas words mein badalne ke liye “Emoji to Text” dabayein.</p>
+    <label for="emojiInput">Your text or emoji</label>
+    <textarea id="emojiInput" rows="6" placeholder="Example: I love you and I am happy today ❤️"></textarea>
+    <div class="btn-group"><button class="action-btn" onclick="convertTextToEmoji()"><i class="fa-solid fa-wand-magic-sparkles"></i> Text to Emoji</button><button class="action-btn secondary" onclick="convertEmojiToText()"><i class="fa-solid fa-language"></i> Emoji to Text</button></div>
+    <label for="emojiOutput">Converted result</label>
+    <textarea id="emojiOutput" rows="6" readonly placeholder="Your converted result will appear here..."></textarea>
+    <div class="btn-group"><button class="action-btn secondary" onclick="copyEmojiResult()"><i class="fa-solid fa-copy"></i> Copy Result</button><button class="action-btn secondary" onclick="clearEmojiFields()"><i class="fa-solid fa-eraser"></i> Clear</button></div>
+    <div class="status" id="emojiStatus"></div>
   </div>
 
   <!-- Other Conversion Views -->
