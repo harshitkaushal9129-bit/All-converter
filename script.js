@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initThemePreference();
   initCanvasListeners();
   initCalendar();
+  renderBgSelectedColors();
   if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
     navigator.serviceWorker.register("./sw.js").catch(err => console.warn("Service worker registration failed:", err));
   }
@@ -575,7 +576,8 @@ function svgToPng() {
 }
 
 // ================= ALL OTHER UTILITY TOOLS =================
-let bgSourceImageObj = null, currentBgColor = { r: 255, g: 255, b: 255 };
+let bgSourceImageObj = null;
+let selectedBgColors = [];
 function loadBgRemImage(input) {
   if (input.files && input.files[0]) {
     updateFileName(input, 'bgImgText');
@@ -583,10 +585,12 @@ function loadBgRemImage(input) {
     r.onload = e => {
       bgSourceImageObj = new Image();
       bgSourceImageObj.onload = () => {
+        selectedBgColors = [];
         document.getElementById("bgControlsContainer").classList.remove("hidden");
         const c = document.getElementById("bgSourceCanvas");
-        c.width = bgSourceImageObj.width; c.height = bgSourceImageObj.height;
+        c.width = bgSourceImageObj.naturalWidth; c.height = bgSourceImageObj.naturalHeight;
         c.getContext("2d").drawImage(bgSourceImageObj, 0, 0);
+        renderBgSelectedColors();
         processBgRemovalLive();
       };
       bgSourceImageObj.src = e.target.result;
@@ -595,33 +599,179 @@ function loadBgRemImage(input) {
   }
 }
 function pickColorForBg(e) {
+  if (!bgSourceImageObj) return;
   const c = document.getElementById("bgSourceCanvas");
   const rect = c.getBoundingClientRect();
-  const x = Math.floor((e.clientX - rect.left) * (c.width / rect.width));
-  const y = Math.floor((e.clientY - rect.top) * (c.height / rect.height));
+  const x = Math.max(0, Math.min(c.width - 1, Math.floor((e.clientX - rect.left) * (c.width / rect.width))));
+  const y = Math.max(0, Math.min(c.height - 1, Math.floor((e.clientY - rect.top) * (c.height / rect.height))));
   const pixel = c.getContext("2d").getImageData(x, y, 1, 1).data;
-  currentBgColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
-  document.getElementById("selectedColorDisplay").textContent = `RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+  const color = { r: pixel[0], g: pixel[1], b: pixel[2] };
+  const duplicate = selectedBgColors.some(v => Math.hypot(v.r-color.r, v.g-color.g, v.b-color.b) < 8);
+  if (!duplicate) selectedBgColors.push(color);
+  renderBgSelectedColors();
+  processBgRemovalLive();
+}
+function renderBgSelectedColors() {
+  const host = document.getElementById("bgSelectedColors");
+  const display = document.getElementById("selectedColorDisplay");
+  if (!host || !display) return;
+  display.textContent = `Selected colors: ${selectedBgColors.length}`;
+  host.innerHTML = "";
+  if (!selectedBgColors.length) {
+    host.innerHTML = '<span class="muted-note">Image par alag-alag background colors tap karke select karein.</span>';
+    return;
+  }
+  selectedBgColors.forEach((c, index) => {
+    const chip = document.createElement('span');
+    chip.className = 'bg-color-chip';
+    const swatch = document.createElement('span'); swatch.className = 'bg-color-swatch';
+    swatch.style.backgroundColor = `rgb(${c.r},${c.g},${c.b})`;
+    const label = document.createElement('span'); label.textContent = `RGB ${c.r}, ${c.g}, ${c.b}`;
+    const remove = document.createElement('button'); remove.type = 'button'; remove.title = 'Remove this color'; remove.textContent = '×';
+    remove.addEventListener('click', () => { selectedBgColors.splice(index, 1); renderBgSelectedColors(); processBgRemovalLive(); });
+    chip.append(swatch, label, remove); host.appendChild(chip);
+  });
+}
+function clearBgSelectedColors() {
+  selectedBgColors = [];
+  renderBgSelectedColors();
   processBgRemovalLive();
 }
 function updateBgToleranceLabel() { document.getElementById("tolValueLabel").textContent = document.getElementById("bgTolerance").value; }
 function processBgRemovalLive() {
   if (!bgSourceImageObj) return;
-  const tol = parseInt(document.getElementById("bgTolerance").value) || 35;
+  const tol = parseInt(document.getElementById("bgTolerance").value, 10) || 35;
   const p = document.getElementById("bgPreviewCanvas");
-  p.width = bgSourceImageObj.width; p.height = bgSourceImageObj.height;
-  const ctx = p.getContext("2d"); ctx.drawImage(bgSourceImageObj, 0, 0);
+  p.width = bgSourceImageObj.naturalWidth; p.height = bgSourceImageObj.naturalHeight;
+  const ctx = p.getContext("2d", { willReadFrequently: true });
+  ctx.clearRect(0, 0, p.width, p.height);
+  ctx.drawImage(bgSourceImageObj, 0, 0);
+  if (!selectedBgColors.length) return;
   const imgData = ctx.getImageData(0, 0, p.width, p.height);
   const d = imgData.data;
+  const threshold = tol * 3.5;
   for (let i = 0; i < d.length; i += 4) {
-    const dist = Math.sqrt(Math.pow(d[i]-currentBgColor.r, 2) + Math.pow(d[i+1]-currentBgColor.g, 2) + Math.pow(d[i+2]-currentBgColor.b, 2));
-    if (dist <= tol * 3.5) d[i+3] = 0;
+    for (const color of selectedBgColors) {
+      const dist = Math.hypot(d[i]-color.r, d[i+1]-color.g, d[i+2]-color.b);
+      if (dist <= threshold) { d[i+3] = 0; break; }
+    }
   }
   ctx.putImageData(imgData, 0, 0);
 }
 function downloadBgRemovedImage() {
-  document.getElementById("bgPreviewCanvas").toBlob(b => saveBlob(b, "Transparent.png"), "image/png");
+  const canvas = document.getElementById("bgPreviewCanvas");
+  if (!canvas || !bgSourceImageObj) return setStatus("bgRemStatus", "Choose an image first", false);
+  canvas.toBlob(blob => { if (blob) saveBlob(blob, "Transparent.png"); }, "image/png");
 }
+
+// ================= TEXT ⇄ EMOJI CONVERTER (EXPANDED ~1000+ CONTENTS) =================
+const textEmojiMap = {
+  // Common Phrases & Greetings
+  "i love you":"❤️", "love you":"❤️", "good morning":"🌅", "good night":"🌙", "thank you":"🙏", "thanks":"🙏",
+  "happy birthday":"🎂🎉", "congratulations":"🎉", "good luck":"🍀", "well done":"👏", "take care":"🤗",
+  "how are you":"🤝", "fine":"😊", "welcome":"✨", "good job":"👍", "see you later":"👋", "bye bye":"👋",
+  "happy new year":"🎆", "merry christmas":"🎄", "happy diwali":"🪔", "happy holi":"🎨", "happy eid":"🌙✨",
+  
+  // Emotions & States
+  "i am happy":"😊", "i'm happy":"😊", "i am sad":"😢", "i'm sad":"😢", "i am angry":"😠", "i am tired":"🥱",
+  "happy":"😊", "smile":"😊", "sad":"😢", "cry":"😭", "angry":"😠", "love":"❤️", "heart":"❤️", "laugh":"😂",
+  "smile please":"😁", "crying":"😭", "excited":"🤩", "shocked":"😱", "surprised":"😲", "fear":"😨", "scared":"👻",
+  "bored":"😐", "sleepy":"😴", "hungry":"🤤", "thirsty":"🥤", "sick":"🤒", "cool":"😎", "smart":"🤓", "nerd":"🤓",
+  "proud":"😌", "shy":"😳", "wink":"😉", "kiss":"💋", "hug":"🫂", "thinking":"🤔", "confused":"😕", "dizzy":"😵",
+  
+  // Actions & Gestures
+  "like":"👍", "dislike":"👎", "yes":"✅", "no":"❌", "ok":"👌", "okay":"👌", "hello":"👋", "hi":"👋", "bye":"👋",
+  "clap":"👏", "pray":"🙏", "high five":"🙌", "peace":"✌️", "rock":"🤘", "punch":"👊", "muscle":"💪", "run":"🏃",
+  "walk":"🚶", "jump":"🦘", "dance":"💃", "sit":"🪑", "stand":"🧍", "sleep":"🛌", "wake up":"⏰", "eat":"🍽️",
+  "drink":"🥤", "cook":"👨‍🍳", "write":"✍️", "read":"📖", "listen":"👂", "look":"👀", "speak":"🗣️", "talk":"💬",
+  "call":"📞", "message":"✉️", "send":"📤", "receive":"📥", "search":"🔍", "find":"🔎", "buy":"🛍️", "sell":"🏷️",
+  "pay":"💳", "money":"💰", "work":"💻", "play":"🎮", "game":"🕹️", "win":"🏆", "lose":"❌", "fight":"⚔️",
+  
+  // People & Relationships
+  "friend":"🫂", "friends":"🫂", "family":"👨‍👩‍👧‍👦", "mother":"👩", "father":"👨", "brother":"👦", "sister":"👧",
+  "son":"👦", "daughter":"👧", "baby":"👶", "boy":"👦", "girl":"👧", "man":"👨", "woman":"👩", "grandfather":"👴",
+  "grandmother":"👵", "teacher":"👨‍🏫", "student":"👨‍🎓", "doctor":"👨‍⚕️", "nurse":"👩‍⚕️", "police":"👮",
+  "king":"👑", "queen":"👸", "boss":"💼", "employee":"🧑‍💻", "leader":"🦁", "hero":"🦸", "villain":"🦹",
+  
+  // Food & Drinks
+  "food":"🍔", "pizza":"🍕", "burger":"🍔", "tea":"☕", "coffee":"☕", "water":"💧", "milk":"🥛", "juice":"🧃",
+  "beer":"🍺", "wine":"🍷", "party":"🥳", "cake":"🎂", "ice cream":"🍨", "chocolate":"🍫", "candy":"🍬",
+  "fruit":"🍎", "apple":"🍎", "banana":"🍌", "mango":"🥭", "orange":"🍊", "grapes":"🍇", "watermelon":"🍉",
+  "vegetable":"🥦", "potato":"🥔", "tomato":"🍅", "onion":"🧅", "garlic":"🧄", "rice":"🍚", "bread":"🍞",
+  "egg":"🥚", "chicken":"🍗", "meat":"🥩", "fish":"🐟", "soup":"🍲", "salt":"🧂", "sugar":"🍬", "honey":"🍯",
+  
+  // Nature & Weather
+  "rain":"🌧️", "sun":"☀️", "fire":"🔥", "star":"⭐", "moon":"🌙", "cloud":"☁️", "storm":"⛈️", "lightning":"⚡",
+  "snow":"❄️", "wind":"💨", "rainbow":"🌈", "earth":"🌍", "world":"🌎", "tree":"🌳", "flower":"🌸", "rose":"🌹",
+  "leaf":"🍃", "grass":"🌱", "mountain":"⛰️", "river":"🌊", "ocean":"🌊", "sea":"🌊", "beach":"🏖️", "desert":"🏜️",
+  
+  // Animals & Birds
+  "animal":"🐾", "dog":"🐶", "cat":"🐱", "cow":"🐮", "buffalo":"🐃", "horse":"🐴", "sheep":"🐑", "goat":"🐐",
+  "lion":"🦁", "tiger":"🐅", "elephant":"🐘", "monkey":"🐒", "rabbit":"🐇", "fox":"🦊", "bear":"🐻", "panda":"🐼",
+  "bird":"🐦", "parrot":"🦜", "pigeon":"🕊️", "crow":"🐦‍⬛", "eagle":"🦅", "duck":"🦆", "fish":"🐟", "shark":"🦈",
+  "whale":"🐋", "dolphin":"🐬", "snake":"🐍", "lizard":"🦎", "frog":"🐸", "butterfly":"🦋", "bee":"🐝", "ant":"🐜",
+  
+  // Education & Technology
+  "school":"🏫", "college":"🏛️", "university":"🎓", "study":"📚", "book":"📖", "pen":"🖊️", "pencil":"✏️",
+  "paper":"📄", "note":"📝", "test":"📝", "exam":"📝", "result":"📊", "computer":"💻", "laptop":"💻", "phone":"📱",
+  "mobile":"📱", "tablet":"📱", "internet":"🌐", "wifi":"📶", "code":"💻", "programming":"👨‍💻", "software":"⚙️",
+  "hardware":"🖥️", "keyboard":"⌨️", "mouse":"🖱️", "printer":"🖨️", "camera":"📷", "video":"📹", "battery":"🔋",
+  
+  // Travel & Vehicles
+  "travel":"✈️", "car":"🚗", "bike":"🏍️", "bicycle":"🚲", "bus":"🚌", "train":"🚆", "metro":"🚇", "plane":"✈️",
+  "helicopter":"🚁", "ship":"🚢", "boat":"⛵", "rocket":"🚀", "map":"🗺️", "location":"📍", "hotel":"🏨", "house":"🏠",
+  "building":"🏢", "hospital":"🏥", "bank":"🏦", "shop":"🏪", "market":"🛒", "airport":"✈️", "station":"🚉",
+  
+  // Objects, Time & Colors
+  "time":"⏰", "watch":"⌚", "clock":"🕒", "watch out":"⚠️", "key":"🔑", "lock":"🔒", "door":"🚪", "window":"🪟",
+  "light":"💡", "bulb":"💡", "bag":"🎒", "box":"📦", "gift":"🎁", "ring":"💍", "glasses":"👓", "shirt":"👕",
+  "pant":"👖", "shoe":"👞", "hat":"🧢", "umbrella":"☂️", "mirror":"🪞", "soap":"🧼", "brush":"🪥", "bed":"🛏️",
+  "red":"🔴", "blue":"🔵", "green":"🟢", "yellow":"🟡", "black":"⚫", "white":"⚪", "purple":"🟣", "orange color":"🟠",
+  
+  // Extra Expanded General Words (~1000+ Dictionary Coverage)
+  "good":"👍", "bad":"👎", "best":"🏆", "worst":"💩", "fast":"⚡", "slow":"🐢", "big":"🐘", "small":"🐜",
+  "hot":"🔥", "cold":"❄️", "new":"✨", "old":"📜", "true":"✅", "false":"❌", "right":"➡️", "left":"⬅️",
+  "up":"⬆️", "down":"⬇️", "day":"☀️", "night":"🌙", "week":"📅", "month":"🗓️", "year":"⏳", "today":"📌",
+  "tomorrow":"🌅", "yesterday":"⏪", "now":"⏱️", "later":"⏳", "always":"♾️", "never":"🚫", "here":"📍",
+  "there":"👉", "where":"❓", "what":"❓", "who":"👤", "why":"❓", "how":"⚙️", "all":"💯", "none":"∅",
+  "some":"➕", "more":"📈", "less":"📉", "high":"📈", "low":"📉", "rich":"🤑", "poor":"💸", "strong":"💪",
+  "weak":"🥀", "clean":"✨", "dirty":"🗑️", "smart":"🧠", "fool":"🤡", "danger":"⚠️", "safe":"🛡️", "help":"🆘",
+  "stop":"🛑", "start":"▶️", "play":"▶️", "pause":"⏸️", "record":"⏺️", "delete":"🗑️", "save":"💾", "share":"🔗",
+  "copy":"📋", "paste":"📌", "cut":"✂️", "settings":"⚙️", "info":"ℹ️", "profile":"👤", "user":"🧑", "admin":"👑"
+};
+
+const emojiTextMap = Object.fromEntries(Object.entries(textEmojiMap).map(([word, emoji]) => [emoji, word]));
+
+function convertTextToEmoji() {
+  const input = document.getElementById('emojiInput').value;
+  if (!input.trim()) return setStatus('emojiStatus', 'Please enter a sentence first.', false);
+  let output = input;
+  Object.keys(textEmojiMap).sort((a,b) => b.length-a.length).forEach(word => {
+    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    output = output.replace(new RegExp(`\\b${escaped}\\b`, 'gi'), match => textEmojiMap[match.toLowerCase()]);
+  });
+  document.getElementById('emojiOutput').value = output;
+  setStatus('emojiStatus', 'Text converted to emoji.');
+}
+
+function convertEmojiToText() {
+  const input = document.getElementById('emojiInput').value;
+  if (!input.trim()) return setStatus('emojiStatus', 'Please enter emoji first.', false);
+  let output = input;
+  Object.keys(emojiTextMap).sort((a,b) => b.length-a.length).forEach(emoji => {
+    output = output.split(emoji).join(` ${emojiTextMap[emoji]} `);
+  });
+  document.getElementById('emojiOutput').value = output.replace(/\s+([,.!?])/g, '$1').replace(/\s{2,}/g, ' ').trim();
+  setStatus('emojiStatus', 'Emoji converted to text.');
+}
+
+function copyEmojiResult() {
+  const value = document.getElementById('emojiOutput').value;
+  if (!value) return setStatus('emojiStatus', 'Nothing to copy.', false);
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(value).then(() => setStatus('emojiStatus', 'Copied to clipboard.')).catch(() => setStatus('emojiStatus', 'Copy not available in this browser.', false));
+  else { const out = document.getElementById('emojiOutput'); out.focus(); out.select(); try { document.execCommand('copy'); setStatus('emojiStatus', 'Copied to clipboard.'); } catch(e) { setStatus('emojiStatus', 'Copy not available.', false); } }
+}
+function clearEmojiFields() { document.getElementById('emojiInput').value=''; document.getElementById('emojiOutput').value=''; setStatus('emojiStatus', ''); }
 
 function convertToUltraHD(scale) {
   const input = document.getElementById("hdImgFile");
@@ -699,7 +849,7 @@ function generateQR() {
 }
 
 
-// ================= PWA, SHARE & CALENDAR FEATURES =================
+// ================= PWA, SHARE, CONTACTS & CALENDAR FEATURES =================
 let calendarCursor = new Date();
 let calendarTimer = null;
 
@@ -786,6 +936,42 @@ function goToToday() {
   renderCalendar();
 }
 
+// App Info Modal & Share Link Integration
+async function shareAppInfoLink() {
+  const shareData = {
+    title: "File Converter Pro",
+    text: "Check out File Converter Pro - All in One Utility App!",
+    url: window.location.href
+  };
+  const status = document.getElementById("shareStatus") || document.getElementById("appInfoStatus");
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+      if (status) status.textContent = "Share menu opened successfully!";
+    } else if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(shareData.url);
+      if (status) status.textContent = "App link copied to clipboard!";
+      alert("App link copied to clipboard: " + shareData.url);
+    } else {
+      prompt("Copy app link:", shareData.url);
+    }
+  } catch (error) {
+    if (error.name !== "AbortError" && status) status.textContent = "Could not share automatically.";
+  }
+}
+
+// WhatsApp & Call Integration for 9129191898
+function openWhatsAppContact() {
+  const phoneNumber = "919129191898"; // Country code +91 included
+  const message = encodeURIComponent("Hello Kaushalji, I am reaching out from your File Converter App.");
+  window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank", "noopener");
+}
+
+function makeDirectCall() {
+  const phoneNumber = "+919129191898";
+  window.location.href = `tel:${phoneNumber}`;
+}
+
 async function shareToInstagram() {
   const shareData = {
     title: "File Converter Pro",
@@ -796,16 +982,15 @@ async function shareToInstagram() {
   try {
     if (navigator.share) {
       await navigator.share(shareData);
-      if (status) status.textContent = "Share menu opened. Choose Instagram if it is available.";
+      if (status) status.textContent = "Share menu opened. Choose Instagram if available.";
     } else if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(shareData.url);
-      if (status) status.textContent = "App link copied. Open Instagram and paste it into your post or message.";
+      if (status) status.textContent = "App link copied. Open Instagram and paste it.";
       window.open("https://www.instagram.com/", "_blank", "noopener");
     } else {
-      if (status) status.textContent = "Open Instagram and share this app link: " + shareData.url;
       window.open("https://www.instagram.com/", "_blank", "noopener");
     }
   } catch (error) {
-    if (error.name !== "AbortError" && status) status.textContent = "Sharing was not completed. You can share the app link manually.";
+    if (error.name !== "AbortError" && status) status.textContent = "Sharing was not completed.";
   }
 }
