@@ -382,7 +382,7 @@
         <p class="freeform-hint"><i class="fa-solid fa-paintbrush"></i> Finger ya mouse drag karke freehand painting karein.</p>
       </div>
 
-      <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Download Final Photo</button>
+      <button class="action-btn" onclick="downloadEditedImage()"><i class="fa-solid fa-download"></i> Save & Review Final Photo</button>
     </div>
     <div class="status" id="editorStatus"></div>
   </div>
@@ -408,16 +408,16 @@
         <div class="bg-color-selection"><div id="selectedColorDisplay" class="color-badge-box">Selected colors: 0</div><div id="bgSelectedColors" class="bg-selected-colors"><span class="muted-note">Image par alag-alag background colors tap karke select karein.</span></div><button class="action-btn secondary" type="button" onclick="clearBgSelectedColors()">Clear selected colors</button></div>
         <div><label>Tolerance: <span id="tolValueLabel">35</span></label><input type="range" id="bgTolerance" min="1" max="100" value="35" oninput="updateBgToleranceLabel(); processBgRemovalLive();"></div>
       </div>
-      <button class="action-btn" onclick="downloadBgRemovedImage()">Download Transparent PNG</button>
+      <button class="action-btn" onclick="downloadBgRemovedImage()">Download & Review Transparent PNG</button>
     </div>
     <div class="status" id="bgRemStatus"></div>
   </div>
 
   <!-- Other Conversion Views -->
-  <div id="h2jView" class="tool-view"><div class="tool-header-bar"><h2>HTML to JSON</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>HTML</label><textarea id="htmlInput" placeholder="<h1>Hello</h1>"></textarea><button class="action-btn" onclick="htmlToJson()">Convert</button><div class="status" id="h2jStatus"></div></div>
-  <div id="j2hView" class="tool-view"><div class="tool-header-bar"><h2>JSON to HTML</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>JSON</label><textarea id="jsonInput" placeholder='{"html":"<h1>Hello</h1>"}'></textarea><button class="action-btn" onclick="jsonToHtml()">Convert</button><div class="status" id="j2hStatus"></div></div>
-  <div id="csvView" class="tool-view"><div class="tool-header-bar"><h2>CSV to JSON</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>CSV</label><textarea id="csvInput" placeholder="name,age\nJohn,30"></textarea><button class="action-btn" onclick="csvToJson()">Convert</button><div class="status" id="csvStatus"></div></div>
-  <div id="j2csvView" class="tool-view"><div class="tool-header-bar"><h2>JSON to CSV</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>JSON</label><textarea id="j2csvInput" placeholder='[{"name":"John"}]'></textarea><button class="action-btn" onclick="jsonToCsv()">Convert</button><div class="status" id="j2csvStatus"></div></div>
+  <div id="h2jView" class="tool-view"><div class="tool-header-bar"><h2>HTML to JSON</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>HTML</label><textarea id="htmlInput" placeholder="<h1>Hello</h1>"></textarea><button class="action-btn" onclick="htmlToJson()">Convert & Review</button><div class="status" id="h2jStatus"></div></div>
+  <div id="j2hView" class="tool-view"><div class="tool-header-bar"><h2>JSON to HTML</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>JSON</label><textarea id="jsonInput" placeholder='{"html":"<h1>Hello</h1>"}'></textarea><button class="action-btn" onclick="jsonToHtml()">Convert & Review</button><div class="status" id="j2hStatus"></div></div>
+  <div id="csvView" class="tool-view"><div class="tool-header-bar"><h2>CSV to JSON</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>CSV</label><textarea id="csvInput" placeholder="name,age\nJohn,30"></textarea><button class="action-btn" onclick="csvToJson()">Convert & Review</button><div class="status" id="csvStatus"></div></div>
+  <div id="j2csvView" class="tool-view"><div class="tool-header-bar"><h2>JSON to CSV</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><label>JSON</label><textarea id="j2csvInput" placeholder='[{"name":"John"}]'></textarea><button class="action-btn" onclick="jsonToCsv()">Convert & Review</button><div class="status" id="j2csvStatus"></div></div>
   <div id="imgConvView" class="tool-view"><div class="tool-header-bar"><h2>Image Converter</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><div class="drop-zone" onclick="document.getElementById('generalImgFile').click()"><div class="drop-zone-text" id="generalImgText">Choose Image</div><input id="generalImgFile" type="file" accept="image/*" onchange="updateFileName(this, 'generalImgText')"></div><div class="btn-group"><button class="action-btn" onclick="imageConvert('generalImgFile', 'png', 'imgConvStatus')">PNG</button><button class="action-btn secondary" onclick="imageConvert('generalImgFile', 'jpg', 'imgConvStatus')">JPG</button><button class="action-btn secondary" onclick="imageConvert('generalImgFile', 'webp', 'imgConvStatus')">WebP</button></div><div class="status" id="imgConvStatus"></div></div>
   
   <div id="svgView" class="tool-view">
@@ -428,15 +428,15 @@
     </div>
     <label>Or Paste SVG Code Below:</label>
     <textarea id="svgCodeInput" placeholder="<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>...</svg>"></textarea>
-    <button class="action-btn" onclick="svgToPng()"><i class="fa-solid fa-file-arrow-down"></i> Convert SVG to PNG</button>
+    <button class="action-btn" onclick="svgToPng()"><i class="fa-solid fa-file-arrow-down"></i> Convert SVG & Review</button>
     <div class="status" id="svgStatus"></div>
   </div>
 
   <div id="urlView" class="tool-view"><div class="tool-header-bar"><h2>URL Encoder</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="urlInput" placeholder="URL..."></textarea><div class="btn-group"><button class="action-btn" onclick="processUrl(true)">Encode</button><button class="action-btn secondary" onclick="processUrl(false)">Decode</button></div><div class="status" id="urlStatus"></div></div>
-  <div id="mdView" class="tool-view"><div class="tool-header-bar"><h2>Markdown</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="mdInput" placeholder="# Heading"></textarea><button class="action-btn" onclick="mdToHtml()">Convert</button><div class="status" id="mdStatus"></div></div>
+  <div id="mdView" class="tool-view"><div class="tool-header-bar"><h2>Markdown</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><textarea id="mdInput" placeholder="# Heading"></textarea><button class="action-btn" onclick="mdToHtml()">Convert & Review</button><div class="status" id="mdStatus"></div></div>
   <div id="colorView" class="tool-view"><div class="tool-header-bar"><h2>HEX ⇄ RGB</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><input type="text" id="colorInput" placeholder="#f97316 or 249,115,22"><button class="action-btn" onclick="convertColor()">Convert</button><div id="colorPreviewBox" class="color-preview-box">Preview</div><div class="status" id="colorStatus"></div></div>
   <div id="passGenView" class="tool-view"><div class="tool-header-bar"><h2>Password Gen</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><input type="text" id="generatedPassword" readonly><button class="action-btn" onclick="generateSecurePassword()">Generate</button><div class="status" id="passGenStatus"></div></div>
-  <div id="qrView" class="tool-view"><div class="tool-header-bar"><h2>QR Generator</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><input type="text" id="qrInput" placeholder="https://..."><button class="action-btn" onclick="generateQR()">Generate QR</button><div id="qrPreviewArea" class="qr-preview-wrapper"></div><div class="status" id="qrStatus"></div></div>
+  <div id="qrView" class="tool-view"><div class="tool-header-bar"><h2>QR Generator</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div><input type="text" id="qrInput" placeholder="https://..."><button class="action-btn" onclick="generateQR()">Generate QR & Review</button><div id="qrPreviewArea" class="qr-preview-wrapper"></div><div class="status" id="qrStatus"></div></div>
   <div id="calendarView" class="tool-view">
     <div class="tool-header-bar"><h2><i class="fa-solid fa-calendar-days"></i> Calendar & Live Clock</h2><button class="back-home-btn" onclick="goHome()">Dashboard</button></div>
     <div class="clock-panel">
@@ -460,12 +460,30 @@
   </div>
 </main>
 
+<!-- ================= NEW FILE REVIEW & OUTPUT MODAL ================= -->
+<div class="modal-overlay" id="fileReviewModal">
+  <div class="modal-card" style="max-width: 600px;">
+    <div class="modal-header">
+      <h3 id="reviewModalTitle"><i class="fa-solid fa-file-shield"></i> Converted File Review</h3>
+      <button class="close-modal" onclick="closeFileReviewModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p class="muted-note" style="margin-bottom: 10px;">Aapka converted output niche ready hai. Aap ise review karke download kar sakte hain:</p>
+      <textarea id="reviewContentBox" rows="8" readonly style="width: 100%; font-family: monospace; font-size: 13px; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;"></textarea>
+      <div class="btn-group" style="margin-top: 15px;">
+        <button class="action-btn" onclick="downloadReviewedFile()"><i class="fa-solid fa-download"></i> Confirm & Download File</button>
+        <button class="action-btn secondary" onclick="closeFileReviewModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modals -->
 <div class="modal-overlay" id="appInfoModal"><div class="modal-card">
   <div class="modal-header"><h3><i class="fa-solid fa-circle-info"></i> App Info</h3><button class="close-modal" onclick="closeAppInfoModal()">&times;</button></div>
   <div class="modal-body app-info-content">
     <div class="developer-card"><div class="developer-avatar">K</div><div><h4>File Converter Pro</h4><p>Version 2027.1 · All-in-One Utility App</p></div></div>
-    <h4>Developer Information</h4><p><b>Developer:</b> Kaushalji</p><p><b>App:</b> File Converter Pro</p>
+    <h4>Developer Information</h4><p><b>Developer:</b> kaushalji</p><p><b>App:</b> File Converter Pro</p>
     <h4>Connect & Share</h4>
     <div class="btn-group info-actions">
       <a class="action-btn info-link" href="https://www.youtube.com/" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i> YouTube</a>
