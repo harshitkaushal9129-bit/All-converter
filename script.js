@@ -1,4 +1,9 @@
-document.addEventListener("DOMContentLoaded",()=>{
+/* ==========================================================================
+   FILE CONVERTER PRO 2027 - UPGRADED SCRIPT SUITE
+   Developer: kaushalji
+   ========================================================================== */
+
+Document.addEventListener("DOMContentLoaded",()=>{
   loadProfileData();
   initThemePreference();
   initCanvasListeners();
@@ -75,15 +80,56 @@ function updateFileName(input,textId){
   if(input.files&&input.files[0])document.getElementById(textId).innerHTML=`<i class="fa-solid fa-file"></i> ${input.files[0].name}`;
 }
 
-function saveBlob(blob,name){
+/* ================= UPGRADED FILE REVIEW & EXPORT SYSTEM ================= */
+let generatedFileBlobCache = null;
+let generatedFileNameCache = "";
+
+function showFileReviewModal(blob, fileName, fileType="text"){
+  generatedFileBlobCache = blob;
+  generatedFileNameCache = fileName;
+  const modal = document.getElementById("fileReviewModal");
+  const previewBox = document.getElementById("reviewContentBox");
+  
+  if(fileType === "text" || fileType === "json" || fileType === "csv" || fileType === "html"){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      previewBox.value = e.target.result;
+    };
+    reader.readAsText(blob);
+  } else if(fileType === "image" || fileType === "qr") {
+    const url = URL.createObjectURL(blob);
+    previewBox.value = `[Image / Binary File Ready for Download: ${fileName}]\nSize: ${(blob.size/1024).toFixed(2)} KB`;
+  }
+  
+  document.getElementById("reviewModalTitle").textContent = `Review Converted File: ${fileName}`;
+  modal.classList.add("active");
+}
+
+function closeFileReviewModal(){
+  document.getElementById("fileReviewModal").classList.remove("active");
+}
+
+function downloadReviewedFile(){
+  if(!generatedFileBlobCache) return;
+  saveBlob(generatedFileBlobCache, generatedFileNameCache);
+  closeFileReviewModal();
+}
+
+function saveBlob(blob,name, fileType="text"){
+  // Automatically open review modal for review before direct download
+  showFileReviewModal(blob, name, fileType);
+  
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
   a.href=url;
   a.download=name;
   document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1500);
+  // Auto trigger download backup
+  setTimeout(()=>{
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }, 200);
 }
 
 /* ================= NUMBER SYSTEM CONVERTER LOGIC ================= */
@@ -319,7 +365,7 @@ function resetCurrentPhoto(){
 }
 function downloadEditedImage(){
   if(openPhotosList.length===0)return;const photo=openPhotosList[activePhotoIndex];
-  document.getElementById("editorCanvas").toBlob(blob=>{saveBlob(blob,`PhotoshopFreeform_${photo.name}`);setStatus("editorStatus","Photo downloaded successfully!");},"image/png");
+  document.getElementById("editorCanvas").toBlob(blob=>{saveBlob(blob,`PhotoshopFreeform_${photo.name}`, "image");setStatus("editorStatus","Photo ready for review & download!");},"image/png");
 }
 
 /* Typing Test Logic */
@@ -393,7 +439,7 @@ function stopTypingTestForce(){if(typingTimer)clearInterval(typingTimer);isTypin
 /* SVG Utilities */
 let loadedSvgString="";
 function loadSvgFile(input){if(input.files&&input.files[0]){updateFileName(input,'svgFileText');const reader=new FileReader();reader.onload=e=>{loadedSvgString=e.target.result;document.getElementById("svgCodeInput").value=loadedSvgString;setStatus("svgStatus","SVG file loaded successfully!");};reader.readAsText(input.files[0]);}}
-function svgToPng(){const code=document.getElementById("svgCodeInput").value.trim()||loadedSvgString;if(!code){return setStatus("svgStatus","Pehle SVG code paste karein ya file upload karein!",false);}const blob=new Blob([code],{type:"image/svg+xml;charset=utf-8"});const url=URL.createObjectURL(blob);const img=new Image();img.onload=()=>{const c=document.createElement("canvas");c.width=img.naturalWidth||800;c.height=img.naturalHeight||600;const ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(img,0,0);c.toBlob(pngBlob=>{URL.revokeObjectURL(url);saveBlob(pngBlob,"Converted_Logo.png");setStatus("svgStatus","SVG successfully converted & downloaded as PNG!");},"image/png");};img.onerror=()=>{setStatus("svgStatus","Invalid SVG code format!",false);};img.src=url;}
+function svgToPng(){const code=document.getElementById("svgCodeInput").value.trim()||loadedSvgString;if(!code){return setStatus("svgStatus","Pehle SVG code paste karein ya file upload karein!",false);}const blob=new Blob([code],{type:"image/svg+xml;charset=utf-8"});const url=URL.createObjectURL(blob);const img=new Image();img.onload=()=>{const c=document.createElement("canvas");c.width=img.naturalWidth||800;c.height=img.naturalHeight||600;const ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(img,0,0);c.toBlob(pngBlob=>{URL.revokeObjectURL(url);saveBlob(pngBlob,"Converted_Logo.png", "image");setStatus("svgStatus","SVG successfully converted & ready for review!");},"image/png");};img.onerror=()=>{setStatus("svgStatus","Invalid SVG code format!",false);};img.src=url;}
 
 /* BG Remover Logic */
 let bgSourceImageObj=null;let selectedBgColors=[];
@@ -403,7 +449,7 @@ function renderBgSelectedColors(){const host=document.getElementById("bgSelected
 function clearBgSelectedColors(){selectedBgColors=[];renderBgSelectedColors();processBgRemovalLive();}
 function updateBgToleranceLabel(){document.getElementById("tolValueLabel").textContent=document.getElementById("bgTolerance").value;}
 function processBgRemovalLive(){if(!bgSourceImageObj)return;const tol=parseInt(document.getElementById("bgTolerance").value,10)||35;const p=document.getElementById("bgPreviewCanvas");p.width=bgSourceImageObj.naturalWidth;p.height=bgSourceImageObj.naturalHeight;const ctx=p.getContext("2d",{willReadFrequently:true});ctx.clearRect(0,0,p.width,p.height);ctx.drawImage(bgSourceImageObj,0,0);if(!selectedBgColors.length)return;const imgData=ctx.getImageData(0,0,p.width,p.height);const d=imgData.data;const threshold=tol*3.5;for(let i=0;i<d.length;i+=4){for(const color of selectedBgColors){const dist=Math.hypot(d[i]-color.r,d[i+1]-color.g,d[i+2]-color.b);if(dist<=threshold){d[i+3]=0;break;}}}ctx.putImageData(imgData,0,0);}
-function downloadBgRemovedImage(){const canvas=document.getElementById("bgPreviewCanvas");if(!canvas||!bgSourceImageObj)return setStatus("bgRemStatus","Choose an image first",false);canvas.toBlob(blob=>{if(blob)saveBlob(blob,"Transparent.png");},"image/png");}
+function downloadBgRemovedImage(){const canvas=document.getElementById("bgPreviewCanvas");if(!canvas||!bgSourceImageObj)return setStatus("bgRemStatus","Choose an image first",false);canvas.toBlob(blob=>{if(blob)saveBlob(blob,"Transparent.png", "image");},"image/png");}
 
 /* Text & Emoji Mapping */
 const textEmojiMap={"i love you":"❤️","love you":"❤️","good morning":"🌅","good night":"🌙","thank you":"🙏","thanks":"🙏","happy birthday":"🎂🎉","congratulations":"🎉","good luck":"🍀","well done":"👏","take care":"🤗","how are you":"🤝","fine":"😊","welcome":"✨","good job":"👍","see you later":"👋","bye bye":"👋","happy new year":"🎆","merry christmas":"🎄","happy diwali":"🪔","happy holi":"🎨","happy eid":"🌙✨","i am happy":"😊","i'm happy":"😊","i am sad":"😢","i'm sad":"😢","i am angry":"😠","i am tired":"🥱","happy":"😊","smile":"😊","sad":"😢","cry":"😭","angry":"😠","love":"❤️","heart":"❤️","laugh":"😂","smile please":"😁","crying":"😭","excited":"🤩","shocked":"😱","surprised":"😲","fear":"😨","scared":"👻","bored":"😐","sleepy":"😴","hungry":"🤤","thirsty":"🥤","sick":"🤒","cool":"😎","smart":"🤓","nerd":"🤓","proud":"😌","shy":"😳","wink":"😉","kiss":"💋","hug":"🫂","thinking":"🤔","confused":"😕","dizzy":"😵","like":"👍","dislike":"👎","yes":"✅","no":"❌","ok":"👌","okay":"👌","hello":"👋","hi":"👋","bye":"👋","clap":"👏","pray":"🙏","high five":"🙌","peace":"✌️","rock":"🤘","punch":"👊","muscle":"💪","run":"🏃","walk":"🚶","jump":"🦘","dance":"💃","sit":"🪑","stand":"🧍","sleep":"🛌","wake up":"⏰","eat":"🍽️","drink":"🥤","cook":"👨‍🍳","write":"✍️","read":"📖","listen":"👂","look":"👀","speak":"🗣️","talk":"💬","call":"📞","message":"✉️","send":"📤","receive":"📥","search":"🔍","find":"🔎","buy":"🛍️","sell":"🏷️","pay":"💳","money":"💰","work":"💻","play":"🎮","game":"🕹️","win":"🏆","lose":"❌","fight":"⚔️","friend":"🫂","friends":"🫂","family":"👨‍👩‍👧‍👦","mother":"👩","father":"👨","brother":"👦","sister":"👧","son":"👦","daughter":"👧","baby":"👶","boy":"👦","girl":"👧","man":"👨","woman":"👩","grandfather":"👴","grandmother":"👵","teacher":"👨‍🏫","student":"👨‍🎓","doctor":"👨‍⚕️","nurse":"👩‍⚕️","police":"👮","king":"👑","queen":"👸","boss":"💼","employee":"🧑‍💻","leader":"🦁","hero":"🦸","villain":"🦹","food":"🍔","pizza":"🍕","burger":"🍔","tea":"☕","coffee":"☕","water":"💧","milk":"🥛","juice":"🧃","beer":"🍺","wine":"🍷","party":"🥳","cake":"🎂","ice cream":"🍨","chocolate":"🍫","candy":"🍬","fruit":"🍎","apple":"🍎","banana":"🍌","mango":"🥭","orange":"🍊","grapes":"🍇","watermelon":"🍉","vegetable":"🥦","potato":"🥔","tomato":"🍅","onion":"🧅","garlic":"🧄","rice":"🍚","bread":"🍞","egg":"🥚","chicken":"🍗","meat":"🥩","fish":"🐟","soup":"🍲","salt":"🧂","sugar":"🍬","honey":"🍯","rain":"🌧️","sun":"☀️","fire":"🔥","star":"⭐","moon":"🌙","cloud":"☁️","storm":"⛈️","lightning":"⚡","snow":"❄️","wind":"💨","rainbow":"🌈","earth":"🌍","world":"🌎","tree":"🌳","flower":"🌸","rose":"🌹","leaf":"🍃","grass":"🌱","mountain":"⛰️","river":"🌊","ocean":"🌊","sea":"🌊","beach":"🏖️","desert":"🏜️","animal":"🐾","dog":"🐶","cat":"🐱","cow":"🐮","buffalo":"🐃","horse":"🐴","sheep":"🐑","goat":"🐐","lion":"🦁","tiger":"🐅","elephant":"🐘","monkey":"🐒","rabbit":"🐇","fox":"🦊","bear":"🐻","panda":"🐼","bird":"🐦","parrot":"🦜","pigeon":"🕊️","crow":"🐦‍⬛","eagle":"🦅","duck":"🦆","fish":"🐟","shark":"🦈","whale":"🐋","dolphin":"🐬","snake":"🐍","lizard":"🦎","frog":"🐸","butterfly":"🦋","bee":"🐝","ant":"🐜","school":"🏫","college":"🏛️","university":"🎓","study":"📚","book":"📖","pen":"🖊️","pencil":"✏️","paper":"📄","note":"📝","test":"📝","exam":"📝","result":"📊","computer":"💻","laptop":"💻","phone":"📱","mobile":"📱","tablet":"📱","internet":"🌐","wifi":"📶","code":"💻","programming":"👨‍💻","software":"⚙️","hardware":"🖥️","keyboard":"⌨️","mouse":"🖱️","printer":"🖨️","camera":"📷","video":"📹","battery":"🔋","travel":"✈️","car":"🚗","bike":"🏍️","bicycle":"🚲","bus":"🚌","train":"🚆","metro":"🚇","plane":"✈️","helicopter":"🚁","ship":"🚢","boat":"⛵","rocket":"🚀","map":"🗺️","location":"📍","hotel":"🏨","house":"🏠","building":"🏢","hospital":"🏥","bank":"🏦","shop":"🏪","market":"🛒","airport":"✈️","station":"🚉","time":"⏰","watch":"⌚","clock":"🕒","watch out":"⚠️","key":"🔑","lock":"🔒","door":"🚪","window":"🪟","light":"💡","bulb":"💡","bag":"🎒","box":"📦","gift":"🎁","ring":"💍","glasses":"👓","shirt":"👕","pant":"👖","shoe":"👞","hat":"🧢","umbrella":"☂️","mirror":"🪞","soap":"🧼","brush":"🪥","bed":"🛏️","red":"🔴","blue":"🔵","green":"🟢","yellow":"🟡","black":"⚫","white":"⚪","purple":"🟣","orange color":"🟠","good":"👍","bad":"👎","best":"🏆","worst":"💩","fast":"⚡","slow":"🐢","big":"🐘","small":"🐜","hot":"🔥","cold":"❄️","new":"✨","old":"📜","true":"✅","false":"❌","right":"➡️","left":"⬅️","up":"⬆️","down":"⬇️","day":"☀️","night":"🌙","week":"📅","month":"🗓️","year":"⏳","today":"📌","tomorrow":"🌅","yesterday":"⏪","now":"⏱️","later":"⏳","always":"♾️","never":"🚫","here":"📍","there":"👉","where":"❓","what":"❓","who":"👤","why":"❓","how":"⚙️","all":"💯","none":"∅","some":"➕","more":"📈","less":"📉","high":"📈","low":"📉","rich":"🤑","poor":"💸","strong":"💪","weak":"🥀","clean":"✨","dirty":"🗑️","smart":"🧠","fool":"🤡","danger":"⚠️","safe":"🛡️","help":"🆘","stop":"🛑","start":"▶️","play":"▶️","pause":"⏸️","record":"⏺️","delete":"🗑️","save":"💾","share":"🔗","copy":"📋","paste":"📌","cut":"✂️","settings":"⚙️","info":"ℹ️","profile":"👤","user":"🧑","admin":"👑"};
@@ -453,18 +499,77 @@ function convertToUltraHD(scale){
     const c=document.createElement("canvas");c.width=img.naturalWidth*scale;c.height=img.naturalHeight*scale;
     const ctx=c.getContext("2d");ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
     ctx.drawImage(img,0,0,c.width,c.height);
-    c.toBlob(blob=>{URL.revokeObjectURL(url);saveBlob(blob,`UltraHD_${scale}X.png`);setStatus("hdStatus","Upscaled successfully!");},"image/png");
+    c.toBlob(blob=>{URL.revokeObjectURL(url);saveBlob(blob,`UltraHD_${scale}X.png`, "image");setStatus("hdStatus","Upscaled & ready for review!");},"image/png");
   };img.src=url;
 }
 
-function htmlToJson(){saveBlob(new Blob([JSON.stringify({html:document.getElementById("htmlInput").value},null,2)],{type:"application/json"}),"conv.json");setStatus("h2jStatus","Converted!");}
-function jsonToHtml(){try{const o=JSON.parse(document.getElementById("jsonInput").value);saveBlob(new Blob([o.html||o],{type:"text/html"}),"conv.html");setStatus("j2hStatus","Converted!");}catch(e){setStatus("j2hStatus",e.message,false);}}
-function csvToJson(){const lines=document.getElementById("csvInput").value.trim().split("\n");const headers=lines[0].split(",");const res=lines.slice(1).map(l=>{const v=l.split(",");const o={};headers.forEach((h,i)=>o[h]=v[i]||"");return o;});saveBlob(new Blob([JSON.stringify(res,null,2)],{type:"application/json"}),"csv.json");setStatus("csvStatus","Converted!");}
-function jsonToCsv(){try{const d=JSON.parse(document.getElementById("j2csvInput").value);const keys=Object.keys(d[0]);let csv=keys.join(",")+"\n";d.forEach(r=>csv+=keys.map(k=>`"${r[k]||""}"`).join(",")+"\n");saveBlob(new Blob([csv],{type:"text/csv"}),"conv.csv");setStatus("j2csvStatus","Converted!");}catch(e){setStatus("j2csvStatus",e.message,false);}}
-function imageConvert(id,fmt,stat){const inp=document.getElementById(id);if(!inp.files[0])return setStatus(stat,"Select image",false);const img=new Image();const url=URL.createObjectURL(inp.files[0]);img.onload=()=>{const c=document.createElement("canvas");c.width=img.naturalWidth;c.height=img.naturalHeight;const ctx=c.getContext("2d");if(fmt==='jpg'){ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);}ctx.drawImage(img,0,0);c.toBlob(b=>{URL.revokeObjectURL(url);saveBlob(b,`img.${fmt}`);setStatus(stat,"Converted!");},`image/${fmt==='jpg'?'jpeg':fmt}`);};img.src=url;}
-function processBase64(enc){try{const v=document.getElementById("base64Input").value;document.getElementById("base64Input").value=enc?btoa(v):atob(v);setStatus("base64Status","Success!");}catch(e){setStatus("base64Status","Error",false);}}
+function htmlToJson(){
+  const htmlContent = document.getElementById("htmlInput").value;
+  const jsonStr = JSON.stringify({html: htmlContent}, null, 2);
+  saveBlob(new Blob([jsonStr],{type:"application/json"}),"conv.json", "json");
+  setStatus("h2jStatus","HTML converted to JSON successfully!");
+}
+
+function jsonToHtml(){
+  try{
+    const o=JSON.parse(document.getElementById("jsonInput").value);
+    const htmlContent = o.html||o;
+    saveBlob(new Blob([htmlContent],{type:"text/html"}),"conv.html", "html");
+    setStatus("j2hStatus","JSON converted to HTML successfully!");
+  }catch(e){setStatus("j2hStatus",e.message,false);}
+}
+
+function csvToJson(){
+  const lines=document.getElementById("csvInput").value.trim().split("\n");
+  const headers=lines[0].split(",");
+  const res=lines.slice(1).map(l=>{const v=l.split(",");const o={};headers.forEach((h,i)=>o[h]=v[i]||"");return o;});
+  const jsonStr = JSON.stringify(res,null,2);
+  saveBlob(new Blob([jsonStr],{type:"application/json"}),"csv.json", "json");
+  setStatus("csvStatus","CSV converted to JSON successfully!");
+}
+
+function jsonToCsv(){
+  try{
+    const d=JSON.parse(document.getElementById("j2csvInput").value);
+    const keys=Object.keys(d[0]);
+    let csv=keys.join(",")+"\n";
+    d.forEach(r=>csv+=keys.map(k=>`"${r[k]||""}"`).join(",")+"\n");
+    saveBlob(new Blob([csv],{type:"text/csv"}),"conv.csv", "csv");
+    setStatus("j2csvStatus","JSON converted to CSV successfully!");
+  }catch(e){setStatus("j2csvStatus",e.message,false);}
+}
+
+function imageConvert(id,fmt,stat){
+  const inp=document.getElementById(id);
+  if(!inp.files[0])return setStatus(stat,"Select image",false);
+  const img=new Image();
+  const url=URL.createObjectURL(inp.files[0]);
+  img.onload=()=>{
+    const c=document.createElement("canvas");
+    c.width=img.naturalWidth;
+    c.height=img.naturalHeight;
+    const ctx=c.getContext("2d");
+    if(fmt==='jpg'){ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);}
+    ctx.drawImage(img,0,0);
+    c.toBlob(b=>{
+      URL.revokeObjectURL(url);
+      saveBlob(b,`converted_img.${fmt}`, "image");
+      setStatus(stat,"Image formatted & ready for review!");
+    },`image/${fmt==='jpg'?'jpeg':fmt}`);
+  };
+  img.src=url;
+}
+
+function processBase64(enc){try{const v=document.getElementById("base64Input").value;const res = enc?btoa(v):atob(v);document.getElementById("base64Input").value=res;setStatus("base64Status","Success!");}catch(e){setStatus("base64Status","Error",false);}}
 function processUrl(enc){const v=document.getElementById("urlInput").value;document.getElementById("urlInput").value=enc?encodeURIComponent(v):decodeURIComponent(v);setStatus("urlStatus","Success!");}
-function mdToHtml(){let md=document.getElementById("mdInput").value;let html=md.replace(/^# (.*$)/gim,'<h1>$1</h1>').replace(/\*\*(.*)\*/gim,'<b>$1</b>');saveBlob(new Blob([html],{type:"text/html"}),"md.html");setStatus("mdStatus","Converted!");}
+
+function mdToHtml(){
+  let md=document.getElementById("mdInput").value;
+  let html=md.replace(/^# (.*$)/gim,'<h1>$1</h1>').replace(/\*\*(.*)\*/gim,'<b>$1</b>');
+  saveBlob(new Blob([html],{type:"text/html"}),"md.html", "html");
+  setStatus("mdStatus","Markdown converted to HTML!");
+}
+
 function convertTextCase(t){let f=document.getElementById("caseInput");let v=f.value;if(t==='upper')f.value=v.toUpperCase();else if(t==='lower')f.value=v.toLowerCase();else f.value=v.replace(/\w\S*/g,txt=>txt.charAt(0).toUpperCase()+txt.substr(1).toLowerCase());setStatus("textCaseStatus","Converted!");}
 
 const mmap={'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..',' ': '/'};
@@ -476,7 +581,20 @@ function binaryToText(){try{let v=document.getElementById("binaryInput").value.t
 function convertColor(){let i=document.getElementById("colorInput").value.trim();let p=document.getElementById("colorPreviewBox");p.style.background=i;p.textContent="Color: "+i;setStatus("colorStatus","Converted!");}
 function generateSecurePassword(){let chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$";let p="";for(let i=0;i<16;i++)p+=chars[Math.floor(Math.random()*chars.length)];document.getElementById("generatedPassword").value=p;setStatus("passGenStatus","Generated!");}
 function analyzeText(){let t=document.getElementById("wordCountInput").value;let w=t.trim()?t.trim().split(/\s+/).length:0;document.getElementById("wcWords").textContent=w;document.getElementById("wcChars").textContent=t.length;document.getElementById("wcTime").textContent=Math.ceil(w/3.3)+"s";}
-function generateQR(){let t=document.getElementById("qrInput").value.trim();if(!t)return setStatus("qrStatus","Enter text",false);document.getElementById("qrPreviewArea").innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(t)}" alt="QR">`;setStatus("qrStatus","Generated!");}
+
+function generateQR(){
+  let t=document.getElementById("qrInput").value.trim();
+  if(!t)return setStatus("qrStatus","Enter text",false);
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(t)}`;
+  document.getElementById("qrPreviewArea").innerHTML=`<img src="${qrUrl}" alt="QR">`;
+  
+  // Fetch blob for review
+  fetch(qrUrl).then(res => res.blob()).then(blob => {
+    saveBlob(blob, "QRCode.png", "qr");
+  }).catch(() => {});
+  
+  setStatus("qrStatus","QR Generated & Ready for Review!");
+}
 
 /* Clock & Calendar Logic */
 let calendarCursor=new Date();let calendarTimer=null;
